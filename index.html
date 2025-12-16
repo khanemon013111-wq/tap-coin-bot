@@ -3,32 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Official App</title>
+    <title>Lite Coin - Tap Bot Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body { background: radial-gradient(circle at center, #1e293b 0%, #020617 100%); color: white; font-family: 'Inter', sans-serif; overflow: hidden; touch-action: none; }
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 110px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
-
-        /* কয়েন ডিজাইন */
         .coin-wrapper { position: relative; width: 260px; height: 260px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 30px auto; }
         .coin-wrapper:active { transform: scale(0.95); }
         .outer-rim { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(145deg, #334155, #000000); box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 -5px 15px rgba(255,0,0,0.3); display: flex; align-items: center; justify-content: center; }
         .coin-body { width: 88%; height: 88%; background: radial-gradient(circle, #1a1a2e 10%, #000000 90%); border-radius: 50%; border: 2px solid rgba(255,0,0,0.4); position: relative; display: flex; align-items: center; justify-content: center; }
-        
         .curved-svg { position: absolute; width: 100%; height: 100%; animation: rotateText 12s linear infinite; }
         @keyframes rotateText { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* কার্ড ডিজাইন */
         .task-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .done-btn { background: #1e293b !important; color: #64748b !important; cursor: not-allowed; }
-
-        /* নেভিগেশন */
         .footer-card { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.08); position: fixed; bottom: 0; left: 0; z-index: 1000; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #94a3b8; font-size: 10px; font-weight: bold; flex: 1; }
         .nav-btn.active { color: #ef4444; }
-
         .tap-effect { position: absolute; color: #fbbf24; font-size: 32px; font-weight: 900; pointer-events: none; animation: tapFloat 0.7s ease-out forwards; z-index: 100; }
         @keyframes tapFloat { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-120px); opacity: 0; } }
     </style>
@@ -37,11 +28,9 @@
 
     <div id="game-page" class="page items-center justify-between">
         <div class="mt-12 text-center">
-            <p class="text-gray-400 text-sm font-bold mb-1">Total Balance</p>
             <h1 class="text-6xl font-black text-yellow-500" id="score">0</h1>
             <div class="bg-gray-800/60 px-5 py-1 rounded-full text-[11px] font-bold text-red-500 uppercase mt-3 tracking-widest border border-red-500/20">Bronze League ></div>
         </div>
-
         <div class="coin-wrapper" id="coin">
             <div class="outer-rim">
                 <div class="coin-body">
@@ -54,55 +43,43 @@
                 </div>
             </div>
         </div>
-
         <div class="w-full px-10 mb-8">
-            <div class="flex justify-between mb-2 font-black text-yellow-400 text-sm">
-                <span>⚡ Energy</span>
-                <span id="energy-text">1000/1000</span>
-            </div>
+            <div class="flex justify-between mb-2 font-black text-yellow-400 text-sm"><span>⚡ Energy</span><span id="energy-text">1000/1000</span></div>
             <div class="h-3.5 w-full bg-gray-900 rounded-full border border-white/5 p-0.5"><div id="fill" class="h-full bg-gradient-to-r from-red-600 to-orange-500 rounded-full transition-all" style="width: 100%;"></div></div>
         </div>
     </div>
 
     <div id="tasks-page" class="page hidden px-6 pt-12">
-        <h2 class="text-4xl font-black text-center mb-2">Tasks</h2>
-        <p class="text-gray-400 text-center text-sm mb-8">টাস্ক কমপ্লিট করে কয়েন আয় করুন</p>
-        
+        <h2 class="text-4xl font-black text-center mb-8">Tasks</h2>
         <div class="task-card">
-            <div class="flex items-center gap-4">
-                <div class="bg-blue-500/10 p-3 rounded-2xl text-2xl">📢</div>
-                <div>
-                    <h4 class="font-bold text-sm">Join Telegram</h4>
-                    <p class="text-xs text-yellow-500 font-bold">+10,000 Coins</p>
-                </div>
-            </div>
-            <button id="task-tg" onclick="doTask('tg', 'https://t.me/YourChannel', 10000)" class="bg-red-600 px-5 py-2.5 rounded-xl text-xs font-black">Join</button>
+            <div class="flex items-center gap-4"><div class="bg-blue-500/10 p-3 rounded-2xl text-2xl">📢</div><div><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-xs text-yellow-500">+10,000</p></div></div>
+            <button onclick="doTask('tg', 'https://t.me/YourChannel', 10000)" class="bg-red-600 px-5 py-2.5 rounded-xl text-xs font-black">Join</button>
         </div>
     </div>
 
     <div id="boost-page" class="page hidden px-6 pt-12">
-        <h2 class="text-4xl font-black text-center mb-2">Boosters</h2>
-        <p class="text-gray-400 text-center text-sm mb-8">এনার্জি রিফিল করুন</p>
+        <h2 class="text-4xl font-black text-center mb-8">Boosters</h2>
         
         <div class="task-card">
-            <div class="flex items-center gap-4">
-                <div class="bg-orange-500/10 p-3 rounded-2xl text-2xl">⚡</div>
-                <div>
-                    <h4 class="font-bold text-sm">Full Tank</h4>
-                    <p class="text-xs text-yellow-500 font-bold" id="refill-status">3/3 Available</p>
-                </div>
-            </div>
-            <button onclick="useFullTank()" class="bg-gradient-to-r from-orange-500 to-red-600 px-5 py-2.5 rounded-xl text-xs font-black">Get it!</button>
+            <div class="flex items-center gap-4"><div class="bg-purple-500/10 p-3 rounded-2xl text-2xl">🤖</div><div><h4 class="font-bold text-sm">Tap Bot</h4><p class="text-xs text-yellow-500 font-bold" id="bot-status">Auto Mining</p></div></div>
+            <button id="buy-bot-btn" onclick="buyBot()" class="bg-purple-600 px-5 py-2.5 rounded-xl text-xs font-black">5,000 🪙</button>
+        </div>
+
+        <div class="task-card">
+            <div class="flex items-center gap-4"><div class="bg-orange-500/10 p-3 rounded-2xl text-2xl">⚡</div><div><h4 class="font-bold text-sm">Full Tank</h4><p class="text-xs text-yellow-500 font-bold" id="refill-status">3/3 Free</p></div></div>
+            <button onclick="useFullTank()" class="bg-red-600 px-5 py-2.5 rounded-xl text-xs font-black">Get it!</button>
+        </div>
+
+        <div class="task-card">
+            <div class="flex items-center gap-4"><div class="bg-blue-500/10 p-3 rounded-2xl text-2xl">👆</div><div><h4 class="font-bold text-sm">Multitap</h4><p class="text-xs text-yellow-500 font-bold" id="tap-status">Level 1</p></div></div>
+            <button onclick="upgradeTap()" class="bg-blue-600 px-5 py-2.5 rounded-xl text-xs font-black">2,000 🪙</button>
         </div>
     </div>
 
-    <div id="friends-page" class="page hidden px-6 pt-12">
-        <h2 class="text-4xl font-black text-center mb-8">Invite Friends</h2>
-        <div class="bg-gray-800/30 p-8 rounded-3xl border border-white/5 text-center mb-6">
-            <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">Total Referrals</p>
-            <h3 class="text-5xl font-black text-red-500" id="refer-count">0</h3>
-        </div>
-        <button onclick="shareInvite()" class="bg-red-600 w-full py-5 rounded-2xl font-black text-xl active:scale-95">Invite a Friend</button>
+    <div id="friends-page" class="page hidden px-6 pt-12 text-center">
+        <h2 class="text-4xl font-black mb-8">Friends</h2>
+        <div class="bg-gray-800/30 p-8 rounded-3xl border border-white/5 mb-6"><p class="text-gray-400 text-xs font-bold mb-2">Total Referrals</p><h3 class="text-5xl font-black text-red-500" id="refer-count">0</h3></div>
+        <button onclick="shareInvite()" class="bg-red-600 w-full py-5 rounded-2xl font-black text-xl">Invite a Friend</button>
     </div>
 
     <div class="footer-card">
@@ -115,19 +92,29 @@
     </div>
 
     <script>
-        // ডাটা লোড
         let score = parseInt(localStorage.getItem('liteScore')) || 0;
         let energy = parseInt(localStorage.getItem('liteEnergy')) || 1000;
         let refers = parseInt(localStorage.getItem('liteRefers')) || 0;
         let refillsUsed = parseInt(localStorage.getItem('refillsUsed')) || 0;
-        let lastRefillDate = localStorage.getItem('lastRefillDate');
+        let tapLevel = parseInt(localStorage.getItem('tapLevel')) || 1; 
+        let hasBot = localStorage.getItem('liteBot') === 'true';
+        let lastVisit = parseInt(localStorage.getItem('lastVisit')) || Date.now();
         let today = new Date().toLocaleDateString();
 
-        // দিন চেক করে রিফিল রিসেট করা
-        if (lastRefillDate !== today) {
-            refillsUsed = 0;
-            localStorage.setItem('refillsUsed', 0);
-            localStorage.setItem('lastRefillDate', today);
+        // দিন রিসেট
+        if (localStorage.getItem('lastRefillDate') !== today) {
+            refillsUsed = 0; localStorage.setItem('refillsUsed', 0); localStorage.setItem('lastRefillDate', today);
+        }
+
+        // রোবট মাইনিং ক্যালকুলেশন (অফলাইনে প্রতি মিনিটে ৬০ কয়েন)
+        if (hasBot) {
+            let now = Date.now();
+            let minutesAway = Math.floor((now - lastVisit) / 60000);
+            if (minutesAway > 0) {
+                let mined = Math.min(minutesAway * 60, 50000); // সর্বোচ্চ ৫০ হাজার পর্যন্ত
+                score += mined;
+                alert("🤖 দাদু, আপনার রোবট অফলাইনে " + mined + " কয়েন মাইনিং করেছে!");
+            }
         }
 
         function updateUI() {
@@ -135,16 +122,19 @@
             document.getElementById('energy-text').innerText = energy + " / 1000";
             document.getElementById('fill').style.width = (energy / 1000) * 100 + "%";
             document.getElementById('refer-count').innerText = refers;
-            document.getElementById('refill-status').innerText = (3 - refillsUsed) + " / 3 Available Today";
+            document.getElementById('refill-status').innerText = (3 - refillsUsed) + " / 3 Free";
+            document.getElementById('tap-status').innerText = "Level " + tapLevel;
             
-            if(localStorage.getItem('task_tg')) {
-                document.getElementById('task-tg').innerText = "Done";
-                document.getElementById('task-tg').className = "done-btn px-5 py-2.5 rounded-xl text-xs font-bold";
+            if (hasBot) {
+                document.getElementById('bot-status').innerText = "Bot Active ✅";
+                document.getElementById('buy-bot-btn').style.display = 'none';
             }
 
             localStorage.setItem('liteScore', score);
             localStorage.setItem('liteEnergy', energy);
-            localStorage.setItem('liteRefers', refers);
+            localStorage.setItem('tapLevel', tapLevel);
+            localStorage.setItem('liteBot', hasBot);
+            localStorage.setItem('lastVisit', Date.now());
         }
 
         function showPage(p) {
@@ -156,55 +146,58 @@
 
         function handleTap(e) {
             e.preventDefault();
-            const x = e.clientX || e.touches[0].clientX;
-            const y = e.clientY || e.touches[0].clientY;
-            if (energy > 0) {
-                score++; energy--;
-                createAnim(x, y);
+            const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+            if (energy >= tapLevel) {
+                score += tapLevel; energy -= tapLevel;
+                createAnim(x, y, "+" + tapLevel);
                 updateUI();
             }
         }
 
-        function createAnim(x, y) {
+        function createAnim(x, y, txt) {
             const el = document.createElement('div');
-            el.className = 'tap-effect'; el.innerText = '+1';
+            el.className = 'tap-effect'; el.innerText = txt;
             el.style.left = (x - 15) + 'px'; el.style.top = (y - 30) + 'px';
             document.body.appendChild(el);
             setTimeout(() => el.remove(), 700);
         }
 
-        function doTask(id, url, reward) {
-            if (localStorage.getItem('task_' + id)) return;
-            window.open(url, '_blank');
-            setTimeout(() => {
-                score += reward;
-                localStorage.setItem('task_' + id, 'done');
-                updateUI();
-                alert("আপনি " + reward + " কয়েন পেয়েছেন!");
-            }, 3000);
+        function buyBot() {
+            if (score >= 5000) {
+                score -= 5000; hasBot = true; updateUI();
+                alert("🤖 Tap Bot কেনা সফল হয়েছে! এখন রোবট আপনার হয়ে মাইনিং করবে।");
+            } else { alert("পর্যাপ্ত কয়েন নেই দাদু!"); }
+        }
+
+        function upgradeTap() {
+            if (score >= 2000) {
+                score -= 2000; tapLevel++; updateUI();
+            } else { alert("কয়েন লাগবে দাদু!"); }
         }
 
         function useFullTank() {
             if (refillsUsed < 3) {
-                energy = 1000;
-                refillsUsed++;
-                localStorage.setItem('refillsUsed', refillsUsed);
-                updateUI();
-                alert("Energy Refilled!");
-            } else {
-                alert("আজকের ৩টি লিমিট শেষ দাদু!");
-            }
+                energy = 1000; refillsUsed++; updateUI();
+            } else { alert("লিমিট শেষ!"); }
         }
 
         function shareInvite() {
             refers++; updateUI();
-            window.open('https://t.me/share/url?url=https://t.me/Referralincamebd01311_bot&text=Join and Earn!', '_blank');
+            window.open('https://t.me/share/url?url=https://t.me/YourBot&text=Join Now!', '_blank');
         }
 
-        document.getElementById('coin').addEventListener('touchstart', handleTap, {passive: false});
-        setInterval(() => { if (energy < 1000) { energy++; updateUI(); } }, 1500);
+        const coin = document.getElementById('coin');
+        coin.addEventListener('touchstart', handleTap, {passive: false});
+        coin.addEventListener('mousedown', handleTap);
+        
+        setInterval(() => {
+            if (energy < 1000) { energy = Math.min(1000, energy + 1); updateUI(); }
+            localStorage.setItem('lastVisit', Date.now());
+        }, 2000);
+
         updateUI();
     </script>
 </body>
-                </html>
+</html>
 
