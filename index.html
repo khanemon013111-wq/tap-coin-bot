@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Bot Bottom Edition</title>
+    <title>Lite Coin - Pro Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -19,9 +19,9 @@
         .curved-svg { position: absolute; width: 100%; height: 100%; animation: rotateText 15s linear infinite; }
         @keyframes rotateText { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* ট্যাপ ইফেক্ট */
-        .tap-effect { position: absolute; color: #fbbf24; font-size: 32px; font-weight: 900; pointer-events: none; animation: tapFloat 0.7s ease-out forwards; z-index: 100; }
-        @keyframes tapFloat { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-150px); opacity: 0; } }
+        /* ট্যাপ সংখ্যা ভেসে ওঠার এনিমেশন */
+        .tap-effect { position: absolute; color: #fbbf24; font-size: 35px; font-weight: 900; pointer-events: none; animation: tapFloat 0.7s ease-out forwards; z-index: 100; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        @keyframes tapFloat { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-150px) scale(1.2); opacity: 0; } }
 
         .task-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .footer-card { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.08); position: fixed; bottom: 0; left: 0; z-index: 1000; }
@@ -36,6 +36,7 @@
             <h1 class="text-6xl font-black text-yellow-500" id="score">0</h1>
             <div class="bg-gray-800/60 px-5 py-1 rounded-full text-[11px] font-bold text-red-500 mt-3 border border-red-500/20 uppercase tracking-widest">Lite League</div>
         </div>
+
         <div class="coin-wrapper" id="coin">
             <div class="outer-rim">
                 <div class="coin-body">
@@ -48,6 +49,7 @@
                 </div>
             </div>
         </div>
+
         <div class="w-full px-10 mb-8">
             <div class="flex justify-between mb-2 font-black text-yellow-400 text-sm"><span>⚡ Energy</span><span id="energy-text">1000/1000</span></div>
             <div class="h-3.5 w-full bg-gray-900 rounded-full border border-white/5 p-0.5"><div id="fill" class="h-full bg-gradient-to-r from-red-600 to-orange-500 rounded-full transition-all" style="width: 100%;"></div></div>
@@ -66,15 +68,15 @@
         <h2 class="text-4xl font-black text-center mb-8 text-red-500">Boosters</h2>
         <div class="task-card">
             <div class="flex items-center gap-4"><div>👆</div><div><h4 class="font-bold text-sm">Multitap</h4><p class="text-xs text-yellow-500" id="tap-status">Level 1</p></div></div>
-            <button id="tap-upgrade-btn" onclick="upgradeTap()" class="bg-blue-600 px-4 py-2 rounded-xl text-xs font-black">2,000</button>
+            <button id="tap-upgrade-btn" onclick="upgradeItem('tap')" class="bg-blue-600 px-4 py-2 rounded-xl text-xs font-black">1,000</button>
         </div>
         <div class="task-card">
-            <div class="flex items-center gap-4"><div>🔋</div><div><h4 class="font-bold text-sm">Limit</h4><p class="text-xs text-yellow-500" id="limit-status">Level 1</p></div></div>
-            <button id="limit-upgrade-btn" onclick="upgradeLimit()" class="bg-yellow-600 px-4 py-2 rounded-xl text-xs font-black">2,000</button>
+            <div class="flex items-center gap-4"><div>🔋</div><div><h4 class="font-bold text-sm">Energy Limit</h4><p class="text-xs text-yellow-500" id="limit-status">Level 1</p></div></div>
+            <button id="limit-upgrade-btn" onclick="upgradeItem('limit')" class="bg-yellow-600 px-4 py-2 rounded-xl text-xs font-black">1,000</button>
         </div>
         <div class="task-card">
-            <div class="flex items-center gap-4"><div>🚀</div><div><h4 class="font-bold text-sm">Recharge</h4><p class="text-xs text-yellow-500" id="speed-status">Level 1</p></div></div>
-            <button id="speed-upgrade-btn" onclick="upgradeSpeed()" class="bg-green-600 px-4 py-2 rounded-xl text-xs font-black">2,000</button>
+            <div class="flex items-center gap-4"><div>🚀</div><div><h4 class="font-bold text-sm">Recharge Speed</h4><p class="text-xs text-yellow-500" id="speed-status">Level 1</p></div></div>
+            <button id="speed-upgrade-btn" onclick="upgradeItem('speed')" class="bg-green-600 px-4 py-2 rounded-xl text-xs font-black">1,000</button>
         </div>
         <div class="task-card">
             <div class="flex items-center gap-4"><div>🤖</div><div><h4 class="font-bold text-sm">Tap Bot</h4><p class="text-xs text-yellow-500" id="bot-status">Auto Mine (500k)</p></div></div>
@@ -110,22 +112,63 @@
 
         function updateUI() {
             let maxEnergy = 1000 + ((limitLevel - 1) * 500);
-            let energy = parseInt(localStorage.getItem('liteEnergy')) || maxEnergy;
+            let energy = parseInt(localStorage.getItem('liteEnergy'));
+            if(isNaN(energy)) energy = maxEnergy;
+
             document.getElementById('score').innerText = score.toLocaleString();
             document.getElementById('energy-text').innerText = Math.floor(energy) + " / " + maxEnergy;
             document.getElementById('fill').style.width = (energy / maxEnergy) * 100 + "%";
             document.getElementById('refer-count').innerText = refers;
-            updateBtn('tap-upgrade-btn', 'tap-status', tapLevel, 2000, "bg-blue-600");
-            updateBtn('limit-upgrade-btn', 'limit-status', limitLevel, 2000, "bg-yellow-600");
-            updateBtn('speed-upgrade-btn', 'speed-status', rechargeLevel, 2000, "bg-green-600");
-            if (hasBot) { document.getElementById('bot-status').innerText = "Bot Active ✅"; document.getElementById('buy-bot-btn').style.display = 'none'; }
+
+            // ১,০০০ থেকে শুরু এবং ২ গুণ দাম
+            updateBtn('tap-upgrade-btn', 'tap-status', tapLevel, 1000, "bg-blue-600");
+            updateBtn('limit-upgrade-btn', 'limit-status', limitLevel, 1000, "bg-yellow-600");
+            updateBtn('speed-upgrade-btn', 'speed-status', rechargeLevel, 1000, "bg-green-600");
+
+            if (hasBot) {
+                document.getElementById('bot-status').innerText = "Bot Active ✅";
+                document.getElementById('buy-bot-btn').style.display = 'none';
+            }
+
             localStorage.setItem('liteScore', score);
+            localStorage.setItem('liteEnergy', energy);
+            localStorage.setItem('tapLevel', tapLevel);
+            localStorage.setItem('limitLevel', limitLevel);
+            localStorage.setItem('rechargeLevel', rechargeLevel);
+            localStorage.setItem('liteBot', hasBot);
+            localStorage.setItem('liteRefers', refers);
         }
 
         function updateBtn(btnId, statusId, level, base, cls) {
             let btn = document.getElementById(btnId);
-            if (level >= 25) { document.getElementById(statusId).innerText = "Level 25 (MAX)"; btn.innerText = "MAX"; btn.className = "bg-gray-600 px-4 py-2 rounded-xl text-xs font-black"; }
-            else { let p = base * Math.pow(3, level - 1); document.getElementById(statusId).innerText = "Level " + level; btn.innerText = p.toLocaleString() + " 🪙"; btn.className = cls + " px-4 py-2 rounded-xl text-xs font-black"; }
+            if (level >= 25) {
+                document.getElementById(statusId).innerText = "Level 25 (MAX)";
+                btn.innerText = "MAX"; btn.className = "bg-gray-600 px-4 py-2 rounded-xl text-xs font-black";
+            } else {
+                let p = base * Math.pow(2, level - 1); 
+                document.getElementById(statusId).innerText = "Level " + level;
+                btn.innerText = p.toLocaleString() + " 🪙";
+                btn.className = cls + " px-4 py-2 rounded-xl text-xs font-black";
+            }
+        }
+
+        function upgradeItem(type) {
+            let level, base = 1000;
+            if(type === 'tap') level = tapLevel;
+            if(type === 'limit') level = limitLevel;
+            if(type === 'speed') level = rechargeLevel;
+
+            let price = base * Math.pow(2, level - 1);
+
+            if(score >= price && level < 25) {
+                score -= price;
+                if(type === 'tap') tapLevel++;
+                if(type === 'limit') limitLevel++;
+                if(type === 'speed') rechargeLevel++;
+                updateUI();
+            } else if (level < 25) {
+                alert("কয়েন নেই দাদু!");
+            }
         }
 
         function handleTap(e) {
@@ -134,25 +177,40 @@
             let energy = parseInt(localStorage.getItem('liteEnergy')) || maxEnergy;
             if (energy >= tapLevel) {
                 tapSound.currentTime = 0; tapSound.play();
-                score += tapLevel; energy -= tapLevel; localStorage.setItem('liteEnergy', energy);
-                const x = e.clientX || e.touches[0].clientX; const y = e.clientY || e.touches[0].clientY;
-                const effect = document.createElement('div'); effect.className = 'tap-effect'; effect.innerText = "+" + tapLevel; effect.style.left = x + 'px'; effect.style.top = y + 'px'; document.body.appendChild(effect);
-                setTimeout(() => effect.remove(), 700); updateUI();
+                score += tapLevel; energy -= tapLevel;
+                localStorage.setItem('liteEnergy', energy);
+
+                const x = e.clientX || e.touches[0].clientX;
+                const y = e.clientY || e.touches[0].clientY;
+                const effect = document.createElement('div');
+                effect.className = 'tap-effect';
+                effect.innerText = "+" + tapLevel;
+                effect.style.left = x + 'px'; effect.style.top = y + 'px';
+                document.body.appendChild(effect);
+                setTimeout(() => effect.remove(), 700);
+                updateUI();
             }
         }
 
-        function showPage(p) { document.querySelectorAll('.page').forEach(el => el.classList.add('hidden')); document.getElementById(p + '-page').classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active')); document.getElementById('btn-' + p).classList.add('active'); }
-        function upgradeTap() { let p = 2000 * Math.pow(3, tapLevel-1); if(score>=p && tapLevel<25){ score-=p; tapLevel++; updateUI(); } }
-        function upgradeLimit() { let p = 2000 * Math.pow(3, limitLevel-1); if(score>=p && limitLevel<25){ score-=p; limitLevel++; updateUI(); } }
-        function upgradeSpeed() { let p = 2000 * Math.pow(3, rechargeLevel-1); if(score>=p && rechargeLevel<25){ score-=p; rechargeLevel++; updateUI(); } }
-        function buyBot() { if(score>=500000){ score-=500000; hasBot=true; localStorage.setItem('liteBot', true); updateUI(); } }
+        function showPage(p) {
+            document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
+            document.getElementById(p + '-page').classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('btn-' + p).classList.add('active');
+        }
+
+        function buyBot() { if(score>=500000){ score-=500000; hasBot=true; updateUI(); } }
         function doTask(url, reward) { window.open(url, '_blank'); score += reward; updateUI(); }
         function shareInvite() { refers++; score += 50000; updateUI(); }
 
         setInterval(() => {
             let maxEnergy = 1000 + ((limitLevel - 1) * 500);
             let energy = parseInt(localStorage.getItem('liteEnergy')) || maxEnergy;
-            if (energy < maxEnergy) { energy = Math.min(maxEnergy, energy + rechargeLevel); localStorage.setItem('liteEnergy', energy); updateUI(); }
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + rechargeLevel);
+                localStorage.setItem('liteEnergy', energy);
+                updateUI();
+            }
         }, 1500);
 
         const coin = document.getElementById('coin');
