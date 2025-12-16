@@ -3,50 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Official Bot</title>
+    <title>Lite Coin - Official</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body { background: radial-gradient(circle at center, #1e293b 0%, #020617 100%); color: white; font-family: 'Inter', sans-serif; overflow: hidden; touch-action: none; }
-        .page { display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 110px; }
+        .page { display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 110px; transition: 0.3s; }
         .hidden { display: none !important; }
 
-        /* লাল মেটালিক কয়েন ও এনিমেশন */
-        .coin-wrapper { position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; cursor: pointer; perspective: 1000px; margin: auto; }
-        .coin-wrapper:active { transform: scale(0.92); }
-        .outer-rim { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(145deg, #2d3748, #000000); box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 -8px 15px rgba(255,0,0,0.3); display: flex; align-items: center; justify-content: center; }
-        .coin-body { width: 88%; height: 88%; background: radial-gradient(circle, #1a1a2e 10%, #000000 80%); border-radius: 50%; border: 4px solid rgba(255,0,0,0.4); position: relative; display: flex; align-items: center; justify-content: center; }
+        /* লাল মেটালিক কয়েন ডিজাইন */
+        .coin-wrapper { position: relative; width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: auto; }
+        .coin-wrapper:active { transform: scale(0.95); }
+        .outer-rim { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(145deg, #334155, #000000); box-shadow: 0 15px 40px rgba(0,0,0,0.7), inset 0 -5px 15px rgba(255,0,0,0.4); display: flex; align-items: center; justify-content: center; }
+        .coin-body { width: 88%; height: 88%; background: radial-gradient(circle, #1a1a2e 10%, #000000 90%); border-radius: 50%; border: 3px solid rgba(255,0,0,0.5); position: relative; display: flex; align-items: center; justify-content: center; }
         
-        /* Powered by Community লেখাটি */
-        .curved-svg { position: absolute; width: 100%; height: 100%; pointer-events: none; animation: rotateText 10s linear infinite; }
+        /* Powered by Community লেখা ঘোরা */
+        .curved-svg { position: absolute; width: 100%; height: 100%; pointer-events: none; animation: rotateText 12s linear infinite; }
         @keyframes rotateText { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .curved-svg text { fill: #ff0000; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 3.5px; }
-        .ton-logo { width: 110px; height: 110px; filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.7)); }
+        .curved-svg text { fill: #ef4444; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; }
+        .ton-logo { width: 100px; height: 100px; filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.6)); }
 
         /* +1 এনিমেশন */
-        .tap-effect { position: absolute; color: #fbbf24; font-size: 40px; font-weight: 900; pointer-events: none; animation: tapFloat 0.8s ease-out forwards; text-shadow: 0 0 15px rgba(251, 191, 36, 0.8); z-index: 100; }
-        @keyframes tapFloat { 
-            0% { transform: translateY(0) scale(1); opacity: 1; } 
-            100% { transform: translateY(-160px) scale(1.5); opacity: 0; } 
-        }
+        .tap-effect { position: absolute; color: #fbbf24; font-size: 38px; font-weight: 900; pointer-events: none; animation: tapFloat 0.7s ease-out forwards; z-index: 100; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        @keyframes tapFloat { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-140px); opacity: 0; } }
 
-        /* স্কোর ও মেনুবার */
-        #score { color: #fbbf24; text-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
-        .footer-card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); width: 100%; padding: 15px 0; border-top: 1px solid rgba(255,255,255,0.1); position: fixed; bottom: 0; left: 0; z-index: 1000; }
-        .nav-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #6b7280; transition: 0.2s; }
+        .footer-card { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(10px); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.05); position: fixed; bottom: 0; left: 0; z-index: 1000; }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #94a3b8; font-size: 10px; font-weight: bold; }
         .nav-btn.active { color: #ef4444; }
-        .nav-btn span:last-child { font-size: 10px; font-weight: bold; margin-top: 4px; }
-        
-        .energy-bar { width: 90%; height: 10px; background: #0f172a; border-radius: 20px; overflow: hidden; margin: 0 auto 10px; }
-        .energy-fill { height: 100%; background: linear-gradient(90deg, #ff0000, #800000); transition: width 0.2s; }
     </style>
 </head>
 <body>
 
     <div id="game-page" class="page">
-        <div class="mt-12 text-center">
-            <h1 class="text-6xl font-black tracking-tighter" id="score">0</h1>
-            <p class="text-red-500 font-bold mt-2 text-sm uppercase">Bronze Wallet ></p>
+        <div class="mt-10 text-center">
+            <h1 class="text-6xl font-black text-yellow-500 mb-1" id="score">0</h1>
+            <div class="bg-gray-800/50 px-4 py-1 rounded-full text-[10px] font-bold text-red-500 uppercase tracking-widest border border-red-500/20">Bronze League ></div>
         </div>
 
         <div class="coin-wrapper" id="coin">
@@ -57,48 +48,73 @@
                         <text><textPath href="#txtPath" startOffset="25%" text-anchor="middle">Powered by Community</textPath></text>
                         <text><textPath href="#txtPath" startOffset="75%" text-anchor="middle">Powered by Community</textPath></text>
                     </svg>
-                    <svg class="ton-logo" viewBox="0 0 120 120" fill="none"><path d="M60 0L120 120L60 95L0 120L60 0Z" fill="#ff0000"/></svg>
+                    <svg class="ton-logo" viewBox="0 0 120 120" fill="none"><path d="M60 0L120 120L60 95L0 120L60 0Z" fill="#ef4444"/></svg>
                 </div>
             </div>
         </div>
 
-        <div class="w-full">
-            <div class="w-[90%] mx-auto flex items-center gap-1 mb-2 font-bold"><span class="text-yellow-400">⚡</span><span id="energy-text">1000 / 1000</span></div>
-            <div class="energy-bar"><div id="fill" class="energy-fill" style="width: 100%;"></div></div>
+        <div class="w-full px-8 mb-6">
+            <div class="flex justify-between items-end mb-2">
+                <div class="flex items-center gap-1 font-black text-yellow-400"><span class="text-xl">⚡</span> <span id="energy-text">1000/1000</span></div>
+            </div>
+            <div class="h-3 w-full bg-gray-900/80 rounded-full border border-white/5 overflow-hidden"><div id="fill" class="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-300" style="width: 100%;"></div></div>
         </div>
     </div>
 
     <div id="friends-page" class="page hidden pt-12 px-6">
-        <h2 class="text-4xl font-black text-yellow-500 text-center">Friends</h2>
-        <div class="bg-gray-800/40 p-8 rounded-3xl mt-10 border border-red-500/20 text-center w-full">
-            <span class="text-6xl">👥</span>
-            <h3 class="text-xl font-bold mt-4">Lite Coin Refer</h3>
-            <p class="text-gray-400 text-sm mt-2">বন্ধুদের ইনভাইট করুন এবং বোনাস পান!</p>
+        <div class="text-center w-full">
+            <h2 class="text-4xl font-black mb-2">Invite Friends</h2>
+            <p class="text-gray-400 text-sm">আপনি যত বেশি রেফার করবেন, তত বেশি আয় হবে!</p>
+
+            <div class="mt-8 space-y-4">
+                <div class="bg-gray-800/40 p-6 rounded-3xl border border-white/5 flex justify-between items-center">
+                    <div class="text-left">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Total Referred</p>
+                        <h3 class="text-3xl font-black text-red-500" id="refer-count">0</h3>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-gray-500 uppercase font-bold">Bonus Earned</p>
+                        <h3 class="text-xl font-bold text-yellow-500" id="refer-bonus">0</h3>
+                    </div>
+                </div>
+                
+                <div class="bg-red-600/10 p-4 rounded-2xl border border-red-600/20 text-xs text-gray-300">
+                    💡 প্রতি সফল রেফারে আপনি পাচ্ছেন ৫,০০০ কয়েন বোনাস।
+                </div>
+            </div>
         </div>
-        <button onclick="shareInvite()" class="mt-10 bg-red-600 w-full py-4 rounded-2xl font-black text-xl shadow-lg active:scale-95 transition">Invite a Friend</button>
+        
+        <button onclick="shareInvite()" class="mb-10 bg-red-600 hover:bg-red-700 w-full py-4 rounded-2xl font-black text-xl shadow-lg shadow-red-600/20 active:scale-95 transition-all">Invite a Friend</button>
     </div>
 
     <div class="footer-card">
         <div class="flex justify-around items-center w-full">
-            <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span class="text-2xl">🪙</span><span>Earn</span></div>
-            <div class="nav-btn"><span class="text-2xl opacity-50">📋</span><span>Tasks</span></div>
-            <div onclick="showPage('friends')" id="btn-friends" class="nav-btn"><span class="text-2xl">👥</span><span>Friends</span></div>
-            <div class="nav-btn"><span class="text-2xl opacity-50">🚀</span><span>Boost</span></div>
-            <div class="nav-btn"><span class="text-2xl opacity-50">🏦</span><span>Wallet</span></div>
+            <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span class="text-2xl mb-1">🪙</span><span>Earn</span></div>
+            <div class="nav-btn opacity-30"><span class="text-2xl mb-1">📋</span><span>Tasks</span></div>
+            <div onclick="showPage('friends')" id="btn-friends" class="nav-btn"><span class="text-2xl mb-1">👥</span><span>Friends</span></div>
+            <div class="nav-btn opacity-30"><span class="text-2xl mb-1">🚀</span><span>Boost</span></div>
+            <div class="nav-btn opacity-30"><span class="text-2xl mb-1">🏦</span><span>Wallet</span></div>
         </div>
     </div>
 
     <script>
+        // ডাটা লোড করা
         let score = parseInt(localStorage.getItem('liteScore')) || 0;
         let energy = parseInt(localStorage.getItem('liteEnergy')) || 1000;
-        const clickSound = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3'); // একটি অনলাইন সাউন্ড ব্যবহার করলাম দাদু
+        let refers = parseInt(localStorage.getItem('liteRefers')) || 0;
 
         function updateUI() {
             document.getElementById('score').innerText = score.toLocaleString();
             document.getElementById('energy-text').innerText = energy + " / 1000";
             document.getElementById('fill').style.width = (energy / 1000) * 100 + "%";
+            
+            // রেফারেল ডাটা আপডেট
+            document.getElementById('refer-count').innerText = refers;
+            document.getElementById('refer-bonus').innerText = (refers * 5000).toLocaleString();
+            
             localStorage.setItem('liteScore', score);
             localStorage.setItem('liteEnergy', energy);
+            localStorage.setItem('liteRefers', refers);
         }
 
         function showPage(p) {
@@ -110,13 +126,12 @@
 
         function handleTap(e) {
             e.preventDefault();
-            const ts = e.changedTouches ? e.changedTouches : [e];
-            for (let i = 0; i < ts.length; i++) {
+            const touches = e.changedTouches ? e.changedTouches : [e];
+            for (let i = 0; i < touches.length; i++) {
                 if (energy > 0) {
                     score++; energy--;
-                    clickSound.currentTime = 0; clickSound.play().catch(() => {});
-                    if (navigator.vibrate) navigator.vibrate(25);
-                    createAnim(ts[i].clientX, ts[i].clientY);
+                    createAnim(touches[i].clientX, touches[i].clientY);
+                    if (navigator.vibrate) navigator.vibrate(15);
                 }
             }
             updateUI();
@@ -125,21 +140,25 @@
         function createAnim(x, y) {
             const el = document.createElement('div');
             el.className = 'tap-effect'; el.innerText = '+1';
-            el.style.left = (x - 20) + 'px'; el.style.top = (y - 50) + 'px';
+            el.style.left = (x - 15) + 'px'; el.style.top = (y - 40) + 'px';
             document.body.appendChild(el);
-            setTimeout(() => el.remove(), 800);
+            setTimeout(() => el.remove(), 700);
         }
 
         function shareInvite() {
-            const botUser = 'Referralincamebd01311_bot'; // আপনার সঠিক ইউজারনেম
-            const url = `https://t.me/share/url?url=https://t.me/${botUser}?start=ref${Date.now()}&text=Lite Coin গেমে জয়েন করে কয়েন আয় করো!`;
-            window.open(url, '_blank');
+            // আপাতত রেফারেল বাড়ানোর জন্য (বিকল্প ট্র্যাকিং)
+            refers++; 
+            updateUI();
+
+            const botUser = 'Referralincamebd01311_bot';
+            const inviteMsg = encodeURIComponent("Lite Coin গেমে জয়েন করে ৫০০০ কয়েন বোনাস নিন! 🪙");
+            window.open(`https://t.me/share/url?url=https://t.me/${botUser}?start=ref${Math.floor(Math.random()*1000)}&text=${inviteMsg}`, '_blank');
         }
 
         const coin = document.getElementById('coin');
         coin.addEventListener('touchstart', handleTap, {passive: false});
         coin.addEventListener('mousedown', handleTap);
-        setInterval(() => { if (energy < 1000) { energy++; updateUI(); } }, 1500);
+        setInterval(() => { if (energy < 1000) { energy++; updateUI(); } }, 2000);
         updateUI();
     </script>
 </body>
