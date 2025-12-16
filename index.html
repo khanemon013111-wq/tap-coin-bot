@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Tap Bot Edition</title>
+    <title>Lite Coin - All Boosters Included</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -74,6 +74,11 @@
             <div class="flex items-center gap-4"><div class="bg-blue-500/10 p-3 rounded-2xl text-2xl">👆</div><div><h4 class="font-bold text-sm">Multitap</h4><p class="text-xs text-yellow-500 font-bold" id="tap-status">Level 1</p></div></div>
             <button onclick="upgradeTap()" class="bg-blue-600 px-5 py-2.5 rounded-xl text-xs font-black">2,000 🪙</button>
         </div>
+
+        <div class="task-card">
+            <div class="flex items-center gap-4"><div class="bg-green-500/10 p-3 rounded-2xl text-2xl">🚀</div><div><h4 class="font-bold text-sm">Recharge</h4><p class="text-xs text-yellow-500 font-bold" id="speed-status">Level 1</p></div></div>
+            <button onclick="upgradeSpeed()" class="bg-green-600 px-5 py-2.5 rounded-xl text-xs font-black">2,000 🪙</button>
+        </div>
     </div>
 
     <div id="friends-page" class="page hidden px-6 pt-12 text-center">
@@ -97,23 +102,22 @@
         let refers = parseInt(localStorage.getItem('liteRefers')) || 0;
         let refillsUsed = parseInt(localStorage.getItem('refillsUsed')) || 0;
         let tapLevel = parseInt(localStorage.getItem('tapLevel')) || 1; 
+        let rechargeLevel = parseInt(localStorage.getItem('rechargeLevel')) || 1; 
         let hasBot = localStorage.getItem('liteBot') === 'true';
         let lastVisit = parseInt(localStorage.getItem('lastVisit')) || Date.now();
         let today = new Date().toLocaleDateString();
 
-        // দিন রিসেট
         if (localStorage.getItem('lastRefillDate') !== today) {
             refillsUsed = 0; localStorage.setItem('refillsUsed', 0); localStorage.setItem('lastRefillDate', today);
         }
 
-        // রোবট মাইনিং ক্যালকুলেশন (অফলাইনে প্রতি মিনিটে ৬০ কয়েন)
         if (hasBot) {
             let now = Date.now();
             let minutesAway = Math.floor((now - lastVisit) / 60000);
             if (minutesAway > 0) {
-                let mined = Math.min(minutesAway * 60, 50000); // সর্বোচ্চ ৫০ হাজার পর্যন্ত
+                let mined = Math.min(minutesAway * 60, 50000); 
                 score += mined;
-                alert("🤖 দাদু, আপনার রোবট অফলাইনে " + mined + " কয়েন মাইনিং করেছে!");
+                alert("🤖 দাদু, রোবট আপনার জন্য " + mined + " কয়েন মাইনিং করেছে!");
             }
         }
 
@@ -124,6 +128,7 @@
             document.getElementById('refer-count').innerText = refers;
             document.getElementById('refill-status').innerText = (3 - refillsUsed) + " / 3 Free";
             document.getElementById('tap-status').innerText = "Level " + tapLevel;
+            document.getElementById('speed-status').innerText = "Level " + rechargeLevel;
             
             if (hasBot) {
                 document.getElementById('bot-status').innerText = "Bot Active ✅";
@@ -133,6 +138,7 @@
             localStorage.setItem('liteScore', score);
             localStorage.setItem('liteEnergy', energy);
             localStorage.setItem('tapLevel', tapLevel);
+            localStorage.setItem('rechargeLevel', rechargeLevel);
             localStorage.setItem('liteBot', hasBot);
             localStorage.setItem('lastVisit', Date.now());
         }
@@ -166,8 +172,7 @@
         function buyBot() {
             if (score >= 5000) {
                 score -= 5000; hasBot = true; updateUI();
-                alert("🤖 Tap Bot কেনা সফল হয়েছে! এখন রোবট আপনার হয়ে মাইনিং করবে।");
-            } else { alert("পর্যাপ্ত কয়েন নেই দাদু!"); }
+            } else { alert("কয়েন নেই দাদু!"); }
         }
 
         function upgradeTap() {
@@ -176,10 +181,22 @@
             } else { alert("কয়েন লাগবে দাদু!"); }
         }
 
+        function upgradeSpeed() {
+            if (score >= 2000) {
+                score -= 2000; rechargeLevel++; updateUI();
+                alert("এনার্জি স্পিড বাড়ানো হয়েছে!");
+            } else { alert("কয়েন লাগবে দাদু!"); }
+        }
+
         function useFullTank() {
             if (refillsUsed < 3) {
                 energy = 1000; refillsUsed++; updateUI();
             } else { alert("লিমিট শেষ!"); }
+        }
+
+        function doTask(id, url, reward) {
+            window.open(url, '_blank');
+            setTimeout(() => { score += reward; updateUI(); }, 3000);
         }
 
         function shareInvite() {
@@ -191,10 +208,14 @@
         coin.addEventListener('touchstart', handleTap, {passive: false});
         coin.addEventListener('mousedown', handleTap);
         
+        // এনার্জি রিচার্জ স্পিড লেভেল অনুযায়ী হবে
         setInterval(() => {
-            if (energy < 1000) { energy = Math.min(1000, energy + 1); updateUI(); }
+            if (energy < 1000) { 
+                energy = Math.min(1000, energy + rechargeLevel); 
+                updateUI(); 
+            }
             localStorage.setItem('lastVisit', Date.now());
-        }, 2000);
+        }, 1500);
 
         updateUI();
     </script>
