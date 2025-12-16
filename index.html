@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Official App</title>
+    <title>Lite Coin - Final Stable Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body { background: radial-gradient(circle at center, #1e293b 0%, #020617 100%); color: white; font-family: 'Inter', sans-serif; overflow: hidden; touch-action: none; }
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 110px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
+        
+        /* কয়েন ডিজাইন */
         .coin-wrapper { position: relative; width: 260px; height: 260px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 30px auto; transition: transform 0.1s; }
         .coin-wrapper:active { transform: scale(0.92); }
         .outer-rim { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(145deg, #334155, #000000); box-shadow: 0 10px 40px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; }
         .coin-body { width: 88%; height: 88%; background: radial-gradient(circle, #1a1a2e 10%, #000000 90%); border-radius: 50%; border: 2px solid rgba(255,0,0,0.4); display: flex; align-items: center; justify-content: center; position: relative; }
+        
+        /* এনিমেশন */
         .curved-svg { position: absolute; width: 100%; height: 100%; animation: rotateText 12s linear infinite; }
         @keyframes rotateText { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        /* কার্ড ও মেনু */
         .task-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .footer-card { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.08); position: fixed; bottom: 0; left: 0; z-index: 1000; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #94a3b8; font-size: 10px; font-weight: bold; flex: 1; }
@@ -60,7 +66,7 @@
         <div class="task-card">
             <div class="flex items-center gap-4">
                 <div class="bg-purple-500/10 p-3 rounded-2xl text-2xl">🤖</div>
-                <div><h4 class="font-bold text-sm">Tap Bot</h4><p class="text-xs text-yellow-500" id="bot-status">Auto Mining (500k)</p></div>
+                <div><h4 class="font-bold text-sm">Tap Bot</h4><p class="text-xs text-yellow-500" id="bot-status">Auto Mining Bot</p></div>
             </div>
             <button id="buy-bot-btn" onclick="buyBot()" class="bg-purple-600 px-4 py-2 rounded-xl text-xs font-black">500,000 🪙</button>
         </div>
@@ -76,7 +82,7 @@
         <div class="task-card">
             <div class="flex items-center gap-4">
                 <div class="bg-yellow-500/10 p-3 rounded-2xl text-2xl">🔋</div>
-                <div><h4 class="font-bold text-sm">Limit</h4><p class="text-xs text-yellow-500" id="limit-status">Level 1</p></div>
+                <div><h4 class="font-bold text-sm">Energy Limit</h4><p class="text-xs text-yellow-500" id="limit-status">Level 1</p></div>
             </div>
             <button id="limit-upgrade-btn" onclick="upgradeLimit()" class="bg-yellow-600 px-4 py-2 rounded-xl text-xs font-black">2,000 🪙</button>
         </div>
@@ -92,9 +98,9 @@
         <div class="task-card">
             <div class="flex items-center gap-4">
                 <div class="bg-orange-500/10 p-3 rounded-2xl text-2xl">⚡</div>
-                <div><h4 class="font-bold text-sm">Full Tank</h4><p class="text-xs text-yellow-500">Daily Free Refill</p></div>
+                <div><h4 class="font-bold text-sm">Full Tank</h4><p class="text-xs text-yellow-500">Restore Energy</p></div>
             </div>
-            <button onclick="useFullTank()" class="bg-red-600 px-4 py-2 rounded-xl text-xs font-black">Free</button>
+            <button onclick="useFullTank()" class="bg-red-600 px-4 py-2 rounded-xl text-xs font-black">FREE</button>
         </div>
     </div>
 
@@ -106,7 +112,7 @@
     </div>
 
     <script>
-        // ডেটা লোড
+        // গেম ভ্যারিয়েবল
         let score = parseInt(localStorage.getItem('liteScore')) || 0;
         let tapLevel = parseInt(localStorage.getItem('tapLevel')) || 1;
         let limitLevel = parseInt(localStorage.getItem('limitLevel')) || 1;
@@ -114,20 +120,22 @@
         let hasBot = localStorage.getItem('liteBot') === 'true';
         let lastVisit = parseInt(localStorage.getItem('lastVisit')) || Date.now();
 
+        // এনার্জি ক্যালকুলেশন
         let maxEnergy = 1000 + ((limitLevel - 1) * 500);
         let energy = parseInt(localStorage.getItem('liteEnergy'));
         if (isNaN(energy)) energy = maxEnergy;
 
-        // অফলাইন মাইনিং (বট থাকলে)
+        // অফলাইন মাইনিং বট (বট কেনা থাকলে)
         if (hasBot) {
             let minutesAway = Math.floor((Date.now() - lastVisit) / 60000);
             if (minutesAway > 0) {
-                let mined = Math.min(minutesAway * 100, 200000);
+                let mined = Math.min(minutesAway * 100, 200000); // প্রতি মিনিটে ১০০ কয়েন
                 score += mined;
-                alert("🤖 দাদু, রোবট অফলাইনে " + mined + " কয়েন মাইনিং করেছে!");
+                alert("🤖 দাদু, রোবট অফলাইনে আপনার জন্য " + mined + " কয়েন জমিয়েছে!");
             }
         }
 
+        // UI আপডেট ফাংশন
         function updateUI() {
             maxEnergy = 1000 + ((limitLevel - 1) * 500);
             if (energy > maxEnergy) energy = maxEnergy;
@@ -136,17 +144,17 @@
             document.getElementById('energy-text').innerText = Math.floor(energy) + " / " + maxEnergy;
             document.getElementById('fill').style.width = (energy / maxEnergy) * 100 + "%";
 
-            // লেভেল এবং দাম আপডেট (তিপল হারে, ম্যাক্স ২৫)
-            updateBtn('tap-upgrade-btn', 'tap-status', tapLevel, 2000, "bg-blue-600");
-            updateBtn('limit-upgrade-btn', 'limit-status', limitLevel, 2000, "bg-yellow-600");
-            updateBtn('speed-upgrade-btn', 'speed-status', rechargeLevel, 2000, "bg-green-600");
+            // বাটন ও লেভেল আপডেট (তিপল দাম + ম্যাক্স ২৫)
+            updateBtnInfo('tap-upgrade-btn', 'tap-status', tapLevel, 2000, "bg-blue-600");
+            updateBtnInfo('limit-upgrade-btn', 'limit-status', limitLevel, 2000, "bg-yellow-600");
+            updateBtnInfo('speed-upgrade-btn', 'speed-status', rechargeLevel, 2000, "bg-green-600");
 
             if (hasBot) {
                 document.getElementById('bot-status').innerText = "Bot Active ✅";
                 document.getElementById('buy-bot-btn').style.display = 'none';
             }
 
-            // সেভ করা
+            // ডেটা সেভ করা
             localStorage.setItem('liteScore', score);
             localStorage.setItem('liteEnergy', energy);
             localStorage.setItem('tapLevel', tapLevel);
@@ -156,7 +164,7 @@
             localStorage.setItem('lastVisit', Date.now());
         }
 
-        function updateBtn(btnId, statusId, level, basePrice, activeClass) {
+        function updateBtnInfo(btnId, statusId, level, basePrice, activeClass) {
             let btn = document.getElementById(btnId);
             let status = document.getElementById(statusId);
             if (level >= 25) {
@@ -164,43 +172,45 @@
                 btn.innerText = "MAX";
                 btn.className = "bg-gray-600 px-4 py-2 rounded-xl text-xs font-black";
             } else {
-                let price = basePrice * Math.pow(3, level - 1);
+                let price = basePrice * Math.pow(3, level - 1); // তিপল সিস্টেম
                 status.innerText = "Level " + level;
                 btn.innerText = price.toLocaleString() + " 🪙";
                 btn.className = activeClass + " px-4 py-2 rounded-xl text-xs font-black";
             }
         }
 
+        // আপগ্রেড ফাংশনসমূহ
         function upgradeTap() {
             if (tapLevel >= 25) return;
             let price = 2000 * Math.pow(3, tapLevel - 1);
             if (score >= price) { score -= price; tapLevel++; updateUI(); }
-            else { alert("কয়েন লাগবে দাদু!"); }
+            else { alert("কয়েন নেই দাদু!"); }
         }
 
         function upgradeLimit() {
             if (limitLevel >= 25) return;
             let price = 2000 * Math.pow(3, limitLevel - 1);
             if (score >= price) { score -= price; limitLevel++; energy += 500; updateUI(); }
-            else { alert("কয়েন লাগবে দাদু!"); }
+            else { alert("কয়েন নেই দাদু!"); }
         }
 
         function upgradeSpeed() {
             if (rechargeLevel >= 25) return;
             let price = 2000 * Math.pow(3, rechargeLevel - 1);
             if (score >= price) { score -= price; rechargeLevel++; updateUI(); }
-            else { alert("কয়েন লাগবে দাদু!"); }
+            else { alert("কয়েন নেই দাদু!"); }
         }
 
         function buyBot() {
             if (score >= 500000) { score -= 500000; hasBot = true; updateUI(); }
-            else { alert("৫ লক্ষ কয়েন লাগবে দাদু!"); }
+            else { alert("৫ লক্ষ কয়েন লাগবে দাদু!"); }
         }
 
         function useFullTank() {
             energy = maxEnergy; updateUI();
         }
 
+        // ট্যাপ হ্যান্ডেল
         function handleTap(e) {
             e.preventDefault();
             if (energy >= tapLevel) {
@@ -210,6 +220,7 @@
             }
         }
 
+        // পেজ পরিবর্তন
         function showPage(p) {
             document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
             document.getElementById(p + '-page').classList.remove('hidden');
@@ -217,7 +228,7 @@
             document.getElementById('btn-' + p).classList.add('active');
         }
 
-        // রিচার্জ স্পিড (আস্তে আস্তে বাড়বে)
+        // এনার্জি রিচার্জ লুপ (ধীরগতিতে)
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy = Math.min(maxEnergy, energy + rechargeLevel);
@@ -226,6 +237,7 @@
             localStorage.setItem('lastVisit', Date.now());
         }, 1500);
 
+        // ইভেন্ট লিসেনার
         const coin = document.getElementById('coin');
         coin.addEventListener('mousedown', handleTap);
         coin.addEventListener('touchstart', handleTap, {passive: false});
@@ -233,5 +245,5 @@
         updateUI();
     </script>
 </body>
-                         </html>
-    
+    </html>
+                                                                                                                      
