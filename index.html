@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Full Version</title>
+    <title>Lite Coin - Premium Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -11,15 +11,18 @@
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 110px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
         
-        /* Coin UI */
-        .coin-wrapper { position: relative; width: 260px; height: 260px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 30px auto; transition: transform 0.1s; }
-        .coin-wrapper:active { transform: scale(0.92); }
-        .outer-rim { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(145deg, #334155, #000000); box-shadow: 0 10px 40px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; }
-        .coin-body { width: 88%; height: 88%; background: radial-gradient(circle, #1a1a2e 10%, #000000 90%); border-radius: 50%; border: 2px solid rgba(255,0,0,0.4); display: flex; align-items: center; justify-content: center; position: relative; }
-        .curved-svg { position: absolute; width: 100%; height: 100%; animation: rotateText 12s linear infinite; }
+        /* আপনার সেই আসল কয়েন ডিজাইন */
+        .coin-wrapper { position: relative; width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 30px auto; }
+        .coin-wrapper:active { transform: scale(0.95); }
+        .outer-rim { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(145deg, #334155, #000000); box-shadow: 0 10px 40px rgba(0,0,0,0.8), inset 0 -5px 15px rgba(255,0,0,0.3); display: flex; align-items: center; justify-content: center; }
+        .coin-body { width: 88%; height: 88%; background: radial-gradient(circle, #1a1a2e 10%, #000000 90%); border-radius: 50%; border: 2px solid rgba(255,0,0,0.4); position: relative; display: flex; align-items: center; justify-content: center; }
+        .curved-svg { position: absolute; width: 100%; height: 100%; animation: rotateText 15s linear infinite; }
         @keyframes rotateText { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
-        /* Cards & Navigation */
+
+        /* ট্যাপ করলে সংখ্যা ভেসে ওঠার এনিমেশন */
+        .tap-effect { position: absolute; color: #fbbf24; font-size: 32px; font-weight: 900; pointer-events: none; animation: tapFloat 0.7s ease-out forwards; z-index: 100; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        @keyframes tapFloat { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-150px); opacity: 0; } }
+
         .task-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .footer-card { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.08); position: fixed; bottom: 0; left: 0; z-index: 1000; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #94a3b8; font-size: 10px; font-weight: bold; flex: 1; }
@@ -31,20 +34,26 @@
     <div id="game-page" class="page items-center justify-between">
         <div class="mt-12 text-center">
             <h1 class="text-6xl font-black text-yellow-500" id="score">0</h1>
-            <div class="bg-gray-800/60 px-5 py-1 rounded-full text-[11px] font-bold text-red-500 uppercase mt-3 tracking-widest border border-red-500/20">Lite League</div>
+            <div class="bg-gray-800/60 px-5 py-1 rounded-full text-[11px] font-bold text-red-500 mt-3 border border-red-500/20">LITE LEAGUE</div>
         </div>
+
         <div class="coin-wrapper" id="coin">
             <div class="outer-rim">
                 <div class="coin-body">
                     <svg class="curved-svg" viewBox="0 0 300 300">
                         <path id="txtPath" d="M 150, 150 m -120, 0 a 120,120 0 1,1 240,0 a 120,120 0 1,1 -240,0" fill="none" />
-                        <text fill="#ef4444" font-size="9" font-weight="900" letter-spacing="4"><textPath href="#txtPath" startOffset="25%" text-anchor="middle">LITE COIN COMMUNITY</textPath></text>
-                        <text fill="#ef4444" font-size="9" font-weight="900" letter-spacing="4"><textPath href="#txtPath" startOffset="75%" text-anchor="middle">LITE COIN COMMUNITY</textPath></text>
+                        <text fill="#ef4444" font-size="9" font-weight="900" letter-spacing="4">
+                            <textPath href="#txtPath" startOffset="25%" text-anchor="middle">LITE COIN COMMUNITY</textPath>
+                        </text>
+                        <text fill="#ef4444" font-size="9" font-weight="900" letter-spacing="4">
+                            <textPath href="#txtPath" startOffset="75%" text-anchor="middle">LITE COIN COMMUNITY</textPath>
+                        </text>
                     </svg>
-                    <svg width="80" height="80" viewBox="0 0 120 120" fill="none"><path d="M60 0L120 120L60 95L0 120L60 0Z" fill="#ef4444"/></svg>
+                    <svg width="100" height="100" viewBox="0 0 120 120" fill="none"><path d="M60 0L120 120L60 95L0 120L60 0Z" fill="#ef4444"/></svg>
                 </div>
             </div>
         </div>
+
         <div class="w-full px-10 mb-8">
             <div class="flex justify-between mb-2 font-black text-yellow-400 text-sm"><span>⚡ Energy</span><span id="energy-text">1000/1000</span></div>
             <div class="h-3.5 w-full bg-gray-900 rounded-full border border-white/5 p-0.5"><div id="fill" class="h-full bg-gradient-to-r from-red-600 to-orange-500 rounded-full transition-all" style="width: 100%;"></div></div>
@@ -53,45 +62,15 @@
 
     <div id="tasks-page" class="page hidden px-6 pt-12">
         <h2 class="text-4xl font-black text-center mb-8 text-blue-500">Tasks</h2>
-        <div class="task-card">
-            <div class="flex items-center gap-4"><div class="text-2xl">📢</div><div><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-xs text-yellow-500">+50,000</p></div></div>
-            <button onclick="doTask('https://t.me/YourChannel', 50000)" class="bg-blue-600 px-4 py-2 rounded-xl text-xs font-black">Join</button>
         </div>
-        <div class="task-card">
-            <div class="flex items-center gap-4"><div class="text-2xl">📺</div><div><h4 class="font-bold text-sm">Watch Video</h4><p class="text-xs text-yellow-500">+20,000</p></div></div>
-            <button onclick="doTask('https://youtube.com', 20000)" class="bg-red-600 px-4 py-2 rounded-xl text-xs font-black">Watch</button>
-        </div>
-    </div>
 
     <div id="boost-page" class="page hidden px-6 pt-12">
         <h2 class="text-4xl font-black text-center mb-8 text-red-500">Boosters</h2>
-        <div class="task-card">
-            <div class="flex items-center gap-4"><div>🤖</div><div><h4 class="font-bold text-sm">Tap Bot</h4><p class="text-xs text-yellow-500" id="bot-status">Auto Mine (500k)</p></div></div>
-            <button id="buy-bot-btn" onclick="buyBot()" class="bg-purple-600 px-4 py-2 rounded-xl text-xs font-black">500,000 🪙</button>
         </div>
-        <div class="task-card">
-            <div class="flex items-center gap-4"><div>👆</div><div><h4 class="font-bold text-sm">Multitap</h4><p class="text-xs text-yellow-500" id="tap-status">Level 1</p></div></div>
-            <button id="tap-upgrade-btn" onclick="upgradeTap()" class="bg-blue-600 px-4 py-2 rounded-xl text-xs font-black">2,000</button>
-        </div>
-        <div class="task-card">
-            <div class="flex items-center gap-4"><div>🔋</div><div><h4 class="font-bold text-sm">Limit</h4><p class="text-xs text-yellow-500" id="limit-status">Level 1</p></div></div>
-            <button id="limit-upgrade-btn" onclick="upgradeLimit()" class="bg-yellow-600 px-4 py-2 rounded-xl text-xs font-black">2,000</button>
-        </div>
-        <div class="task-card">
-            <div class="flex items-center gap-4"><div>🚀</div><div><h4 class="font-bold text-sm">Recharge</h4><p class="text-xs text-yellow-500" id="speed-status">Level 1</p></div></div>
-            <button id="speed-upgrade-btn" onclick="upgradeSpeed()" class="bg-green-600 px-4 py-2 rounded-xl text-xs font-black">2,000</button>
-        </div>
-    </div>
 
     <div id="friends-page" class="page hidden px-6 pt-12 text-center">
         <h2 class="text-4xl font-black mb-8">Friends</h2>
-        <div class="bg-gray-800/30 p-8 rounded-3xl border border-white/5 mb-6">
-            <p class="text-gray-400 text-xs font-bold mb-2">Total Referrals</p>
-            <h3 class="text-5xl font-black text-red-500" id="refer-count">0</h3>
         </div>
-        <button onclick="shareInvite()" class="bg-red-600 w-full py-5 rounded-2xl font-black text-xl">Invite a Friend</button>
-        <p class="text-xs text-gray-500 mt-4">+50,000 for you and your friend</p>
-    </div>
 
     <div class="footer-card">
         <div class="flex justify-around items-center w-full">
@@ -103,14 +82,13 @@
     </div>
 
     <script>
+        // সাউন্ড ফাইল (এটি একটি ছোট 'পপ' সাউন্ড)
+        const tapSound = new Audio('https://www.soundjay.com/buttons/button-50.mp3');
+
         let score = parseInt(localStorage.getItem('liteScore')) || 0;
         let tapLevel = parseInt(localStorage.getItem('tapLevel')) || 1;
         let limitLevel = parseInt(localStorage.getItem('limitLevel')) || 1;
         let rechargeLevel = parseInt(localStorage.getItem('rechargeLevel')) || 1;
-        let refers = parseInt(localStorage.getItem('liteRefers')) || 0;
-        let hasBot = localStorage.getItem('liteBot') === 'true';
-        let lastVisit = parseInt(localStorage.getItem('lastVisit')) || Date.now();
-
         let maxEnergy = 1000 + ((limitLevel - 1) * 500);
         let energy = parseInt(localStorage.getItem('liteEnergy')) || maxEnergy;
 
@@ -119,78 +97,52 @@
             document.getElementById('score').innerText = score.toLocaleString();
             document.getElementById('energy-text').innerText = Math.floor(energy) + " / " + maxEnergy;
             document.getElementById('fill').style.width = (energy / maxEnergy) * 100 + "%";
-            document.getElementById('refer-count').innerText = refers;
-
-            updateBtn('tap-upgrade-btn', 'tap-status', tapLevel, 2000, "bg-blue-600");
-            updateBtn('limit-upgrade-btn', 'limit-status', limitLevel, 2000, "bg-yellow-600");
-            updateBtn('speed-upgrade-btn', 'speed-status', rechargeLevel, 2000, "bg-green-600");
-
-            if (hasBot) {
-                document.getElementById('bot-status').innerText = "Bot Active ✅";
-                document.getElementById('buy-bot-btn').style.display = 'none';
-            }
-
+            
             localStorage.setItem('liteScore', score);
             localStorage.setItem('liteEnergy', energy);
-            localStorage.setItem('tapLevel', tapLevel);
-            localStorage.setItem('limitLevel', limitLevel);
-            localStorage.setItem('rechargeLevel', rechargeLevel);
-            localStorage.setItem('liteBot', hasBot);
-            localStorage.setItem('liteRefers', refers);
-            localStorage.setItem('lastVisit', Date.now());
         }
 
-        function updateBtn(btnId, statusId, level, base, cls) {
-            let btn = document.getElementById(btnId);
-            if (level >= 25) {
-                document.getElementById(statusId).innerText = "Level 25 (MAX)";
-                btn.innerText = "MAX"; btn.className = "bg-gray-600 px-4 py-2 rounded-xl text-xs font-black";
-            } else {
-                let p = base * Math.pow(3, level - 1);
-                document.getElementById(statusId).innerText = "Level " + level;
-                btn.innerText = p.toLocaleString() + " 🪙";
-                btn.className = cls + " px-4 py-2 rounded-xl text-xs font-black";
+        // ট্যাপ হ্যান্ডেল ফাংশন (যেখানে ১ উঠবে এবং শব্দ হবে)
+        function handleTap(e) {
+            e.preventDefault();
+            if (energy >= tapLevel) {
+                // ১. সাউন্ড বাজবে
+                tapSound.currentTime = 0;
+                tapSound.play();
+
+                // ২. স্কোর এবং এনার্জি আপডেট
+                score += tapLevel;
+                energy -= tapLevel;
+
+                // ৩. স্ক্রিনে সংখ্যা (+১) দেখানোর ইফেক্ট
+                const x = e.clientX || e.touches[0].clientX;
+                const y = e.clientY || e.touches[0].clientY;
+                
+                const effect = document.createElement('div');
+                effect.className = 'tap-effect';
+                effect.innerText = "+" + tapLevel;
+                effect.style.left = x + 'px';
+                effect.style.top = y + 'px';
+                document.body.appendChild(effect);
+
+                setTimeout(() => effect.remove(), 700);
+                updateUI();
             }
-        }
-
-        function upgradeTap() { 
-            let p = 2000 * Math.pow(3, tapLevel-1); 
-            if(score>=p && tapLevel<25){ score-=p; tapLevel++; updateUI(); } 
-        }
-        function upgradeLimit() { 
-            let p = 2000 * Math.pow(3, limitLevel-1); 
-            if(score>=p && limitLevel<25){ score-=p; limitLevel++; energy+=500; updateUI(); } 
-        }
-        function upgradeSpeed() { 
-            let p = 2000 * Math.pow(3, rechargeLevel-1); 
-            if(score>=p && rechargeLevel<25){ score-=p; rechargeLevel++; updateUI(); } 
-        }
-        function buyBot() { if(score>=500000){ score-=500000; hasBot=true; updateUI(); } }
-        
-        function doTask(url, reward) {
-            window.open(url, '_blank');
-            setTimeout(() => { score += reward; updateUI(); alert("Task Complete! +" + reward); }, 2000);
-        }
-
-        function shareInvite() {
-            refers++; score += 50000; updateUI();
-            window.open("https://t.me/share/url?url=CheckOutThisBot&text=Join me!", "_blank");
         }
 
         function showPage(p) {
             document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
             document.getElementById(p + '-page').classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('btn-' + p).classList.add('active');
         }
 
-        function handleTap(e) {
-            e.preventDefault();
-            if (energy >= tapLevel) { score += tapLevel; energy -= tapLevel; updateUI(); }
-        }
-
+        // এনার্জি রিচার্জ
         setInterval(() => {
-            if (energy < maxEnergy) { energy = Math.min(maxEnergy, energy + rechargeLevel); updateUI(); }
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + rechargeLevel);
+                updateUI();
+            }
         }, 1500);
 
         const coin = document.getElementById('coin');
@@ -200,5 +152,5 @@
         updateUI();
     </script>
 </body>
-                                                     </html>
-                
+    </html>
+
