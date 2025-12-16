@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap Coin Game</title>
+    <style>
+        body { background: radial-gradient(circle, #1e272e, #000); color: white; text-align: center; font-family: sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
+        #score { font-size: 60px; font-weight: bold; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.6); margin-bottom: 20px; }
+        #coin { width: 220px; cursor: pointer; transition: transform 0.1s; user-select: none; -webkit-tap-highlight-color: transparent; }
+        #coin:active { transform: scale(0.9); }
+        .ad-banner { margin-top: 30px; padding: 10px; border: 1px dashed #555; border-radius: 10px; color: #888; width: 80%; max-width: 320px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div id="score">0</div>
+    <img id="coin" src="https://cdn-icons-png.flaticon.com/512/5434/5434232.png" alt="Coin" onclick="tap()">
+    
+    <div class="ad-banner">এখানে আপনার বিজ্ঞাপন দেখাবে (Ad Space)</div>
+
+    <script>
+        let count = parseInt(localStorage.getItem('coins')) || 0;
+        document.getElementById('score').innerText = count;
+
+        function tap() {
+            count++;
+            document.getElementById('score').innerText = count;
+            localStorage.setItem('coins', count);
+        }
+    </script>
+</body>
+</html>
