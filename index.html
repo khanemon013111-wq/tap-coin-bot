@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TON Coin Pro - Multi-Tap & Friends</title>
+    <title>TON Coin Pro - Refer System Fixed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -13,11 +13,10 @@
             overflow: hidden; touch-action: none;
         }
 
-        /* মেইন গেম স্ক্রিন */
-        .page { display: flex; flex-direction: column; items-center; justify-content: space-between; height: 100vh; width: 100%; }
+        .page { display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100vh; width: 100%; }
         .hidden { display: none !important; }
 
-        /* লাল মেটালিক কয়েন */
+        /* লাল মেটালিক কয়েন ডিজাইন */
         .coin-wrapper {
             position: relative; width: 300px; height: 300px;
             display: flex; align-items: center; justify-content: center;
@@ -39,13 +38,17 @@
             position: relative; display: flex; align-items: center; justify-content: center;
         }
 
-        /* লাল টেক্সট ও লোগো */
+        /* লাল টন লোগো */
+        .ton-logo { width: 110px; height: 110px; filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.7)); }
+        
+        /* লাল টেক্সট */
         .curved-svg { position: absolute; width: 100%; height: 100%; pointer-events: none; }
         .curved-svg text { fill: #ff0000; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; }
-        .ton-logo { width: 110px; height: 110px; filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.7)); }
 
-        /* হলুদ স্কোর */
+        /* হলুদ ব্যালেন্স */
         #score { color: #fbbf24; text-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
+
+        /* এনিমেশন */
         .tap-effect {
             position: absolute; color: #fbbf24; font-size: 45px; font-weight: 900;
             pointer-events: none; animation: tapFloat 0.7s ease-out forwards;
@@ -53,7 +56,7 @@
         }
         @keyframes tapFloat { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-160px); opacity: 0; } }
 
-        /* ইউআই এলিমেন্ট */
+        /* ফুটার নেভিগেশন */
         .footer-card { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(15px); width: 100%; padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.1); }
         .energy-bar { width: 90%; height: 12px; background: #0f172a; border-radius: 20px; overflow: hidden; margin: 0 auto 10px; }
         .energy-fill { height: 100%; background: linear-gradient(90deg, #ff0000, #800000); transition: width 0.2s; }
@@ -82,7 +85,7 @@
 
         <div class="w-full">
             <div class="w-[90%] mx-auto flex items-center gap-1 mb-2 font-bold">
-                <span>⚡</span><span id="energy-text">1000 / 1000</span>
+                <span class="text-yellow-400">⚡</span><span id="energy-text">1000 / 1000</span>
             </div>
             <div class="energy-bar"><div id="fill" class="energy-fill" style="width: 100%;"></div></div>
         </div>
@@ -90,15 +93,15 @@
 
     <div id="friends-page" class="page hidden pt-10 px-6">
         <h2 class="text-4xl font-black text-yellow-500 text-center">Friends</h2>
-        <p class="text-gray-400 text-center mt-2">আপনার বন্ধুদের ইনভাইট করুন!</p>
+        <p class="text-gray-400 text-center mt-2">আপনার বন্ধুদের ইনভাইট করলে পাবেন বোনাস!</p>
         
-        <div class="bg-gray-800/40 p-8 rounded-3xl mt-10 border border-red-500/20 text-center">
-            <span class="text-6xl">👥</span>
-            <h3 class="text-xl font-bold mt-4">No friends yet</h3>
-            <p class="text-gray-500 text-sm mt-2">শেয়ার করুন এবং একসাথে পয়েন্ট আয় করুন।</p>
+        <div class="bg-gray-800/40 p-8 rounded-3xl mt-10 border border-red-500/20 text-center w-full">
+            <span class="text-6xl">🎁</span>
+            <h3 class="text-xl font-bold mt-4">Invite Bonus</h3>
+            <p class="text-gray-500 text-sm mt-2">প্রতি বন্ধু জয়েন করলে +5,000 কয়েন।</p>
         </div>
 
-        <button onclick="copyInvite()" class="mt-auto mb-10 bg-red-600 py-4 rounded-2xl font-black text-xl shadow-lg shadow-red-900/40 active:scale-95 transition">
+        <button onclick="shareInvite()" class="mt-auto mb-10 bg-red-600 w-full py-4 rounded-2xl font-black text-xl shadow-lg shadow-red-900/40 active:scale-95 transition">
             Invite a Friend
         </button>
     </div>
@@ -111,16 +114,10 @@
             <div onclick="showPage('friends')" id="btn-friends" class="flex flex-col items-center text-gray-500 cursor-pointer">
                 <span class="text-2xl">👥</span><span class="text-[10px] font-bold">Friends</span>
             </div>
-            <div class="flex flex-col items-center text-gray-500 opacity-50">
-                <span class="text-2xl">🚀</span><span class="text-[10px] font-bold">Boost</span>
-            </div>
-            <div class="flex flex-col items-center text-gray-500 opacity-50">
-                <span class="text-2xl">🏦</span><span class="text-[10px] font-bold">Wallet</span>
-            </div>
+            <div class="flex flex-col items-center text-gray-500 opacity-50"><span>🚀</span><span class="text-[10px] font-bold">Boost</span></div>
+            <div class="flex flex-col items-center text-gray-500 opacity-50"><span>🏦</span><span class="text-[10px] font-bold">Wallet</span></div>
         </div>
     </div>
-
-    <audio id="click" src="https://www.soundjay.com/buttons/sounds/button-37a.mp3"></audio>
 
     <script>
         let score = parseInt(localStorage.getItem('eScore')) || 0;
@@ -137,30 +134,20 @@
             localStorage.setItem('eEnergy', energy);
         }
 
-        // পেজ পরিবর্তন সিস্টেম
         function showPage(page) {
-            document.getElementById('game-page').classList.add('hidden');
-            document.getElementById('friends-page').classList.add('hidden');
-            document.getElementById('btn-game').classList.replace('text-red-500', 'text-gray-500');
-            document.getElementById('btn-friends').classList.replace('text-red-500', 'text-gray-500');
-
-            if(page === 'game') {
-                document.getElementById('game-page').classList.remove('hidden');
-                document.getElementById('btn-game').classList.replace('text-gray-500', 'text-red-500');
-            } else {
-                document.getElementById('friends-page').classList.remove('hidden');
-                document.getElementById('btn-friends').classList.replace('text-gray-500', 'text-red-500');
-            }
+            document.getElementById('game-page').classList.toggle('hidden', page !== 'game');
+            document.getElementById('friends-page').classList.toggle('hidden', page !== 'friends');
+            document.getElementById('btn-game').classList.toggle('text-red-500', page === 'game');
+            document.getElementById('btn-friends').classList.toggle('text-red-500', page === 'friends');
         }
 
-        // মাল্টি-টাচ হ্যান্ডলার (৫ আঙুল সাপোর্ট)
+        // মাল্টি-টাচ ৫ আঙুল সাপোর্ট
         function handleTap(e) {
             e.preventDefault();
             const touches = e.changedTouches ? e.changedTouches : [e];
             for (let i = 0; i < touches.length; i++) {
                 if (energy > 0) {
                     score++; energy--;
-                    document.getElementById('click').cloneNode().play();
                     if (navigator.vibrate) navigator.vibrate(30);
                     createAnim(touches[i].clientX, touches[i].clientY);
                 }
@@ -176,14 +163,20 @@
             setTimeout(() => p.remove(), 700);
         }
 
-        function copyInvite() {
-            const link = "https://t.me/YourBotName?start=" + (Math.random()*1000).toFixed(0);
-            navigator.clipboard.writeText(link);
-            alert("ইনভাইট লিঙ্ক কপি হয়েছে!");
+        // টেলিগ্রাম ইনভাইট ফাংশন
+        function shareInvite() {
+            const botUser = "YourBotUsername"; // এখানে আপনার বটের ইউজারনেম দিন
+            const inviteText = encodeURIComponent("দাদু, এই নতুন টন কয়েন বটে জয়েন করে কয়েন আয় করো!");
+            const url = `https://t.me/share/url?url=https://t.me/${botUser}?start=ref${Date.now()}&text=${inviteText}`;
+            window.open(url, '_blank');
         }
 
         const c = document.getElementById('coin');
         c.addEventListener('touchstart', handleTap, {passive: false});
         c.addEventListener('mousedown', (e) => handleTap(e));
-        setInterval(() => { if (energy < 1000) { energy
-        
+        setInterval(() => { if (energy < 1000) { energy++; update(); } }, 1500);
+        update();
+    </script>
+</body>
+    </html>
+
