@@ -3,91 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>E-Coin TapSwap Blue</title>
+    <title>E-Coin TapSwap Blue Fixed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { 
-            background: #0d0d1a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #0d0d1a; color: white; font-family: 'Segoe UI', sans-serif; 
             overflow: hidden; touch-action: manipulation;
         }
 
-        /* হুবহু ছবির মতো কয়েন ডিজাইন */
+        /* হুবহু ছবির মতো প্রিমিয়াম কয়েন ডিজাইন */
         .coin-outer {
             width: 280px; height: 280px;
-            background: #1e3a8a; /* গাঢ় নীল বর্ডার */
-            border-radius: 50%; padding: 10px;
-            box-shadow: 0 0 40px rgba(0, 191, 255, 0.4);
+            background: #1e3a8a; 
+            border-radius: 50%; padding: 8px;
+            box-shadow: 0 0 50px rgba(0, 191, 255, 0.3);
             cursor: pointer; position: relative;
             transition: transform 0.05s ease;
+            display: flex; align-items: center; justify-content: center;
         }
         .coin-outer:active { transform: scale(0.94); }
 
         .coin-inner-border {
             width: 100%; height: 100%;
-            border-radius: 50%; border: 6px solid #38bdf8; /* উজ্জ্বল নীল লাইন */
+            border-radius: 50%; border: 12px solid #38bdf8; /* মোটা বর্ডার যেখানে লেখা থাকবে */
             background: radial-gradient(circle, #0ea5e9 0%, #0369a1 100%);
             display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            position: relative; box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
         }
+
+        /* স্থির টেক্সট - যা এখন আর ঘুরবে না */
+        .static-text {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        /* ছবির মতো করে বর্ডারের ওপর লেখা বসানো */
+        .community-label {
+            position: absolute; width: 100%; text-align: center;
+            font-size: 8px; font-weight: 900; color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase; letter-spacing: 1px;
+            pointer-events: none;
+        }
+        .label-top { top: 4px; }
+        .label-bottom { bottom: 4px; transform: rotate(180deg); }
 
         /* মাঝখানের উজ্জ্বল নীল আভা */
         .coin-center-glow {
-            width: 200px; height: 200px;
-            background: radial-gradient(circle, rgba(125, 211, 252, 0.4) 0%, transparent 70%);
+            width: 180px; height: 180px;
+            background: radial-gradient(circle, rgba(125, 211, 252, 0.5) 0%, transparent 75%);
             position: absolute; z-index: 1;
         }
 
-        /* ঘোরানো টেক্সট */
-        .rotating-text {
-            position: absolute; width: 100%; height: 100%;
-            animation: rotateText 20s linear infinite;
-        }
-        .rotating-text p {
-            font-size: 7px; font-weight: 900; color: rgba(255, 255, 255, 0.4);
-            text-transform: uppercase; letter-spacing: 3px;
-        }
-        @keyframes rotateText { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* মাঝখানের বড় E */
         .e-logo {
-            font-size: 130px; font-weight: 900; color: white; 
-            z-index: 10; text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-            font-style: italic;
+            font-size: 140px; font-weight: 900; color: white; 
+            z-index: 10; text-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+            font-style: italic; font-family: 'Arial Black', sans-serif;
         }
 
-        /* নিচের মেনু বাটন */
+        /* নিচের মেনু ও এনার্জি */
         .nav-bar {
-            background: rgba(20, 20, 40, 0.9); width: 100%;
+            background: rgba(20, 20, 40, 0.95); width: 100%;
             display: flex; justify-content: space-around; padding: 15px 0;
             border-top: 1px solid #2d3748;
         }
-        .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #718096; }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #718096; }
         .nav-btn.active { color: #38bdf8; }
 
         .progress-container { width: 90%; margin-bottom: 25px; }
         .progress-bar { width: 100%; height: 14px; background: #1a202c; border-radius: 20px; overflow: hidden; border: 1px solid #2d3748; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #38bdf8, #2563eb); transition: width 0.2s; }
 
-        .tap-anim { position: absolute; color: #38bdf8; font-size: 35px; font-weight: 900; pointer-events: none; animation: tapFloat 0.7s ease-out forwards; }
-        @keyframes tapFloat { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-120px); opacity: 0; } }
+        .tap-anim { position: absolute; color: #38bdf8; font-size: 38px; font-weight: 900; pointer-events: none; animation: tapFloat 0.7s ease-out forwards; z-index: 50; }
+        @keyframes tapFloat { from { transform: translateY(0) scale(1); opacity: 1; } to { transform: translateY(-140px) scale(1.2); opacity: 0; } }
     </style>
 </head>
 <body class="flex flex-col items-center justify-between h-screen">
     
     <div class="mt-12 text-center">
-        <div class="flex items-center justify-center gap-2">
-             <h1 class="text-5xl font-black" id="score">0</h1>
-        </div>
-        <p class="text-blue-400 text-xs tracking-widest mt-2">BRONZE WALLET ></p>
+        <h1 class="text-6xl font-black text-white" id="score">0</h1>
+        <p class="text-blue-400 text-xs tracking-widest mt-2 font-bold uppercase">Bronze Wallet ></p>
     </div>
 
     <div class="coin-outer" id="coinBtn">
         <div class="coin-inner-border">
-            <div class="coin-center-glow"></div>
-            <div class="rotating-text flex items-center justify-center">
-                <p>POWERED BY COMMUNITY • POWERED BY COMMUNITY •</p>
+            <div class="static-text">
+                <span class="community-label label-top">Powered by Community</span>
+                <span class="community-label label-bottom">Powered by Community</span>
             </div>
+            <div class="coin-center-glow"></div>
             <span class="e-logo">E</span>
         </div>
     </div>
@@ -96,8 +99,8 @@
         <div class="progress-container">
             <div class="flex justify-between items-center mb-2 px-1">
                 <div class="flex items-center gap-1 font-bold">
-                    <span class="text-blue-400">⚡</span>
-                    <span id="energy-text">1000 / 1000</span>
+                    <span class="text-blue-400 text-xl">⚡</span>
+                    <span id="energy-text" class="text-lg">1000 / 1000</span>
                 </div>
             </div>
             <div class="progress-bar">
@@ -106,11 +109,11 @@
         </div>
 
         <nav class="nav-bar">
-            <div class="nav-btn active"><span class="text-xl">🏠</span><span class="text-xs">Earn</span></div>
-            <div class="nav-btn"><span class="text-xl">📋</span><span class="text-xs">Tasks</span></div>
-            <div class="nav-btn"><span class="text-xl">👥</span><span class="text-xs">Friends</span></div>
-            <div class="nav-btn"><span class="text-xl">🚀</span><span class="text-xs">Boost</span></div>
-            <div class="nav-btn"><span class="text-xl">🏦</span><span class="text-xs">Wallet</span></div>
+            <div class="nav-btn active"><span class="text-2xl">🏠</span><span class="text-xs font-bold">Earn</span></div>
+            <div class="nav-btn"><span class="text-2xl">📋</span><span class="text-xs font-bold">Tasks</span></div>
+            <div class="nav-btn"><span class="text-2xl">👥</span><span class="text-xs font-bold">Friends</span></div>
+            <div class="nav-btn"><span class="text-2xl">🚀</span><span class="text-xs font-bold">Boost</span></div>
+            <div class="nav-btn"><span class="text-2xl">🏦</span><span class="text-xs font-bold">Wallet</span></div>
         </nav>
     </div>
 
@@ -140,20 +143,23 @@
                 if (navigator.vibrate) navigator.vibrate(40);
                 updateDisplay();
                 
-                const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-                const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+                // +1 এনিমেশন
+                const clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+                const clientY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
                 const anim = document.createElement('span');
                 anim.className = 'tap-anim'; anim.innerText = '+1';
-                anim.style.left = x + 'px'; anim.style.top = y + 'px';
+                anim.style.left = (clientX - 20) + 'px'; anim.style.top = (clientY - 40) + 'px';
                 document.body.appendChild(anim);
                 setTimeout(() => anim.remove(), 700);
             }
         }
 
-        document.getElementById('coinBtn').addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(e); });
-        document.getElementById('coinBtn').addEventListener('click', (e) => handleTap(e));
+        const btn = document.getElementById('coinBtn');
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(e); });
+        btn.addEventListener('click', (e) => handleTap(e));
 
-        setInterval(() => { if (energy < 1000) { energy++; updateDisplay(); } }, 2500);
+        // এনার্জি রিফিল
+        setInterval(() => { if (energy < 1000) { energy++; updateDisplay(); } }, 2000);
         updateDisplay();
     </script>
 </body>
