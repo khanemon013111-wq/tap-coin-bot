@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>E-Coin Pro Edition</title>
+    <title>TON Coin Pro Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body { 
             background: radial-gradient(circle at center, #1e293b 0%, #020617 100%); 
@@ -13,31 +13,31 @@
             overflow: hidden; touch-action: manipulation;
         }
 
-        /* প্রফেশনাল থ্রি-ডি কয়েন ডিজাইন */
+        /* প্রফেশনাল থ্রি-ডি কয়েন */
         .coin-wrapper {
             position: relative; width: 310px; height: 310px;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer; transition: transform 0.05s ease-out;
             perspective: 1000px;
         }
-        .coin-wrapper:active { transform: scale(0.95) rotateX(5deg); }
+        .coin-wrapper:active { transform: scale(0.95); }
 
         /* বাইরের মেটালিক রিং */
         .outer-rim {
             position: absolute; width: 100%; height: 100%;
             border-radius: 50%;
-            background: linear-gradient(145deg, #38bdf8, #0369a1);
+            background: linear-gradient(145deg, #0088cc, #005580);
             box-shadow: 
                 0 20px 50px rgba(0,0,0,0.6),
                 inset 0 -8px 15px rgba(0,0,0,0.4),
-                inset 0 8px 15px rgba(255,255,255,0.3);
+                inset 0 8px 15px rgba(255,255,255,0.2);
             display: flex; align-items: center; justify-content: center;
         }
 
         /* মাঝখানের গোল বডি */
         .coin-body {
             width: 88%; height: 88%;
-            background: radial-gradient(circle, #0ea5e9 10%, #075985 80%);
+            background: radial-gradient(circle, #00a3ff 10%, #006699 80%);
             border-radius: 50%;
             border: 4px solid rgba(255,255,255,0.1);
             position: relative;
@@ -46,28 +46,23 @@
             overflow: hidden;
         }
 
-        /* হুবহু ফটোর মতো কার্ভড টেক্সট */
+        /* বাঁকানো লেখা */
         .curved-svg {
             position: absolute; width: 100%; height: 100%;
             z-index: 5; pointer-events: none;
         }
         .curved-svg text {
-            fill: rgba(255,255,255,0.4); font-size: 10px; font-weight: 900;
+            fill: rgba(255,255,255,0.5); font-size: 10px; font-weight: 900;
             text-transform: uppercase; letter-spacing: 3px;
         }
 
-        /* মাঝখানের সেই গ্লোয়িং E লোগো */
-        .e-logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 150px; font-weight: 900; color: white;
-            z-index: 10; font-style: italic;
-            text-shadow: 
-                0 0 20px rgba(255,255,255,0.6),
-                0 0 40px rgba(56, 189, 248, 0.5);
-            transform: skewX(-5deg);
+        /* TON লোগো ডিজাইন */
+        .ton-logo {
+            width: 120px; height: 120px;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.8));
+            z-index: 10;
         }
 
-        /* নিচের প্রিমিয়াম ইউআই (UI) */
         .footer-card {
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(15px);
@@ -81,32 +76,29 @@
             overflow: hidden; margin: 0 auto 15px;
         }
         .energy-fill {
-            height: 100%; background: linear-gradient(90deg, #38bdf8, #2563eb);
+            height: 100%; background: linear-gradient(90deg, #0088cc, #00a3ff);
             transition: width 0.3s ease;
         }
 
         .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #64748b; transition: 0.3s; }
-        .nav-btn.active { color: #38bdf8; }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #64748b; }
+        .nav-btn.active { color: #00a3ff; }
 
         .tap-effect {
-            position: absolute; color: #38bdf8; font-size: 38px; font-weight: 900;
+            position: absolute; color: #00a3ff; font-size: 38px; font-weight: 900;
             pointer-events: none; animation: tapFloat 0.7s ease-out forwards;
-            text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
         }
         @keyframes tapFloat {
-            from { transform: translateY(0) scale(1); opacity: 1; }
-            to { transform: translateY(-150px) scale(1.3); opacity: 0; }
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-150px); opacity: 0; }
         }
     </style>
 </head>
 <body class="flex flex-col items-center justify-between h-screen">
 
     <div class="mt-16 text-center">
-        <h1 class="text-6xl font-black tracking-tighter italic" id="score">0</h1>
-        <div class="flex items-center justify-center gap-2 mt-2">
-            <span class="px-3 py-1 bg-blue-900/50 rounded-full text-xs font-bold text-blue-300 border border-blue-700/50">BRONZE WALLET &gt;</span>
-        </div>
+        <h1 class="text-6xl font-black tracking-tighter" id="score">0</h1>
+        <p class="text-blue-400 font-bold mt-2 text-sm">BRONZE WALLET &gt;</p>
     </div>
 
     <div class="coin-wrapper" id="coin">
@@ -119,7 +111,9 @@
                         <textPath href="#txtPath" startOffset="75%" text-anchor="middle">Powered by Community</textPath>
                     </text>
                 </svg>
-                <span class="e-logo">E</span>
+                <svg class="ton-logo" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M60 0L120 120L60 95L0 120L60 0Z" fill="white"/>
+                </svg>
             </div>
         </div>
     </div>
@@ -134,11 +128,11 @@
         <div class="energy-bar"><div id="fill" class="energy-fill" style="width: 100%;"></div></div>
         
         <div class="nav-grid">
-            <div class="nav-btn active"><span class="text-2xl">🪙</span><span class="text-[10px] mt-1 font-bold">Earn</span></div>
-            <div class="nav-btn"><span>📋</span><span class="text-[10px] mt-1 font-bold">Tasks</span></div>
-            <div class="nav-btn"><span>👥</span><span class="text-[10px] mt-1 font-bold">Friends</span></div>
-            <div class="nav-btn"><span>🚀</span><span class="text-[10px] mt-1 font-bold">Boost</span></div>
-            <div class="nav-btn"><span>🏦</span><span class="text-[10px] mt-1 font-bold">Wallet</span></div>
+            <div class="nav-btn active"><span class="text-2xl">🪙</span><span class="text-[10px] font-bold">Earn</span></div>
+            <div class="nav-btn"><span>📋</span><span class="text-[10px] font-bold">Tasks</span></div>
+            <div class="nav-btn"><span>👥</span><span class="text-[10px] font-bold">Friends</span></div>
+            <div class="nav-btn"><span>🚀</span><span class="text-[10px] font-bold">Boost</span></div>
+            <div class="nav-btn"><span>🏦</span><span class="text-[10px] font-bold">Wallet</span></div>
         </div>
     </div>
 
@@ -164,7 +158,6 @@
                 score++; energy--;
                 document.getElementById('click').currentTime = 0;
                 document.getElementById('click').play();
-                if (navigator.vibrate) navigator.vibrate(40);
                 update();
                 
                 const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
