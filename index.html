@@ -20,7 +20,7 @@
         .curved-svg { position: absolute; width: 100%; height: 100%; animation: rotateText 12s linear infinite; }
         @keyframes rotateText { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* টাস্ক কার্ড */
+        /* কার্ড ডিজাইন */
         .task-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .done-btn { background: #1e293b !important; color: #64748b !important; cursor: not-allowed; }
 
@@ -66,7 +66,7 @@
 
     <div id="tasks-page" class="page hidden px-6 pt-12">
         <h2 class="text-4xl font-black text-center mb-2">Tasks</h2>
-        <p class="text-gray-400 text-center text-sm mb-8">Complete tasks to earn extra coins</p>
+        <p class="text-gray-400 text-center text-sm mb-8">টাস্ক কমপ্লিট করে কয়েন আয় করুন</p>
         
         <div class="task-card">
             <div class="flex items-center gap-4">
@@ -78,16 +78,21 @@
             </div>
             <button id="task-tg" onclick="doTask('tg', 'https://t.me/YourChannel', 10000)" class="bg-red-600 px-5 py-2.5 rounded-xl text-xs font-black">Join</button>
         </div>
+    </div>
 
+    <div id="boost-page" class="page hidden px-6 pt-12">
+        <h2 class="text-4xl font-black text-center mb-2">Boosters</h2>
+        <p class="text-gray-400 text-center text-sm mb-8">এনার্জি রিফিল করুন</p>
+        
         <div class="task-card">
             <div class="flex items-center gap-4">
-                <div class="bg-red-500/10 p-3 rounded-2xl text-2xl">📺</div>
+                <div class="bg-orange-500/10 p-3 rounded-2xl text-2xl">⚡</div>
                 <div>
-                    <h4 class="font-bold text-sm">Watch Video</h4>
-                    <p class="text-xs text-yellow-500 font-bold">+5,000 Coins</p>
+                    <h4 class="font-bold text-sm">Full Tank</h4>
+                    <p class="text-xs text-yellow-500 font-bold" id="refill-status">3/3 Available</p>
                 </div>
             </div>
-            <button id="task-yt" onclick="doTask('yt', 'https://youtube.com', 5000)" class="bg-red-600 px-5 py-2.5 rounded-xl text-xs font-black">Watch</button>
+            <button onclick="useFullTank()" class="bg-gradient-to-r from-orange-500 to-red-600 px-5 py-2.5 rounded-xl text-xs font-black">Get it!</button>
         </div>
     </div>
 
@@ -97,35 +102,45 @@
             <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">Total Referrals</p>
             <h3 class="text-5xl font-black text-red-500" id="refer-count">0</h3>
         </div>
-        <div class="bg-white/5 p-4 rounded-2xl text-xs text-gray-400 text-center mb-10">
-            Invite your friends and get 5,000 coins for each successful referral!
-        </div>
-        <button onclick="shareInvite()" class="bg-red-600 w-full py-5 rounded-2xl font-black text-xl shadow-lg shadow-red-600/20 active:scale-95 transition-all">Invite a Friend</button>
+        <button onclick="shareInvite()" class="bg-red-600 w-full py-5 rounded-2xl font-black text-xl active:scale-95">Invite a Friend</button>
     </div>
 
     <div class="footer-card">
         <div class="flex justify-around items-center w-full">
-            <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span class="text-2xl mb-1">🪙</span><span>Earn</span></div>
-            <div onclick="showPage('tasks')" id="btn-tasks" class="nav-btn"><span class="text-2xl mb-1">📋</span><span>Tasks</span></div>
-            <div onclick="showPage('friends')" id="btn-friends" class="nav-btn"><span class="text-2xl mb-1">👥</span><span>Friends</span></div>
-            <div class="nav-btn opacity-30"><span class="text-2xl mb-1">🏦</span><span>Wallet</span></div>
+            <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span>🪙</span><span>Earn</span></div>
+            <div onclick="showPage('tasks')" id="btn-tasks" class="nav-btn"><span>📋</span><span>Tasks</span></div>
+            <div onclick="showPage('boost')" id="btn-boost" class="nav-btn"><span>🚀</span><span>Boost</span></div>
+            <div onclick="showPage('friends')" id="btn-friends" class="nav-btn"><span>👥</span><span>Friends</span></div>
         </div>
     </div>
 
     <script>
+        // ডাটা লোড
         let score = parseInt(localStorage.getItem('liteScore')) || 0;
         let energy = parseInt(localStorage.getItem('liteEnergy')) || 1000;
         let refers = parseInt(localStorage.getItem('liteRefers')) || 0;
+        let refillsUsed = parseInt(localStorage.getItem('refillsUsed')) || 0;
+        let lastRefillDate = localStorage.getItem('lastRefillDate');
+        let today = new Date().toLocaleDateString();
+
+        // দিন চেক করে রিফিল রিসেট করা
+        if (lastRefillDate !== today) {
+            refillsUsed = 0;
+            localStorage.setItem('refillsUsed', 0);
+            localStorage.setItem('lastRefillDate', today);
+        }
 
         function updateUI() {
             document.getElementById('score').innerText = score.toLocaleString();
             document.getElementById('energy-text').innerText = energy + " / 1000";
             document.getElementById('fill').style.width = (energy / 1000) * 100 + "%";
             document.getElementById('refer-count').innerText = refers;
+            document.getElementById('refill-status').innerText = (3 - refillsUsed) + " / 3 Available Today";
             
-            // টাস্ক বাটন চেক
-            if(localStorage.getItem('task_tg')) { document.getElementById('task-tg').innerText = "Done"; document.getElementById('task-tg').className = "done-btn px-5 py-2.5 rounded-xl text-xs font-bold"; }
-            if(localStorage.getItem('task_yt')) { document.getElementById('task-yt').innerText = "Done"; document.getElementById('task-yt').className = "done-btn px-5 py-2.5 rounded-xl text-xs font-bold"; }
+            if(localStorage.getItem('task_tg')) {
+                document.getElementById('task-tg').innerText = "Done";
+                document.getElementById('task-tg').className = "done-btn px-5 py-2.5 rounded-xl text-xs font-bold";
+            }
 
             localStorage.setItem('liteScore', score);
             localStorage.setItem('liteEnergy', energy);
@@ -141,11 +156,11 @@
 
         function handleTap(e) {
             e.preventDefault();
-            const clientX = e.clientX || e.touches[0].clientX;
-            const clientY = e.clientY || e.touches[0].clientY;
+            const x = e.clientX || e.touches[0].clientX;
+            const y = e.clientY || e.touches[0].clientY;
             if (energy > 0) {
                 score++; energy--;
-                createAnim(clientX, clientY);
+                createAnim(x, y);
                 updateUI();
             }
         }
@@ -165,12 +180,25 @@
                 score += reward;
                 localStorage.setItem('task_' + id, 'done');
                 updateUI();
+                alert("আপনি " + reward + " কয়েন পেয়েছেন!");
             }, 3000);
+        }
+
+        function useFullTank() {
+            if (refillsUsed < 3) {
+                energy = 1000;
+                refillsUsed++;
+                localStorage.setItem('refillsUsed', refillsUsed);
+                updateUI();
+                alert("Energy Refilled!");
+            } else {
+                alert("আজকের ৩টি লিমিট শেষ দাদু!");
+            }
         }
 
         function shareInvite() {
             refers++; updateUI();
-            window.open('https://t.me/share/url?url=https://t.me/Referralincamebd01311_bot&text=Lite Coin গেমে জয়েন করে ৫০০০ কয়েন ফ্রি নিন!', '_blank');
+            window.open('https://t.me/share/url?url=https://t.me/Referralincamebd01311_bot&text=Join and Earn!', '_blank');
         }
 
         document.getElementById('coin').addEventListener('touchstart', handleTap, {passive: false});
