@@ -3,140 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>E-Coin Saver</title>
+    <title>E-Coin TapSwap Blue</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { 
-            background: radial-gradient(circle at center, #1a1a2e 0%, #0d0d0d 100%); 
-            color: white; font-family: sans-serif; overflow: hidden; touch-action: manipulation;
+            background: #0d0d1a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow: hidden; touch-action: manipulation;
         }
-        .coin-wrapper {
-            position: relative; width: 280px; height: 280px;
-            background: linear-gradient(145deg, #ffd700, #b8860b);
+
+        /* হুবহু ছবির মতো কয়েন ডিজাইন */
+        .coin-outer {
+            width: 280px; height: 280px;
+            background: #1e3a8a; /* গাঢ় নীল বর্ডার */
             border-radius: 50%; padding: 10px;
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(0,0,0,0.5);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.05s;
+            box-shadow: 0 0 40px rgba(0, 191, 255, 0.4);
+            cursor: pointer; position: relative;
+            transition: transform 0.05s ease;
         }
-        .coin-wrapper:active { transform: scale(0.94); }
-        .inner-coin {
-            width: 100%; height: 100%; background: #c59d1f;
-            border-radius: 50%; border: 4px dashed #8b6508;
+        .coin-outer:active { transform: scale(0.94); }
+
+        .coin-inner-border {
+            width: 100%; height: 100%;
+            border-radius: 50%; border: 6px solid #38bdf8; /* উজ্জ্বল নীল লাইন */
+            background: radial-gradient(circle, #0ea5e9 0%, #0369a1 100%);
             display: flex; align-items: center; justify-content: center;
-            position: relative;
+            position: relative; overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
-        .inner-coin::before {
-            content: "POWERED BY COMMUNITY • POWERED BY COMMUNITY •";
+
+        /* মাঝখানের উজ্জ্বল নীল আভা */
+        .coin-center-glow {
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(125, 211, 252, 0.4) 0%, transparent 70%);
+            position: absolute; z-index: 1;
+        }
+
+        /* ঘোরানো টেক্সট */
+        .rotating-text {
             position: absolute; width: 100%; height: 100%;
-            font-size: 9px; font-weight: 900; color: rgba(0,0,0,0.4);
-            display: flex; align-items: center; justify-content: center;
-            animation: rotateText 15s linear infinite;
+            animation: rotateText 20s linear infinite;
+        }
+        .rotating-text p {
+            font-size: 7px; font-weight: 900; color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase; letter-spacing: 3px;
         }
         @keyframes rotateText { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .e-logo { font-size: 140px; font-weight: 900; color: #4a3504; z-index: 10; }
-        .energy-container { width: 90%; margin-bottom: 40px; }
-        .progress-bg { width: 100%; height: 16px; background: #1f1f1f; border-radius: 20px; border: 1px solid #333; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #fbc02d, #f57f17); transition: width 0.2s; }
-        .plus-one { position: absolute; color: #ffd700; font-size: 30px; font-weight: bold; pointer-events: none; animation: floatUp 0.7s ease-out forwards; z-index: 100; }
-        @keyframes floatUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-120px); opacity: 0; } }
+
+        /* মাঝখানের বড় E */
+        .e-logo {
+            font-size: 130px; font-weight: 900; color: white; 
+            z-index: 10; text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+
+        /* নিচের মেনু বাটন */
+        .nav-bar {
+            background: rgba(20, 20, 40, 0.9); width: 100%;
+            display: flex; justify-content: space-around; padding: 15px 0;
+            border-top: 1px solid #2d3748;
+        }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #718096; }
+        .nav-btn.active { color: #38bdf8; }
+
+        .progress-container { width: 90%; margin-bottom: 25px; }
+        .progress-bar { width: 100%; height: 14px; background: #1a202c; border-radius: 20px; overflow: hidden; border: 1px solid #2d3748; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #38bdf8, #2563eb); transition: width 0.2s; }
+
+        .tap-anim { position: absolute; color: #38bdf8; font-size: 35px; font-weight: 900; pointer-events: none; animation: tapFloat 0.7s ease-out forwards; }
+        @keyframes tapFloat { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-120px); opacity: 0; } }
     </style>
 </head>
 <body class="flex flex-col items-center justify-between h-screen">
-    <div class="mt-16 text-center">
-        <p class="text-gray-400 text-xs uppercase tracking-widest mb-1">Total Coins</p>
+    
+    <div class="mt-12 text-center">
         <div class="flex items-center justify-center gap-2">
-            <span class="text-3xl">💰</span>
-            <h1 class="text-5xl font-black text-yellow-500" id="score">0</h1>
+             <h1 class="text-5xl font-black" id="score">0</h1>
         </div>
+        <p class="text-blue-400 text-xs tracking-widest mt-2">BRONZE WALLET ></p>
     </div>
 
-    <div class="coin-wrapper" id="coin">
-        <div class="inner-coin">
+    <div class="coin-outer" id="coinBtn">
+        <div class="coin-inner-border">
+            <div class="coin-center-glow"></div>
+            <div class="rotating-text flex items-center justify-center">
+                <p>POWERED BY COMMUNITY • POWERED BY COMMUNITY •</p>
+            </div>
             <span class="e-logo">E</span>
         </div>
     </div>
 
-    <div class="energy-container">
-        <div class="flex justify-between items-center mb-2 px-1">
-            <div class="flex items-center gap-1">
-                <span class="text-yellow-400 text-xl">⚡</span>
-                <span id="energy-text" class="font-bold text-lg">1000/1000</span>
+    <div class="w-full flex flex-col items-center">
+        <div class="progress-container">
+            <div class="flex justify-between items-center mb-2 px-1">
+                <div class="flex items-center gap-1 font-bold">
+                    <span class="text-blue-400">⚡</span>
+                    <span id="energy-text">1000 / 1000</span>
+                </div>
             </div>
-            <span class="text-gray-400 font-medium">Bronze League ></span>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 100%;"></div>
+            </div>
         </div>
-        <div class="progress-bg">
-            <div id="progress-fill" class="progress-fill"></div>
-        </div>
+
+        <nav class="nav-bar">
+            <div class="nav-btn active"><span class="text-xl">🏠</span><span class="text-xs">Earn</span></div>
+            <div class="nav-btn"><span class="text-xl">📋</span><span class="text-xs">Tasks</span></div>
+            <div class="nav-btn"><span class="text-xl">👥</span><span class="text-xs">Friends</span></div>
+            <div class="nav-btn"><span class="text-xl">🚀</span><span class="text-xs">Boost</span></div>
+            <div class="nav-btn"><span class="text-xl">🏦</span><span class="text-xs">Wallet</span></div>
+        </nav>
     </div>
 
-    <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-37a.mp3"></audio>
+    <audio id="tapSound" src="https://www.soundjay.com/buttons/sounds/button-37a.mp3"></audio>
 
     <script>
-        // সেভ করা ডাটা লোড করা (LocalStorage থেকে)
-        let score = parseInt(localStorage.getItem('eCoin_score')) || 0;
-        let energy = parseInt(localStorage.getItem('eCoin_energy')) || 1000;
+        let score = parseInt(localStorage.getItem('eScore')) || 0;
+        let energy = parseInt(localStorage.getItem('eEnergy')) || 1000;
 
         const scoreEl = document.getElementById('score');
-        const energyText = document.getElementById('energy-text');
-        const progressFill = document.getElementById('progress-fill');
-        const clickSound = document.getElementById('clickSound');
-        const coin = document.getElementById('coin');
+        const energyEl = document.getElementById('energy-text');
+        const fillEl = document.getElementById('progress-fill');
+        const sound = document.getElementById('tapSound');
 
-        // শুরুর ভ্যালু সেট করা
-        updateUI();
+        function updateDisplay() {
+            scoreEl.innerText = score.toLocaleString();
+            energyEl.innerText = energy + " / 1000";
+            fillEl.style.width = (energy / 1000) * 100 + "%";
+            localStorage.setItem('eScore', score);
+            localStorage.setItem('eEnergy', energy);
+        }
 
         function handleTap(e) {
             if (energy > 0) {
-                score += 1;
-                energy -= 1;
-                
-                // ডাটা সেভ করা
-                saveData();
-
-                // শব্দ ও ভাইব্রেশন
-                clickSound.currentTime = 0;
-                clickSound.play();
+                score++; energy--;
+                sound.currentTime = 0; sound.play();
                 if (navigator.vibrate) navigator.vibrate(40);
-
-                updateUI();
-                showPlusOne(e);
+                updateDisplay();
+                
+                const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+                const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+                const anim = document.createElement('span');
+                anim.className = 'tap-anim'; anim.innerText = '+1';
+                anim.style.left = x + 'px'; anim.style.top = y + 'px';
+                document.body.appendChild(anim);
+                setTimeout(() => anim.remove(), 700);
             }
         }
 
-        function saveData() {
-            localStorage.setItem('eCoin_score', score);
-            localStorage.setItem('eCoin_energy', energy);
-        }
+        document.getElementById('coinBtn').addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(e); });
+        document.getElementById('coinBtn').addEventListener('click', (e) => handleTap(e));
 
-        function updateUI() {
-            scoreEl.innerText = score.toLocaleString();
-            energyText.innerText = energy + "/1000";
-            progressFill.style.width = (energy / 1000) * 100 + "%";
-        }
-
-        function showPlusOne(e) {
-            const x = e.clientX || (e.touches ? e.touches[0].clientX : window.innerWidth/2);
-            const y = e.clientY || (e.touches ? e.touches[0].clientY : window.innerHeight/2);
-            const span = document.createElement('span');
-            span.className = 'plus-one';
-            span.innerText = '+1';
-            span.style.left = x + 'px';
-            span.style.top = y + 'px';
-            document.body.appendChild(span);
-            setTimeout(() => span.remove(), 700);
-        }
-
-        coin.addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(e); });
-        coin.addEventListener('click', (e) => handleTap(e));
-
-        // প্রতি ২ সেকেন্ডে ১ এনার্জি রিফিল হবে এবং সেভ হবে
-        setInterval(() => {
-            if (energy < 1000) {
-                energy += 1;
-                saveData();
-                updateUI();
-            }
-        }, 2000);
+        setInterval(() => { if (energy < 1000) { energy++; updateDisplay(); } }, 2500);
+        updateDisplay();
     </script>
 </body>
 </html>
