@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Official Fresh Start</title>
+    <title>Lite Coin - Pro Edition Full</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -32,9 +32,11 @@
 <body>
 
     <script>
-        if(!localStorage.getItem('isResetDone')) {
+        // দাদু, এই অংশটুকু আপনার ডাটাবেজ একদম পরিষ্কার (Clean) করে দেবে
+        // একবার জিরো হয়ে গেলে আপনি এই ৩টি লাইন মুছে দিতে পারেন
+        if(!localStorage.getItem('forceReset_Final')) {
             localStorage.clear();
-            localStorage.setItem('isResetDone', 'true');
+            localStorage.setItem('forceReset_Final', 'true');
         }
     </script>
 
@@ -109,6 +111,7 @@
     </div>
 
     <script>
+        // প্রাথমিক ভ্যালু সেটআপ
         let score = parseInt(localStorage.getItem('liteScore')) || 0;
         let tapLevel = parseInt(localStorage.getItem('tapLevel')) || 1;
         let limitLevel = parseInt(localStorage.getItem('limitLevel')) || 1;
@@ -118,7 +121,7 @@
         let boostLeft = localStorage.getItem('liteBoost') === null ? 3 : parseInt(localStorage.getItem('liteBoost'));
         let energy = localStorage.getItem('liteEnergy') === null ? 1000 : parseInt(localStorage.getItem('liteEnergy'));
 
-        // ইউজারের জন্য একটা আইডি তৈরি করা (ভবিষ্যতে ফায়ারবেজের জন্য)
+        // ইউজার আইডি
         let userId = localStorage.getItem('liteUserId');
         if (!userId) {
             userId = 'user_' + Math.floor(Math.random() * 900000 + 100000);
@@ -221,19 +224,17 @@
 
         function doTask(url, reward) { window.open(url, '_blank'); score += reward; updateUI(); }
         
-        // --- রেফারেল সিস্টেম ---
+        // রেফারেল সিস্টেম (অটো-কয়েন বন্ধ)
         function shareInvite() {
-            const botUsername = "LiteCoin_Official_Bot"; // আপনার বটের নাম
+            const botUsername = "LiteCoin_Official_Bot"; 
             const referLink = `https://t.me/${botUsername}?start=ref_${userId}`;
-            const shareText = "🪙 Lite Coin-এ জয়েন করো আর লুটে নাও ৫০,০০০ কয়েন বোনাস! আমার লিঙ্কে জয়েন করলে দুজনেই বোনাস পাবো! 🚀";
-            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(referLink)}&text=${encodeURIComponent(shareText)}`;
-            
-            window.open(telegramUrl, '_blank');
-            alert("আপনার রেফারেল লিঙ্ক তৈরি হয়েছে! বন্ধু জয়েন করলেই আপনি বোনাস পাবেন।");
+            const shareText = "🪙 Lite Coin-এ জয়েন করো আর লুটে নাও ৫০,০০০ কয়েন বোনাস! 🚀";
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(referLink)}&text=${encodeURIComponent(shareText)}`, '_blank');
+            alert("লিঙ্ক তৈরি হয়েছে! বন্ধু জয়েন করলেই আপনি বোনাস পাবেন।");
         }
 
         updateUI();
     </script>
 </body>
-            </html>
-    
+                </html>
+                                                                                                                        
