@@ -3,84 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Floating Spin Edition</title>
+    <title>Lite Coin - Fixed Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
         body { background: radial-gradient(circle at center, #1e293b 0%, #020617 100%); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; touch-action: none; }
-        .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 110px; transition: 0.3s; overflow-y: auto; }
+        .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 120px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
         
-        /* Floating Spin Button (Left Side) */
+        /* Floating Spin Button (Left) */
         .floating-spin-btn {
-            position: fixed; left: 15px; top: 40%; transform: translateY(-50%);
-            width: 60px; height: 60px; background: linear-gradient(145deg, #fbbf24, #d97706);
+            position: fixed; left: 10px; top: 50%; transform: translateY(-50%);
+            width: 55px; height: 55px; background: linear-gradient(145deg, #fbbf24, #d97706);
             border-radius: 50%; border: 3px solid #f59e0b; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1500; cursor: pointer; animation: bounce 2s infinite;
+            z-index: 2000; cursor: pointer; animation: bounce 2s infinite;
         }
         @keyframes bounce { 0%, 100% { transform: translateY(-50%) scale(1); } 50% { transform: translateY(-55%) scale(1.1); } }
 
         /* Coin Style */
-        #coin { width: 240px; height: 240px; border-radius: 50%; background: linear-gradient(145deg, #fbbf24, #d97706); border: 8px solid #f59e0b; box-shadow: 0 0 40px rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; margin: 20px auto; }
-        .coin-logo { width: 90px; height: 90px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
+        .coin-wrapper { margin-top: 30px; display: flex; justify-content: center; width: 100%; }
+        #coin { width: 220px; height: 220px; border-radius: 50%; background: linear-gradient(145deg, #fbbf24, #d97706); border: 8px solid #f59e0b; box-shadow: 0 0 40px rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; }
+        .coin-logo { width: 80px; height: 80px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
 
-        /* Spin Wheel Style */
-        .wheel-container { position: relative; width: 280px; height: 280px; margin: 20px auto; border: 5px solid #fbbf24; border-radius: 50%; padding: 5px; background: #0f172a; box-shadow: 0 0 20px #fbbf24; }
-        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); background: conic-gradient(#fbbf24 0deg 60deg, #d97706 60deg 120deg, #fbbf24 120deg 180deg, #d97706 180deg 240deg, #fbbf24 240deg 300deg, #d97706 300deg 360deg); position: relative; overflow: hidden; }
-        .wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ef4444; z-index: 10; }
+        /* Spin Wheel */
+        .wheel-container { position: relative; width: 260px; height: 260px; margin: 20px auto; border: 5px solid #fbbf24; border-radius: 50%; background: #0f172a; box-shadow: 0 0 20px #fbbf24; }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); background: conic-gradient(#fbbf24 0deg 60deg, #d97706 60deg 120deg, #fbbf24 120deg 180deg, #d97706 180deg 240deg, #fbbf24 240deg 300deg, #d97706 300deg 360deg); }
+        .wheel-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ef4444; z-index: 10; }
 
-        .footer-nav { background: rgba(15, 23, 42, 0.98); width: 100%; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.1); position: fixed; bottom: 0; left: 0; z-index: 1000; display: flex; justify-content: space-around; }
-        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 10px; font-weight: bold; cursor: pointer; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .footer-nav { background: rgba(15, 23, 42, 0.95); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); position: fixed; bottom: 0; left: 0; z-index: 1000; display: flex; justify-content: space-around; }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 11px; font-weight: bold; cursor: pointer; }
         .nav-btn.active { color: #fbbf24; }
+        .league-badge { background: rgba(251, 191, 36, 0.15); color: #fbbf24; padding: 4px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; border: 1px solid rgba(251, 191, 36, 0.3); margin-top: 40px; }
     </style>
 </head>
 <body>
 
     <div class="floating-spin-btn" onclick="showPage('spin')">
-        <span class="text-2xl">🎡</span>
+        <span class="text-xl">🎡</span>
         <span class="text-[8px] font-black text-black">SPIN</span>
     </div>
 
-    <div id="game-page" class="page items-center pt-10">
-        <h1 class="text-6xl font-black text-white" id="score">0</h1>
-        <div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)">
-            <div class="coin-logo"></div>
+    <div id="game-page" class="page items-center">
+        <div class="league-badge" id="current-league">Bronze League</div>
+        <h1 class="text-6xl font-black text-white mt-4" id="score">0</h1>
+        
+        <div class="coin-wrapper">
+            <div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)">
+                <div class="coin-logo"></div>
+            </div>
         </div>
-        <div class="w-full px-10">
+
+        <div class="w-full px-10 mt-10">
             <div class="flex justify-between font-black text-yellow-400 mb-2">
                 <span class="text-xl">⚡ <span id="energy-val">1000</span></span>
+                <span class="text-gray-500 text-sm">/ 1000</span>
             </div>
             <div class="h-4 w-full bg-gray-900 rounded-full overflow-hidden border border-white/10">
-                <div id="energy-bar" class="h-full bg-yellow-500" style="width: 100%;"></div>
+                <div id="energy-bar" class="h-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-300" style="width: 100%;"></div>
             </div>
         </div>
     </div>
 
     <div id="spin-page" class="page hidden px-6 pt-12 text-center">
-        <h2 class="text-3xl font-black text-yellow-500 mb-2">LUCKY SPIN</h2>
-        <p class="text-xs text-gray-400 mb-6 uppercase tracking-widest">Remaining: <span id="spin-limit" class="text-white font-bold">4</span>/4</p>
-        
+        <h2 class="text-3xl font-black text-yellow-500 mb-2 uppercase">Lucky Spin</h2>
+        <p class="text-xs text-gray-400 mb-6 tracking-widest">Spins Left: <span id="spin-limit" class="text-white font-bold">4</span>/4</p>
         <div class="wheel-container">
             <div class="wheel-pointer"></div>
             <div id="wheel"></div>
         </div>
-
         <button id="spin-btn" onclick="startSpin()" class="mt-8 bg-yellow-500 text-black w-full py-4 rounded-2xl font-black text-xl shadow-lg transition-transform active:scale-95">SPIN & WATCH AD</button>
-        <button onclick="showPage('game')" class="mt-4 text-gray-400 font-bold uppercase text-xs">← Back to Game</button>
+        <button onclick="showPage('game')" class="mt-4 text-gray-500 font-bold uppercase text-xs">← Back</button>
+    </div>
+
+    <div id="leaderboard-page" class="page hidden px-6 pt-12">
+        <h2 class="text-3xl font-black text-yellow-500 mb-6 text-center">LEADERBOARD</h2>
+        <div class="glass-card" style="border: 1px solid #fbbf24;">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-yellow-500 text-black flex items-center justify-center font-bold mr-3 text-xs">1</div>
+                <div><h4 class="font-bold text-sm">You (Lite User)</h4><p class="text-[10px] text-gray-400">Bronze League</p></div>
+            </div>
+            <div class="text-yellow-500 font-bold" id="rank-score">0</div>
+        </div>
+    </div>
+
+    <div id="tasks-page" class="page hidden px-6 pt-12">
+        <h2 class="text-3xl font-black text-yellow-500 mb-8 text-center uppercase">Tasks</h2>
+        <div class="glass-card">
+            <div><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-[10px] text-yellow-500">+50,000</p></div>
+            <button onclick="alert('Task Started!')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl font-bold text-xs">JOIN</button>
+        </div>
     </div>
 
     <div id="boost-page" class="page hidden px-6 pt-12">
-        <h2 class="text-3xl font-black mb-6 text-center text-yellow-500 uppercase">Boosters</h2>
-        <div class="bg-white/5 border border-white/10 p-5 rounded-2xl flex justify-between items-center mb-4">
-            <div><h4 class="font-bold">Multitap</h4><p id="tap-status" class="text-xs text-yellow-500">Level 1</p></div>
-            <button id="tap-upgrade-btn" onclick="upgradeItem('tap')" class="px-6 py-2 rounded-xl text-xs font-bold transition-all">100</button>
+        <h2 class="text-3xl font-black text-yellow-500 mb-8 text-center uppercase">Boosters</h2>
+        <div class="glass-card">
+            <div><h4 class="font-bold text-sm">Multitap</h4><p id="tap-status" class="text-xs text-yellow-500">Level 1</p></div>
+            <button id="tap-upgrade-btn" onclick="upgradeItem()" class="px-6 py-2 rounded-xl text-xs font-bold shadow-md transition-all">100</button>
         </div>
-        </div>
+    </div>
 
-    <div id="leaderboard-page" class="page hidden p-6 text-center"><h2 class="text-2xl font-bold text-yellow-500">Leaderboard</h2></div>
-    <div id="tasks-page" class="page hidden p-6 text-center"><h2 class="text-2xl font-bold text-yellow-500">Tasks</h2></div>
-    <div id="friends-page" class="page hidden p-6 text-center"><h2 class="text-2xl font-bold text-yellow-500">Friends</h2></div>
+    <div id="friends-page" class="page hidden px-6 pt-12 text-center">
+        <h2 class="text-3xl font-black text-yellow-500 mb-8 uppercase">Friends</h2>
+        <div class="glass-card flex-col py-10"><h3 class="text-6xl font-black text-white">0</h3><p class="text-gray-400 text-xs">Friends Invited</p></div>
+        <button class="bg-yellow-500 text-black w-full py-5 rounded-2xl font-black text-xl mt-4">Invite Friend</button>
+    </div>
 
     <div class="footer-nav">
         <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span>🪙</span><span>Earn</span></div>
@@ -100,31 +128,28 @@
         function checkSpinReset() {
             let today = new Date().toLocaleDateString();
             if (lastSpinDate !== today) {
-                spinsToday = 0;
-                localStorage.setItem('spinsToday', 0);
-                localStorage.setItem('lastSpinDate', today);
+                spinsToday = 0; localStorage.setItem('spinsToday', 0); localStorage.setItem('lastSpinDate', today);
             }
         }
 
         function updateUI() {
             checkSpinReset();
             document.getElementById('score').innerText = score.toLocaleString();
+            document.getElementById('rank-score').innerText = score.toLocaleString();
             document.getElementById('energy-val').innerText = Math.floor(energy);
             document.getElementById('energy-bar').style.width = (energy / 1000) * 100 + "%";
             document.getElementById('spin-limit').innerText = 4 - spinsToday;
             
-            // Boost Button Style
+            // Smart Upgrade Button
             let price = 100 * Math.pow(2, tapLevel - 1);
             let btn = document.getElementById('tap-upgrade-btn');
             document.getElementById('tap-status').innerText = "Level " + tapLevel;
             btn.innerText = price.toLocaleString();
             btn.className = (score >= price) ? "bg-yellow-500 text-black px-6 py-2 rounded-xl text-xs font-bold" : "bg-gray-700 text-gray-400 opacity-50 px-6 py-2 rounded-xl text-xs font-bold cursor-not-allowed";
 
-            // Spin button state
-            let spinBtn = document.getElementById('spin-btn');
             if (spinsToday >= 4) {
-                spinBtn.innerText = "NO SPINS LEFT";
-                spinBtn.classList.replace('bg-yellow-500', 'bg-gray-700');
+                document.getElementById('spin-btn').innerText = "NO SPINS LEFT";
+                document.getElementById('spin-btn').className = "mt-8 bg-gray-700 text-gray-400 w-full py-4 rounded-2xl font-black";
             }
 
             localStorage.setItem('liteScore', score);
@@ -135,25 +160,25 @@
             if (e.type === 'touchstart') e.preventDefault();
             if (energy >= tapLevel) {
                 score += tapLevel; energy -= tapLevel;
+                const coin = document.getElementById('coin');
+                coin.style.transform = 'scale(0.95)'; setTimeout(() => coin.style.transform = 'scale(1)', 100);
                 updateUI();
             }
         }
 
         function startSpin() {
             if (spinsToday >= 4) return;
-            alert("Loading Advertisement... Please wait.");
-            
+            alert("Loading Advertisement...");
             setTimeout(() => {
                 const wheel = document.getElementById('wheel');
                 const randomDeg = Math.floor(Math.random() * 360) + 3600;
                 wheel.style.transform = `rotate(${randomDeg}deg)`;
-
                 setTimeout(() => {
                     let prizes = [5000, 10000, 2000, 50000, 1000, 25000];
                     let win = prizes[Math.floor(Math.random() * 6)];
                     score += win; spinsToday++;
                     localStorage.setItem('spinsToday', spinsToday);
-                    alert("You won " + win.toLocaleString() + " coins!");
+                    alert("Congratulations! You won " + win + " coins!");
                     updateUI();
                 }, 4000);
             }, 1000);
@@ -166,14 +191,14 @@
             if(p !== 'spin') document.getElementById('btn-' + p).classList.add('active');
         }
 
-        function upgradeItem(type) {
+        function upgradeItem() {
             let price = 100 * Math.pow(2, tapLevel - 1);
             if(score >= price) { score -= price; tapLevel++; localStorage.setItem('tapLevel', tapLevel); updateUI(); }
         }
 
-        setInterval(() => { if (energy < 1000) energy = Math.min(1000, energy + 1); updateUI(); }, 1500);
+        setInterval(() => { if (energy < 1000) energy = Math.min(1000, energy + 1); updateUI(); }, 2000);
         updateUI();
     </script>
 </body>
-        </html>
-
+                </html>
+                
