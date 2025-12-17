@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Pro Leaderboard</title>
+    <title>Lite Coin - Ultimate Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -29,7 +29,6 @@
         .progress-container { width: 100%; height: 10px; background: #1e293b; border-radius: 10px; margin-top: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); width: 0%; transition: width 0.5s ease-out; }
 
-        /* Custom Scrollbar for Leaderboard */
         #leaderboard-list::-webkit-scrollbar { width: 4px; }
         #leaderboard-list::-webkit-scrollbar-thumb { background: #fbbf24; border-radius: 10px; }
     </style>
@@ -49,17 +48,11 @@
     </div>
 
     <div id="league-page" class="page hidden px-6 pt-8">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-black text-yellow-500 uppercase">Leagues</h2>
-            <button onclick="showPage('game')" class="text-xs font-bold text-gray-500 bg-white/5 px-3 py-1 rounded-lg">BACK</button>
-        </div>
+        <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-black text-yellow-500 uppercase">Leagues</h2><button onclick="showPage('game')" class="text-xs font-bold text-gray-500 bg-white/5 px-3 py-1 rounded-lg">BACK</button></div>
         <div class="glass-card p-5 border-yellow-500/20 bg-yellow-500/5 mb-6 block text-center">
             <h3 class="text-xl font-black mt-1" id="prog-league-name">Bronze League</h3>
             <div class="progress-container"><div id="league-progress-fill" class="progress-fill"></div></div>
-            <div class="flex justify-between mt-3 text-[10px] font-bold">
-                <span id="prog-current-score">0</span>
-                <span id="prog-next-target" class="text-yellow-500">Next: 25,000</span>
-            </div>
+            <div class="flex justify-between mt-3 text-[10px] font-bold"><span id="prog-current-score">0</span><span id="prog-next-target" class="text-yellow-500">Next: 25,000</span></div>
         </div>
         <div class="space-y-2">
             <div class="league-item" id="l-tier-1"><span>🥉 Bronze</span><span class="text-[9px] font-bold">0+</span></div>
@@ -72,7 +65,6 @@
     <div id="tasks-page" class="page hidden px-6 pt-10">
         <h2 class="text-3xl font-black text-yellow-500 mb-8 text-center uppercase">Tasks</h2>
         <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-[10px] text-yellow-500">+10k</p></div><button onclick="doTask(10000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold">CLAIM</button></div>
-        <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Follow Twitter</h4><p class="text-[10px] text-yellow-500">+5k</p></div><button onclick="doTask(5000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold">CLAIM</button></div>
     </div>
 
     <div id="boost-page" class="page hidden px-6 pt-10">
@@ -83,6 +75,7 @@
         </div>
         <div class="glass-card"><div><h4 class="font-bold text-sm">Multitap</h4><p id="tap-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-tap" onclick="upgrade('tap')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold">100</button></div>
         <div class="glass-card"><div><h4 class="font-bold text-sm">Energy Limit</h4><p id="lim-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-lim" onclick="upgrade('limit')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold">200</button></div>
+        <div class="glass-card"><div><h4 class="font-bold text-sm">Recharging Speed</h4><p id="rech-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-rech" onclick="upgrade('recharge')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold">500</button></div>
         <div class="glass-card border-purple-500/30"><div><h4 class="font-bold text-sm">Tap Bot 🤖</h4><p id="bot-status" class="text-[10px] text-purple-400">Not Owned</p></div><button id="btn-bot" onclick="buyBot()" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold">50,000</button></div>
     </div>
 
@@ -94,19 +87,9 @@
 
     <div id="leaderboard-page" class="page hidden px-6 pt-10">
         <h2 class="text-3xl font-black text-yellow-500 mb-4 text-center uppercase">Leaderboard</h2>
-        
-        <div class="glass-card border-yellow-500/50 bg-yellow-500/10 mb-4">
-            <div class="flex items-center">
-                <span class="text-xl mr-3">⭐</span>
-                <div class="text-left"><h4 class="font-bold text-sm">You</h4><p class="text-[10px] text-gray-400">Rank: Checking...</p></div>
-            </div>
-            <span id="bord-score" class="font-black text-yellow-500">0</span>
-        </div>
-
-        <p class="text-[10px] text-gray-500 uppercase font-bold mb-2 ml-1">Top 500 Miners</p>
-        
-        <div id="leaderboard-list" class="flex-1 overflow-y-auto pr-1 space-y-2">
-            </div>
+        <div class="glass-card border-yellow-500/50 bg-yellow-500/10 mb-4"><div class="flex items-center"><span class="text-xl mr-3">⭐</span><div class="text-left"><h4 class="font-bold text-sm">You</h4><p class="text-[10px] text-gray-400">Rank: #1</p></div></div><span id="bord-score" class="font-black text-yellow-500">0</span></div>
+        <p class="text-[10px] text-gray-500 uppercase font-bold mb-2">Top 500 Miners</p>
+        <div id="leaderboard-list" class="flex-1 overflow-y-auto pr-1 space-y-2"></div>
     </div>
 
     <div id="spin-page" class="page hidden px-6 pt-12 text-center">
@@ -127,6 +110,7 @@
         let score = parseInt(localStorage.getItem('L_Score')) || 0;
         let tapL = parseInt(localStorage.getItem('L_Tap')) || 1;
         let limL = parseInt(localStorage.getItem('L_Lim')) || 1;
+        let rechL = parseInt(localStorage.getItem('L_Rech')) || 1; // Recharging Level
         let energy = localStorage.getItem('L_Eng') === null ? 1000 : parseInt(localStorage.getItem('L_Eng'));
         let hasBot = localStorage.getItem('L_Bot') === 'true';
         let turboActive = false;
@@ -152,36 +136,19 @@
 
             for(let i=1; i<=4; i++) {
                 let el = document.getElementById('l-tier-'+i);
-                if(i === tier) el.classList.add('active'); else el.classList.remove('active');
+                if(el) { if(i === tier) el.classList.add('active'); else el.classList.remove('active'); }
             }
 
             if(hasBot) { document.getElementById('bot-status').innerText = "Active 🤖"; document.getElementById('btn-bot').innerText = "OWNED"; document.getElementById('btn-bot').disabled = true; }
+            
             setBtn('btn-tap', 'tap-s', tapL, 100);
             setBtn('btn-lim', 'lim-s', limL, 200);
+            setBtn('btn-rech', 'rech-s', rechL, 500);
 
             localStorage.setItem('L_Score', score);
             localStorage.setItem('L_Eng', energy);
             localStorage.setItem('L_Bot', hasBot);
-        }
-
-        // Leaderboard Generation
-        function loadLeaderboard() {
-            const list = document.getElementById('leaderboard-list');
-            list.innerHTML = '';
-            for (let i = 1; i <= 500; i++) {
-                const userScore = Math.floor(Math.random() * 1000000) + 5000;
-                const card = document.createElement('div');
-                card.className = 'glass-card py-3';
-                card.innerHTML = `
-                    <div class="flex items-center">
-                        <span class="text-xs font-bold text-gray-500 w-6">#${i}</span>
-                        <div class="w-8 h-8 bg-gray-700 rounded-full mr-3 flex items-center justify-center text-[10px]">U${i}</div>
-                        <div class="text-left"><h4 class="font-bold text-xs">Player_${i}</h4></div>
-                    </div>
-                    <span class="text-xs font-bold">${userScore.toLocaleString()}</span>
-                `;
-                list.appendChild(card);
-            }
+            localStorage.setItem('L_Rech', rechL);
         }
 
         function setBtn(id, sId, lvl, base) {
@@ -197,9 +164,16 @@
         }
 
         function upgrade(type) {
-            let lvl = type==='tap'?tapL : limL;
-            let p = (type==='tap'?100 : 200) * Math.pow(2, lvl-1);
-            if(score >= p) { score -= p; if(type==='tap') tapL++; else limL++; updateUI(); }
+            let lvl = type==='tap'?tapL : (type==='limit'?limL : rechL);
+            let base = type==='tap'?100 : (type==='limit'?200 : 500);
+            let p = base * Math.pow(2, lvl-1);
+            if(score >= p) {
+                score -= p;
+                if(type==='tap') tapL++; 
+                else if(type==='limit') limL++;
+                else rechL++;
+                updateUI();
+            }
         }
 
         function buyBot() { if(score >= 50000 && !hasBot) { score -= 50000; hasBot = true; updateUI(); } }
@@ -208,19 +182,30 @@
         function useTurbo() { turboActive = true; showPage('game'); setTimeout(()=>{turboActive=false; updateUI();}, 10000); }
         function startSpin() { document.getElementById('wheel').style.transform = `rotate(${Math.floor(Math.random()*360)+3600}deg)`; setTimeout(() => { score += 5000; updateUI(); }, 4000); }
 
+        function loadLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+            for (let i = 1; i <= 500; i++) {
+                const userScore = Math.floor(Math.random() * 1000000) + 1000;
+                list.innerHTML += `<div class="glass-card py-3">
+                    <div class="flex items-center"><span class="text-xs font-bold text-gray-500 w-6">#${i+1}</span><div class="w-8 h-8 bg-gray-700 rounded-full mr-3"></div><div><h4 class="font-bold text-xs">Player_${i}</h4></div></div>
+                    <span class="text-xs font-bold">${userScore.toLocaleString()}</span>
+                </div>`;
+            }
+        }
+
         function showPage(p) {
             document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
             document.getElementById(p + '-page').classList.remove('hidden');
-            if(p !== 'spin' && p !== 'league') {
-                document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-                document.getElementById('btn-' + p).classList.add('active');
-            }
-            if(p === 'leaderboard') loadLeaderboard(); // Load when opening
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            if(p !== 'spin' && p !== 'league') { document.getElementById('btn-' + (p==='game'?'game':p)).classList.add('active'); }
+            if(p === 'leaderboard') loadLeaderboard();
         }
 
         setInterval(() => {
             let mE = 1000 + ((limL - 1) * 500);
-            if (energy < mE) energy = Math.min(mE, energy + 2);
+            // Recharging logic: Base 2 + recharge level
+            if (energy < mE) energy = Math.min(mE, energy + (1 + rechL));
             if (hasBot) score += 1;
             updateUI();
         }, 1000);
@@ -228,5 +213,5 @@
         updateUI();
     </script>
 </body>
-                                                                                                                                                         </html>
+            </html>
                                                                                                                                                          
