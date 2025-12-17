@@ -32,8 +32,6 @@
 <body>
 
     <script>
-        // দাদু, এই লাইনটি আপনার সব পুরনো জমানো ডাটা মুছে দেবে
-        // একবার নতুন করে শুরু হয়ে গেলে আপনি চাইলে এই লাইনটি মুছে দিতে পারেন
         if(!localStorage.getItem('isResetDone')) {
             localStorage.clear();
             localStorage.setItem('isResetDone', 'true');
@@ -119,6 +117,13 @@
         let hasBot = localStorage.getItem('liteBot') === 'true';
         let boostLeft = localStorage.getItem('liteBoost') === null ? 3 : parseInt(localStorage.getItem('liteBoost'));
         let energy = localStorage.getItem('liteEnergy') === null ? 1000 : parseInt(localStorage.getItem('liteEnergy'));
+
+        // ইউজারের জন্য একটা আইডি তৈরি করা (ভবিষ্যতে ফায়ারবেজের জন্য)
+        let userId = localStorage.getItem('liteUserId');
+        if (!userId) {
+            userId = 'user_' + Math.floor(Math.random() * 900000 + 100000);
+            localStorage.setItem('liteUserId', userId);
+        }
 
         function updateUI() {
             let maxEnergy = 1000 + ((limitLevel - 1) * 500);
@@ -215,9 +220,20 @@
         }, 2000);
 
         function doTask(url, reward) { window.open(url, '_blank'); score += reward; updateUI(); }
-        function shareInvite() { refers++; score += 50000; updateUI(); }
+        
+        // --- রেফারেল সিস্টেম ---
+        function shareInvite() {
+            const botUsername = "LiteCoin_Official_Bot"; // আপনার বটের নাম
+            const referLink = `https://t.me/${botUsername}?start=ref_${userId}`;
+            const shareText = "🪙 Lite Coin-এ জয়েন করো আর লুটে নাও ৫০,০০০ কয়েন বোনাস! আমার লিঙ্কে জয়েন করলে দুজনেই বোনাস পাবো! 🚀";
+            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(referLink)}&text=${encodeURIComponent(shareText)}`;
+            
+            window.open(telegramUrl, '_blank');
+            alert("আপনার রেফারেল লিঙ্ক তৈরি হয়েছে! বন্ধু জয়েন করলেই আপনি বোনাস পাবেন।");
+        }
+
         updateUI();
     </script>
 </body>
-    </html>
+            </html>
     
