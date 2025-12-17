@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Pro Edition Full</title>
+    <title>Lite Coin - Leaderboard Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -26,19 +26,16 @@
         .footer-nav { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); position: fixed; bottom: 0; left: 0; z-index: 1000; display: flex; justify-content: space-around; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 11px; font-weight: bold; cursor: pointer; }
         .nav-btn.active { color: #fbbf24; }
-        .nav-btn span:first-child { font-size: 24px; }
+        .nav-btn span:first-child { font-size: 22px; }
+        
+        /* Leaderboard Specific */
+        .rank-badge { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 10px; }
+        .rank-1 { background: #fbbf24; color: black; }
+        .rank-2 { background: #cbd5e1; color: black; }
+        .rank-3 { background: #cd7f32; color: white; }
     </style>
 </head>
 <body>
-
-    <script>
-        // দাদু, এই অংশটুকু আপনার ডাটাবেজ একদম পরিষ্কার (Clean) করে দেবে
-        // একবার জিরো হয়ে গেলে আপনি এই ৩টি লাইন মুছে দিতে পারেন
-        if(!localStorage.getItem('forceReset_Final')) {
-            localStorage.clear();
-            localStorage.setItem('forceReset_Final', 'true');
-        }
-    </script>
 
     <div id="game-page" class="page items-center">
         <div class="mt-12 text-center">
@@ -63,12 +60,10 @@
 
     <div id="boost-page" class="page hidden px-6 pt-12">
         <h2 class="text-3xl font-black mb-6 text-center text-yellow-500">Boosters</h2>
-        <p class="text-gray-400 text-[10px] font-bold mb-2 uppercase tracking-widest">Free Daily Boost</p>
         <div class="glass-card mb-6">
             <div><h4 class="font-bold">Full Energy</h4><p class="text-xs text-yellow-500" id="boost-count">3/3 left</p></div>
             <button onclick="useFullEnergy()" class="bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-2 rounded-xl text-xs font-bold">REFILL</button>
         </div>
-        <p class="text-gray-400 text-[10px] font-bold mb-2 uppercase tracking-widest">Upgrades</p>
         <div class="glass-card">
             <div><h4 class="font-bold">Multitap</h4><p class="text-xs text-yellow-500" id="tap-status">Level 1</p></div>
             <button onclick="upgradeItem('tap')" id="tap-upgrade-btn" class="bg-blue-600 px-4 py-2 rounded-xl text-xs font-bold">100</button>
@@ -95,6 +90,41 @@
         </div>
     </div>
 
+    <div id="leaderboard-page" class="page hidden px-6 pt-12">
+        <h2 class="text-3xl font-black mb-6 text-center text-yellow-500">Leaderboard</h2>
+        <div id="leaderboard-list">
+            <div class="glass-card border-yellow-500/50" style="border-width: 2px;">
+                <div class="flex items-center">
+                    <div class="rank-badge rank-1">1</div>
+                    <div><h4 class="font-bold">You (Lite Master)</h4><p class="text-xs text-gray-400">Keep tapping!</p></div>
+                </div>
+                <div class="text-yellow-500 font-bold" id="user-rank-score">0</div>
+            </div>
+            
+            <div class="glass-card opacity-70">
+                <div class="flex items-center">
+                    <div class="rank-badge rank-2">2</div>
+                    <div><h4 class="font-bold">CryptoKing</h4></div>
+                </div>
+                <div class="text-gray-300 font-bold">850,000</div>
+            </div>
+            <div class="glass-card opacity-70">
+                <div class="flex items-center">
+                    <div class="rank-badge rank-3">3</div>
+                    <div><h4 class="font-bold">Alex_Tapper</h4></div>
+                </div>
+                <div class="text-gray-300 font-bold">620,000</div>
+            </div>
+            <div class="glass-card opacity-60">
+                <div class="flex items-center">
+                    <div class="rank-badge bg-gray-700 text-white ml-1">4</div>
+                    <div class="ml-2"><h4 class="font-bold">Lite_Lover</h4></div>
+                </div>
+                <div class="text-gray-300 font-bold">450,000</div>
+            </div>
+        </div>
+    </div>
+
     <div id="friends-page" class="page hidden px-6 pt-12 text-center">
         <h2 class="text-3xl font-black mb-8 text-yellow-500">Friends</h2>
         <div class="glass-card flex-col py-10">
@@ -105,13 +135,13 @@
 
     <div class="footer-nav">
         <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span>🪙</span><span>Earn</span></div>
+        <div onclick="showPage('leaderboard')" id="btn-leaderboard" class="nav-btn"><span>🏆</span><span>Bord</span></div>
         <div onclick="showPage('tasks')" id="btn-tasks" class="nav-btn"><span>📋</span><span>Tasks</span></div>
         <div onclick="showPage('boost')" id="btn-boost" class="nav-btn"><span>🚀</span><span>Boost</span></div>
         <div onclick="showPage('friends')" id="btn-friends" class="nav-btn"><span>👥</span><span>Friends</span></div>
     </div>
 
     <script>
-        // প্রাথমিক ভ্যালু সেটআপ
         let score = parseInt(localStorage.getItem('liteScore')) || 0;
         let tapLevel = parseInt(localStorage.getItem('tapLevel')) || 1;
         let limitLevel = parseInt(localStorage.getItem('limitLevel')) || 1;
@@ -121,7 +151,6 @@
         let boostLeft = localStorage.getItem('liteBoost') === null ? 3 : parseInt(localStorage.getItem('liteBoost'));
         let energy = localStorage.getItem('liteEnergy') === null ? 1000 : parseInt(localStorage.getItem('liteEnergy'));
 
-        // ইউজার আইডি
         let userId = localStorage.getItem('liteUserId');
         if (!userId) {
             userId = 'user_' + Math.floor(Math.random() * 900000 + 100000);
@@ -131,6 +160,7 @@
         function updateUI() {
             let maxEnergy = 1000 + ((limitLevel - 1) * 500);
             document.getElementById('score').innerText = score.toLocaleString();
+            document.getElementById('user-rank-score').innerText = score.toLocaleString();
             document.getElementById('energy-val').innerText = Math.floor(energy);
             document.getElementById('energy-max-text').innerText = maxEnergy;
             document.getElementById('energy-bar').style.width = (energy / maxEnergy) * 100 + "%";
@@ -224,17 +254,15 @@
 
         function doTask(url, reward) { window.open(url, '_blank'); score += reward; updateUI(); }
         
-        // রেফারেল সিস্টেম (অটো-কয়েন বন্ধ)
         function shareInvite() {
             const botUsername = "LiteCoin_Official_Bot"; 
             const referLink = `https://t.me/${botUsername}?start=ref_${userId}`;
             const shareText = "🪙 Lite Coin-এ জয়েন করো আর লুটে নাও ৫০,০০০ কয়েন বোনাস! 🚀";
             window.open(`https://t.me/share/url?url=${encodeURIComponent(referLink)}&text=${encodeURIComponent(shareText)}`, '_blank');
-            alert("লিঙ্ক তৈরি হয়েছে! বন্ধু জয়েন করলেই আপনি বোনাস পাবেন।");
         }
 
         updateUI();
     </script>
 </body>
-                </html>
-                                                                                                                        
+                                                                                                                    </html>
+    
