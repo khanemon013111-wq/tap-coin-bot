@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - The Perfect Edition</title>
+    <title>Lite Coin - Official App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -11,11 +11,9 @@
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 170px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
         
-        /* Floating Spin */
         .floating-spin-btn { position: fixed; left: 10px; top: 40%; width: 55px; height: 55px; background: linear-gradient(145deg, #fbbf24, #d97706); border-radius: 50%; border: 3px solid #f59e0b; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; cursor: pointer; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        /* Pop Number */
         .pop-number { position: absolute; font-size: 28px; font-weight: 900; color: white; pointer-events: none; animation: popUp 0.8s ease-out forwards; z-index: 9999; }
         @keyframes popUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
 
@@ -64,7 +62,7 @@
             <div class="progress-container"><div id="league-progress-fill" class="progress-fill"></div></div>
             <div class="flex justify-between mt-3 text-[10px] font-bold"><span id="prog-current-score">0</span><span id="prog-next-target" class="text-yellow-500">Next: 25,000</span></div>
         </div>
-        <div class="space-y-2">
+        <div class="space-y-2" id="league-list-container">
             <div id="l-tier-1" class="league-item">🥉 Bronze <span class="text-[9px]">0+</span></div>
             <div id="l-tier-2" class="league-item">🥈 Silver <span class="text-[9px]">25,000+</span></div>
             <div id="l-tier-3" class="league-item">🥇 Gold <span class="text-[9px]">100,000+</span></div>
@@ -88,29 +86,47 @@
                 <button id="btn-turbo" onclick="useTurbo()" class="bg-red-600 text-[10px] px-4 py-1 mt-2 rounded-lg uppercase font-bold">Use</button>
             </div>
         </div>
-        <div class="glass-card"><div><h4 class="font-bold text-sm">Multitap</h4><p id="tap-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-tap" onclick="upgrade('tap')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold">100</button></div>
-        <div class="glass-card"><div><h4 class="font-bold text-sm">Energy Limit</h4><p id="lim-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-lim" onclick="upgrade('limit')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold">200</button></div>
-        <div class="glass-card"><div><h4 class="font-bold text-sm">Recharge Speed</h4><p id="rech-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-rech" onclick="upgrade('rech')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold">500</button></div>
+        <div class="glass-card"><div><h4 class="font-bold text-sm">Multitap</h4><p id="tap-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-tap" onclick="upgrade('tap')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold uppercase">100</button></div>
+        <div class="glass-card"><div><h4 class="font-bold text-sm">Energy Limit</h4><p id="lim-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-lim" onclick="upgrade('limit')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold uppercase">200</button></div>
+        <div class="glass-card"><div><h4 class="font-bold text-sm">Recharge Speed</h4><p id="rech-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-rech" onclick="upgrade('rech')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold uppercase">500</button></div>
         <div class="glass-card border-purple-500/30"><div><h4 class="font-bold text-sm">Tap Bot 🤖</h4><p id="bot-status" class="text-[10px] text-purple-400">Not Owned</p></div><button id="btn-bot" onclick="buyBot()" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase">50,000</button></div>
     </div>
 
     <div id="tasks-page" class="page hidden px-6 pt-10">
         <h2 class="text-3xl font-black text-yellow-500 mb-8 text-center uppercase">Tasks</h2>
-        <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-[10px] text-yellow-500">+10,000</p></div><button onclick="doTask(10000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
-        <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Subscribe YT</h4><p class="text-[10px] text-yellow-500">+20,000</p></div><button onclick="doTask(20000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
+        <div class="glass-card">
+            <div class="text-left"><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-[10px] text-yellow-500">+10,000</p></div>
+            <button onclick="doTask(10000, this, 'https://t.me/yourchannel')" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Join</button>
+        </div>
+        <div class="glass-card">
+            <div class="text-left"><h4 class="font-bold text-sm">Subscribe YT</h4><p class="text-[10px] text-yellow-500">+20,000</p></div>
+            <button onclick="doTask(20000, this, 'https://youtube.com/yourchannel')" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Join</button>
+        </div>
     </div>
 
     <div id="friends-page" class="page hidden px-6 pt-10 text-center">
         <h2 class="text-3xl font-black text-yellow-500 mb-8 uppercase">Friends</h2>
-        <div class="bg-white/5 p-10 rounded-3xl border border-white/10 mb-8"><h1 class="text-3xl font-black text-yellow-500">🎁 5,000</h1><p class="text-xs text-gray-400 mt-2 font-bold uppercase">Invite Bonus</p></div>
-        <button onclick="alert('Link Copied!')" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Invite Friends</button>
+        <div class="bg-white/5 p-10 rounded-3xl border border-white/10 mb-8">
+            <h1 class="text-3xl font-black text-yellow-500">🎁 5,000</h1>
+            <p class="text-xs text-gray-400 mt-2 font-bold uppercase">Invite Bonus</p>
+        </div>
+        <button onclick="copyInviteLink(this)" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase active:scale-95 transition-all shadow-lg shadow-yellow-500/20">Invite Friends</button>
     </div>
 
     <div id="leaderboard-page" class="page hidden px-6 pt-10 text-center"><h2 class="text-3xl font-black text-yellow-500 mb-4 uppercase">Board</h2><div id="leaderboard-list"></div></div>
+
     <div id="spin-page" class="page hidden px-6 pt-12 text-center">
         <h2 class="text-3xl font-black text-yellow-500 mb-6 uppercase">Spin & Win</h2>
-        <div class="relative mx-auto w-64 h-64 mb-8"><div class="pointer"></div><div id="wheel" class="mx-auto"><div class="wheel-segment" style="transform: rotate(0deg); background: #fbbf24;">1k</div><div class="wheel-segment" style="transform: rotate(90deg); background: #f59e0b;">5k</div><div class="wheel-segment" style="transform: rotate(180deg); background: #fbbf24;">10k</div><div class="wheel-segment" style="transform: rotate(270deg); background: #f59e0b;">50k</div></div></div>
-        <button onclick="startSpin()" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Spin Now</button>
+        <div class="relative mx-auto w-64 h-64 mb-8">
+            <div class="pointer"></div>
+            <div id="wheel" class="mx-auto">
+                <div class="wheel-segment" style="transform: rotate(0deg); background: #fbbf24;">1k</div>
+                <div class="wheel-segment" style="transform: rotate(90deg); background: #f59e0b;">5k</div>
+                <div class="wheel-segment" style="transform: rotate(180deg); background: #fbbf24;">10k</div>
+                <div class="wheel-segment" style="transform: rotate(270deg); background: #f59e0b;">50k</div>
+            </div>
+        </div>
+        <button id="spin-btn" onclick="startSpin()" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase active:scale-95 transition-all">Spin Now</button>
     </div>
 
     <div class="footer-nav">
@@ -133,6 +149,7 @@
         let refillCount = (localStorage.getItem('L_Date') === today) ? (parseInt(localStorage.getItem('L_Refill')) || 0) : 0;
         let turboCount = (localStorage.getItem('L_Date') === today) ? (parseInt(localStorage.getItem('L_Turbo')) || 0) : 0;
         let turboActive = false;
+        let isSpinning = false;
 
         function updateUI() {
             let maxE = 1000 + ((limL - 1) * 500);
@@ -141,34 +158,43 @@
             document.getElementById('energy-max').innerText = "/ " + maxE;
             document.getElementById('energy-bar').style.width = (energy / maxE) * 100 + "%";
 
-            // Limits Display
             document.getElementById('refill-limit').innerText = (3 - refillCount) + "/3 left";
             document.getElementById('turbo-limit').innerText = (3 - turboCount) + "/3 left";
             document.getElementById('btn-refill').disabled = refillCount >= 3;
             document.getElementById('btn-turbo').disabled = turboCount >= 3;
 
-            // Leagues logic
+            // League logic
             let lName = "Bronze", target = 25000, start = 0, tier = 1;
             if(score >= 500000) { lName = "Diamond"; target = 1000000; start = 500000; tier = 4; }
             else if(score >= 100000) { lName = "Gold"; target = 500000; start = 100000; tier = 3; }
             else if(score >= 25000) { lName = "Silver"; target = 100000; start = 25000; tier = 2; }
+            
             document.getElementById('display-league').innerText = lName + " League ❯";
             document.getElementById('prog-league-name').innerText = lName + " League";
             document.getElementById('prog-current-score').innerText = score.toLocaleString();
             document.getElementById('prog-next-target').innerText = "Next: " + target.toLocaleString();
             document.getElementById('league-progress-fill').style.width = Math.min(100, ((score - start) / (target - start)) * 100) + "%";
+            
             for(let i=1; i<=4; i++) {
                 let el = document.getElementById('l-tier-'+i);
                 if(i === tier) el.classList.add('active'); else el.classList.remove('active');
             }
 
-            // Upgrades
             setBtn('btn-tap', 'tap-s', tapL, 100);
             setBtn('btn-lim', 'lim-s', limL, 200);
             setBtn('btn-rech', 'rech-s', rechL, 500);
             if(hasBot) { document.getElementById('bot-status').innerText = "Active 🤖"; document.getElementById('btn-bot').innerText = "OWNED"; document.getElementById('btn-bot').disabled = true; }
 
-            localStorage.setItem('L_Score', score); localStorage.setItem('L_Eng', energy); localStorage.setItem('L_Bot', hasBot); localStorage.setItem('L_Refill', refillCount); localStorage.setItem('L_Turbo', turboCount); localStorage.setItem('L_Date', today); localStorage.setItem('L_Tap', tapL); localStorage.setItem('L_Lim', limL); localStorage.setItem('L_Rech', rechL);
+            // Save Data Locally (Firebase Integration point)
+            localStorage.setItem('L_Score', score); 
+            localStorage.setItem('L_Eng', energy); 
+            localStorage.setItem('L_Bot', hasBot); 
+            localStorage.setItem('L_Refill', refillCount); 
+            localStorage.setItem('L_Turbo', turboCount); 
+            localStorage.setItem('L_Date', today); 
+            localStorage.setItem('L_Tap', tapL); 
+            localStorage.setItem('L_Lim', limL); 
+            localStorage.setItem('L_Rech', rechL);
         }
 
         function setBtn(id, sId, lvl, base) {
@@ -180,6 +206,7 @@
         function handleTap(e) {
             if (e.type === 'touchstart') e.preventDefault();
             let p = turboActive ? tapL * 5 : tapL;
+            let maxE = 1000 + ((limL - 1) * 500);
             if (energy >= tapL || turboActive) {
                 score += p; if(!turboActive) energy -= tapL;
                 const snd = document.getElementById('tap-sound'); snd.currentTime=0; snd.play().catch(()=>{});
@@ -192,13 +219,36 @@
             }
         }
 
-        function useFullEnergy() { if(refillCount < 3) { energy = 1000 + ((limL - 1) * 500); refillCount++; updateUI(); showPage('game'); } }
-        function useTurbo() { if(turboCount < 3) { turboActive = true; turboCount++; updateUI(); showPage('game'); setTimeout(() => { turboActive = false; updateUI(); }, 10000); } }
-        
-        function upgrade(type) {
-            let lvl = (type==='tap')?tapL : (type==='limit'?limL : rechL);
-            let p = (type==='tap'?100 : (type==='limit'?200 : 500)) * Math.pow(2, lvl-1);
-            if(score >= p) { score -= p; if(type==='tap') tapL++; else if(type==='limit') limL++; else rechL++; updateUI(); }
+        function copyInviteLink(btn) {
+            const inviteURL = "https://t.me/your_bot_link?start=" + Math.floor(Math.random()*100000);
+            navigator.clipboard.writeText(inviteURL).then(() => {
+                btn.innerText = "LINK COPIED! ✅";
+                setTimeout(() => { btn.innerText = "Invite Friends"; }, 2000);
+            }).catch(() => {
+                alert("Invite Link: " + inviteURL);
+            });
+        }
+
+        function startSpin() {
+            if (isSpinning) return;
+            isSpinning = true;
+            const wheel = document.getElementById('wheel');
+            const randomDeg = Math.floor(Math.random() * 3600) + 360; 
+            wheel.style.transform = `rotate(${randomDeg}deg)`;
+            
+            setTimeout(() => {
+                isSpinning = false;
+                const actualDeg = randomDeg % 360;
+                let win = 1000;
+                if(actualDeg >= 0 && actualDeg < 90) win = 50000;
+                else if(actualDeg >= 90 && actualDeg < 180) win = 10000;
+                else if(actualDeg >= 180 && actualDeg < 270) win = 5000;
+                else win = 1000;
+                
+                score += win;
+                alert(`Congratulations! You won ${win.toLocaleString()} Coins!`);
+                updateUI();
+            }, 4000);
         }
 
         function showPage(p) {
@@ -210,22 +260,20 @@
             if(document.getElementById('btn-'+p)) document.getElementById('btn-'+p).classList.add('active');
             if(p === 'leaderboard') {
                 const list = document.getElementById('leaderboard-list'); list.innerHTML = '';
-                for (let i = 1; i <= 20; i++) list.innerHTML += `<div class="glass-card py-3"><span>#${i} Miner_${i}</span><span class="font-bold text-yellow-500">${(100000 - i*2000).toLocaleString()}</span></div>`;
+                for (let i = 1; i <= 10; i++) list.innerHTML += `<div class="glass-card py-3"><span>#${i} Player_${100+i}</span><span class="font-bold text-yellow-500">${(100000 - i*5000).toLocaleString()}</span></div>`;
             }
         }
 
-        function buyBot() { if(score >= 50000 && !hasBot) { score -= 50000; hasBot = true; updateUI(); } }
-        function startSpin() { let deg = Math.floor(Math.random()*360)+3600; document.getElementById('wheel').style.transform = `rotate(${deg}deg)`; setTimeout(()=>alert("Spin Success!"), 4000); }
-        function doTask(amt, btn) { score += amt; btn.innerText = "DONE ✅"; btn.disabled = true; updateUI(); }
+        function doTask(amt, btn, url) {
+            window.open(url, '_blank');
+            btn.innerText = "Verifying...";
+            setTimeout(() => {
+                score += amt;
+                btn.innerText = "DONE ✅";
+                btn.disabled = true;
+                btn.classList.replace('bg-yellow-500', 'bg-green-600');
+                updateUI();
+            }, 3000);
+        }
 
-        setInterval(() => {
-            let maxE = 1000 + ((limL - 1) * 500);
-            if (energy < maxE) energy = Math.min(maxE, energy + (1 + rechL));
-            if (hasBot) score += 1;
-            updateUI();
-        }, 1000);
-        updateUI();
-    </script>
-</body>
-</html>
-
+        function useFullEnergy() { if(refillCount < 3) { let maxE = 1000 + ((limL - 1) * 500); energy = maxE; refillCount++; update
