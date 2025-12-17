@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Pro Edition Full</title>
+    <title>Lite Coin - Official Fresh Start</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
         body { background: radial-gradient(circle at center, #1e293b 0%, #020617 100%); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; touch-action: none; }
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 110px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
-        
-        /* গোল্ডেন শাইনি কয়েন */
         .coin-wrapper { perspective: 1000px; margin: 30px auto; display: flex; justify-content: center; }
         #coin {
             width: 260px; height: 260px; border-radius: 50%;
@@ -22,15 +20,9 @@
             position: relative; cursor: pointer; transition: transform 0.1s;
         }
         .coin-logo { width: 100px; height: 100px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
-
-        /* ট্যাপ ইফেক্ট */
         .tap-effect { position: absolute; color: #fbbf24; font-size: 38px; font-weight: 900; pointer-events: none; animation: floatUp 0.8s ease-out forwards; z-index: 100; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-160px) scale(1.5); opacity: 0; } }
-
-        /* গ্লাস কার্ড */
         .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* ফুটার মেনু */
         .footer-nav { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); position: fixed; bottom: 0; left: 0; z-index: 1000; display: flex; justify-content: space-around; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 11px; font-weight: bold; cursor: pointer; }
         .nav-btn.active { color: #fbbf24; }
@@ -38,6 +30,15 @@
     </style>
 </head>
 <body>
+
+    <script>
+        // দাদু, এই লাইনটি আপনার সব পুরনো জমানো ডাটা মুছে দেবে
+        // একবার নতুন করে শুরু হয়ে গেলে আপনি চাইলে এই লাইনটি মুছে দিতে পারেন
+        if(!localStorage.getItem('isResetDone')) {
+            localStorage.clear();
+            localStorage.setItem('isResetDone', 'true');
+        }
+    </script>
 
     <div id="game-page" class="page items-center">
         <div class="mt-12 text-center">
@@ -62,13 +63,11 @@
 
     <div id="boost-page" class="page hidden px-6 pt-12">
         <h2 class="text-3xl font-black mb-6 text-center text-yellow-500">Boosters</h2>
-        
         <p class="text-gray-400 text-[10px] font-bold mb-2 uppercase tracking-widest">Free Daily Boost</p>
         <div class="glass-card mb-6">
             <div><h4 class="font-bold">Full Energy</h4><p class="text-xs text-yellow-500" id="boost-count">3/3 left</p></div>
             <button onclick="useFullEnergy()" class="bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-2 rounded-xl text-xs font-bold">REFILL</button>
         </div>
-
         <p class="text-gray-400 text-[10px] font-bold mb-2 uppercase tracking-widest">Upgrades</p>
         <div class="glass-card">
             <div><h4 class="font-bold">Multitap</h4><p class="text-xs text-yellow-500" id="tap-status">Level 1</p></div>
@@ -93,10 +92,6 @@
         <div class="glass-card">
             <div><h4 class="font-bold">Join Telegram</h4><p class="text-xs text-yellow-500">+50,000</p></div>
             <button onclick="doTask('https://t.me/', 50000)" class="bg-yellow-500 text-black px-4 py-2 rounded-xl font-bold text-xs">JOIN</button>
-        </div>
-        <div class="glass-card">
-            <div><h4 class="font-bold">YouTube Sub</h4><p class="text-xs text-yellow-500">+30,000</p></div>
-            <button onclick="doTask('https://youtube.com/', 30000)" class="bg-yellow-500 text-black px-4 py-2 rounded-xl font-bold text-xs">JOIN</button>
         </div>
     </div>
 
@@ -200,7 +195,7 @@
         }
 
         function buyBot() {
-            if (score >= 500000) { // দাদু এখানে ৫ লাখ করে দিয়েছি
+            if (score >= 500000) {
                 score -= 500000; hasBot = true; updateUI();
             }
         }
@@ -224,5 +219,5 @@
         updateUI();
     </script>
 </body>
-</html>
-
+    </html>
+    
