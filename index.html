@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Leaderboard Edition</title>
+    <title>Lite Coin - Reward Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
         body { background: radial-gradient(circle at center, #1e293b 0%, #020617 100%); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; touch-action: none; }
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 110px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
-        .coin-wrapper { perspective: 1000px; margin: 30px auto; display: flex; justify-content: center; }
+        .coin-wrapper { perspective: 1000px; margin: 20px auto; display: flex; justify-content: center; }
         #coin {
-            width: 260px; height: 260px; border-radius: 50%;
+            width: 240px; height: 240px; border-radius: 50%;
             background: linear-gradient(145deg, #fbbf24, #d97706);
-            border: 10px solid #f59e0b;
-            box-shadow: 0 0 50px rgba(251, 191, 36, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.6);
+            border: 8px solid #f59e0b;
+            box-shadow: 0 0 40px rgba(251, 191, 36, 0.4), inset 0 0 25px rgba(255, 255, 255, 0.6);
             display: flex; align-items: center; justify-content: center;
             position: relative; cursor: pointer; transition: transform 0.1s;
         }
-        .coin-logo { width: 100px; height: 100px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
+        .coin-logo { width: 90px; height: 90px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
         .tap-effect { position: absolute; color: #fbbf24; font-size: 38px; font-weight: 900; pointer-events: none; animation: floatUp 0.8s ease-out forwards; z-index: 100; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-160px) scale(1.5); opacity: 0; } }
         .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
@@ -27,20 +27,28 @@
         .nav-btn { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 11px; font-weight: bold; cursor: pointer; }
         .nav-btn.active { color: #fbbf24; }
         .nav-btn span:first-child { font-size: 22px; }
+        .league-badge { background: rgba(251, 191, 36, 0.2); color: #fbbf24; padding: 4px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid rgba(251, 191, 36, 0.3); }
         
-        /* Leaderboard Specific */
-        .rank-badge { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 10px; }
-        .rank-1 { background: #fbbf24; color: black; }
-        .rank-2 { background: #cbd5e1; color: black; }
-        .rank-3 { background: #cd7f32; color: white; }
+        /* Popup Styling */
+        #reward-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; width: 80%; max-width: 300px; text-align: center; display: none; }
     </style>
 </head>
 <body>
 
+    <div id="reward-popup" class="glass-card flex-col py-10 border-yellow-500 border-2">
+        <h2 class="text-2xl font-black text-yellow-500 mb-2">CONGRATS! 🎉</h2>
+        <p class="text-sm mb-4" id="reward-msg">You reached Silver League!</p>
+        <div class="text-4xl font-black mb-6" id="reward-amount">+5,000</div>
+        <button onclick="closePopup()" class="bg-yellow-500 text-black px-8 py-2 rounded-full font-bold">Awesome!</button>
+    </div>
+
     <div id="game-page" class="page items-center">
-        <div class="mt-12 text-center">
+        <div class="mt-10 text-center">
+            <div class="flex justify-center mb-2">
+                <span class="league-badge" id="current-league">Bronze League</span>
+            </div>
             <h1 class="text-6xl font-black text-white" id="score">0</h1>
-            <p class="text-yellow-500 tracking-[5px] font-bold mt-2 uppercase">Lite League</p>
+            <p class="text-gray-400 text-xs mt-2 uppercase tracking-[3px]">Next Rank at: <span id="next-rank-val">25,000</span></p>
         </div>
         <div class="coin-wrapper">
             <div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)">
@@ -92,44 +100,19 @@
 
     <div id="leaderboard-page" class="page hidden px-6 pt-12">
         <h2 class="text-3xl font-black mb-6 text-center text-yellow-500">Leaderboard</h2>
-        <div id="leaderboard-list">
-            <div class="glass-card border-yellow-500/50" style="border-width: 2px;">
-                <div class="flex items-center">
-                    <div class="rank-badge rank-1">1</div>
-                    <div><h4 class="font-bold">You (Lite Master)</h4><p class="text-xs text-gray-400">Keep tapping!</p></div>
-                </div>
-                <div class="text-yellow-500 font-bold" id="user-rank-score">0</div>
+        <div class="glass-card border-yellow-500/50" style="border-width: 2px;">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-yellow-500 text-black flex items-center justify-center font-bold mr-3">1</div>
+                <div><h4 class="font-bold text-sm">You</h4><p class="text-[10px] text-gray-400 uppercase" id="user-league-text">Bronze League</p></div>
             </div>
-            
-            <div class="glass-card opacity-70">
-                <div class="flex items-center">
-                    <div class="rank-badge rank-2">2</div>
-                    <div><h4 class="font-bold">CryptoKing</h4></div>
-                </div>
-                <div class="text-gray-300 font-bold">850,000</div>
-            </div>
-            <div class="glass-card opacity-70">
-                <div class="flex items-center">
-                    <div class="rank-badge rank-3">3</div>
-                    <div><h4 class="font-bold">Alex_Tapper</h4></div>
-                </div>
-                <div class="text-gray-300 font-bold">620,000</div>
-            </div>
-            <div class="glass-card opacity-60">
-                <div class="flex items-center">
-                    <div class="rank-badge bg-gray-700 text-white ml-1">4</div>
-                    <div class="ml-2"><h4 class="font-bold">Lite_Lover</h4></div>
-                </div>
-                <div class="text-gray-300 font-bold">450,000</div>
-            </div>
+            <div class="text-yellow-500 font-bold" id="user-rank-score">0</div>
         </div>
+        <div class="glass-card opacity-60"><div class="flex items-center"><div class="w-8 h-8 rounded-full bg-gray-300 text-black flex items-center justify-center font-bold mr-3">2</div><h4 class="font-bold text-sm">CryptoKing</h4></div><div class="text-gray-300 font-bold">850,000</div></div>
     </div>
 
     <div id="friends-page" class="page hidden px-6 pt-12 text-center">
         <h2 class="text-3xl font-black mb-8 text-yellow-500">Friends</h2>
-        <div class="glass-card flex-col py-10">
-            <h3 class="text-6xl font-black text-white" id="refer-count">0</h3>
-        </div>
+        <div class="glass-card flex-col py-10"><h3 class="text-6xl font-black text-white" id="refer-count">0</h3></div>
         <button onclick="shareInvite()" class="bg-yellow-500 text-black w-full py-5 rounded-2xl font-black text-xl mt-4">Invite Friend</button>
     </div>
 
@@ -143,6 +126,7 @@
 
     <script>
         let score = parseInt(localStorage.getItem('liteScore')) || 0;
+        let lastLeague = localStorage.getItem('liteLastLeague') || "Bronze League";
         let tapLevel = parseInt(localStorage.getItem('tapLevel')) || 1;
         let limitLevel = parseInt(localStorage.getItem('limitLevel')) || 1;
         let rechargeLevel = parseInt(localStorage.getItem('rechargeLevel')) || 1;
@@ -150,17 +134,51 @@
         let hasBot = localStorage.getItem('liteBot') === 'true';
         let boostLeft = localStorage.getItem('liteBoost') === null ? 3 : parseInt(localStorage.getItem('liteBoost'));
         let energy = localStorage.getItem('liteEnergy') === null ? 1000 : parseInt(localStorage.getItem('liteEnergy'));
+        let userId = localStorage.getItem('liteUserId') || 'user_' + Math.floor(Math.random() * 900000 + 100000);
+        localStorage.setItem('liteUserId', userId);
 
-        let userId = localStorage.getItem('liteUserId');
-        if (!userId) {
-            userId = 'user_' + Math.floor(Math.random() * 900000 + 100000);
-            localStorage.setItem('liteUserId', userId);
+        function getLeagueData() {
+            if (score < 25000) return { name: "Bronze League", next: 25000, reward: 0 };
+            if (score < 100000) return { name: "Silver League", next: 100000, reward: 5000 };
+            if (score < 500000) return { name: "Gold League", next: 500000, reward: 25000 };
+            if (score < 1000000) return { name: "Platinum League", next: 1000000, reward: 50000 };
+            return { name: "Diamond League", next: "MAX", reward: 100000 };
+        }
+
+        function checkLeagueUpgrade() {
+            let currentData = getLeagueData();
+            if (currentData.name !== lastLeague) {
+                // If it's an upgrade, give reward
+                if (currentData.reward > 0) {
+                    score += currentData.reward;
+                    showReward(currentData.name, currentData.reward);
+                }
+                lastLeague = currentData.name;
+                localStorage.setItem('liteLastLeague', lastLeague);
+                updateUI();
+            }
+        }
+
+        function showReward(name, amount) {
+            document.getElementById('reward-msg').innerText = "You reached " + name + "!";
+            document.getElementById('reward-amount').innerText = "+" + amount.toLocaleString();
+            document.getElementById('reward-popup').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('reward-popup').style.display = 'none';
         }
 
         function updateUI() {
             let maxEnergy = 1000 + ((limitLevel - 1) * 500);
+            let league = getLeagueData();
+            
             document.getElementById('score').innerText = score.toLocaleString();
             document.getElementById('user-rank-score').innerText = score.toLocaleString();
+            document.getElementById('current-league').innerText = league.name;
+            document.getElementById('user-league-text').innerText = league.name;
+            document.getElementById('next-rank-val').innerText = league.next === "MAX" ? "MAXED" : league.next.toLocaleString();
+            
             document.getElementById('energy-val').innerText = Math.floor(energy);
             document.getElementById('energy-max-text').innerText = maxEnergy;
             document.getElementById('energy-bar').style.width = (energy / maxEnergy) * 100 + "%";
@@ -212,6 +230,7 @@
                 const coin = document.getElementById('coin');
                 coin.style.transform = 'scale(0.92)';
                 setTimeout(() => coin.style.transform = 'scale(1)', 100);
+                
                 const x = (e.clientX || (e.touches && e.touches[0].clientX));
                 const y = (e.clientY || (e.touches && e.touches[0].clientY));
                 const effect = document.createElement('div');
@@ -219,6 +238,8 @@
                 effect.style.left = x + 'px'; effect.style.top = y + 'px';
                 document.body.appendChild(effect);
                 setTimeout(() => effect.remove(), 700);
+                
+                checkLeagueUpgrade();
                 updateUI();
             }
         }
@@ -248,11 +269,14 @@
         setInterval(() => {
             let maxEnergy = 1000 + ((limitLevel - 1) * 500);
             if (energy < maxEnergy) energy = Math.min(maxEnergy, energy + rechargeLevel);
-            if (hasBot) score += 1;
+            if (hasBot) {
+                score += 1;
+                checkLeagueUpgrade();
+            }
             updateUI();
         }, 2000);
 
-        function doTask(url, reward) { window.open(url, '_blank'); score += reward; updateUI(); }
+        function doTask(url, reward) { window.open(url, '_blank'); score += reward; checkLeagueUpgrade(); updateUI(); }
         
         function shareInvite() {
             const botUsername = "LiteCoin_Official_Bot"; 
@@ -264,5 +288,5 @@
         updateUI();
     </script>
 </body>
-                                                                                                                    </html>
-    
+</html>
+
