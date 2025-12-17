@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - The Perfect Edition</title>
+    <title>Lite Coin - Official Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -57,6 +57,21 @@
         </div>
     </div>
 
+    <div id="spin-page" class="page hidden px-6 pt-12 text-center">
+        <h2 class="text-3xl font-black text-yellow-500 mb-2 uppercase">Spin & Win</h2>
+        <p class="text-[10px] text-gray-400 mb-6 uppercase">Daily Limit: <span id="spin-left-ui" class="text-yellow-500 font-bold">5</span>/5 Left</p>
+        <div class="relative mx-auto w-64 h-64 mb-8">
+            <div class="pointer"></div>
+            <div id="wheel" class="mx-auto">
+                <div class="wheel-segment" style="transform: rotate(0deg); background: #fbbf24;">1k</div>
+                <div class="wheel-segment" style="transform: rotate(90deg); background: #f59e0b;">5k</div>
+                <div class="wheel-segment" style="transform: rotate(180deg); background: #fbbf24;">10k</div>
+                <div class="wheel-segment" style="transform: rotate(270deg); background: #f59e0b;">50k</div>
+            </div>
+        </div>
+        <button id="spin-btn" onclick="startSpin()" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Watch Ad to Spin</button>
+    </div>
+
     <div id="league-page" class="page hidden px-6 pt-8">
         <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-black text-yellow-500 uppercase">Leagues</h2><button onclick="showPage('game')" class="text-xs font-bold text-gray-500 bg-white/5 px-3 py-1 rounded-lg uppercase">Back</button></div>
         <div class="glass-card p-5 border-yellow-500/20 bg-yellow-500/5 mb-6 block text-center">
@@ -94,24 +109,9 @@
         <div class="glass-card border-purple-500/30"><div><h4 class="font-bold text-sm">Tap Bot 🤖</h4><p id="bot-status" class="text-[10px] text-purple-400">Not Owned</p></div><button id="btn-bot" onclick="buyBot()" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase">50,000</button></div>
     </div>
 
-    <div id="tasks-page" class="page hidden px-6 pt-10">
-        <h2 class="text-3xl font-black text-yellow-500 mb-8 text-center uppercase">Tasks</h2>
-        <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-[10px] text-yellow-500">+10,000</p></div><button onclick="doTask(10000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
-        <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Subscribe YT</h4><p class="text-[10px] text-yellow-500">+20,000</p></div><button onclick="doTask(20000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
-    </div>
-
-    <div id="friends-page" class="page hidden px-6 pt-10 text-center">
-        <h2 class="text-3xl font-black text-yellow-500 mb-8 uppercase">Friends</h2>
-        <div class="bg-white/5 p-10 rounded-3xl border border-white/10 mb-8"><h1 class="text-3xl font-black text-yellow-500">🎁 5,000</h1><p class="text-xs text-gray-400 mt-2 font-bold uppercase">Invite Bonus</p></div>
-        <button onclick="alert('Link Copied!')" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Invite Friends</button>
-    </div>
-
+    <div id="tasks-page" class="page hidden px-6 pt-10 text-center"><h2 class="text-3xl font-black text-yellow-500 mb-8 uppercase">Tasks</h2><div class="glass-card"><div><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-[10px] text-yellow-500">+10,000</p></div><button onclick="doTask(10000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div></div>
+    <div id="friends-page" class="page hidden px-6 pt-10 text-center"><h2 class="text-3xl font-black text-yellow-500 mb-8 uppercase">Friends</h2><div class="bg-white/5 p-10 rounded-3xl border border-white/10 mb-8"><h1 class="text-3xl font-black text-yellow-500">🎁 5,000</h1><p class="text-xs text-gray-400 mt-2 font-bold uppercase">Invite Bonus</p></div><button onclick="alert('Link Copied!')" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Invite Friends</button></div>
     <div id="leaderboard-page" class="page hidden px-6 pt-10 text-center"><h2 class="text-3xl font-black text-yellow-500 mb-4 uppercase">Board</h2><div id="leaderboard-list"></div></div>
-    <div id="spin-page" class="page hidden px-6 pt-12 text-center">
-        <h2 class="text-3xl font-black text-yellow-500 mb-6 uppercase">Spin & Win</h2>
-        <div class="relative mx-auto w-64 h-64 mb-8"><div class="pointer"></div><div id="wheel" class="mx-auto"><div class="wheel-segment" style="transform: rotate(0deg); background: #fbbf24;">1k</div><div class="wheel-segment" style="transform: rotate(90deg); background: #f59e0b;">5k</div><div class="wheel-segment" style="transform: rotate(180deg); background: #fbbf24;">10k</div><div class="wheel-segment" style="transform: rotate(270deg); background: #f59e0b;">50k</div></div></div>
-        <button onclick="startSpin()" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Spin Now</button>
-    </div>
 
     <div class="footer-nav">
         <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span>🪙</span><span>Earn</span></div>
@@ -129,7 +129,9 @@
         let energy = localStorage.getItem('L_Eng') === null ? 1000 : parseInt(localStorage.getItem('L_Eng'));
         let hasBot = localStorage.getItem('L_Bot') === 'true';
 
+        // Daily Limit Logic for Spin
         let today = new Date().toDateString();
+        let spinsDone = (localStorage.getItem('L_SpinDate') === today) ? (parseInt(localStorage.getItem('L_SpinCount')) || 0) : 0;
         let refillCount = (localStorage.getItem('L_Date') === today) ? (parseInt(localStorage.getItem('L_Refill')) || 0) : 0;
         let turboCount = (localStorage.getItem('L_Date') === today) ? (parseInt(localStorage.getItem('L_Turbo')) || 0) : 0;
         let turboActive = false;
@@ -140,8 +142,9 @@
             document.getElementById('energy-val').innerText = Math.floor(energy);
             document.getElementById('energy-max').innerText = "/ " + maxE;
             document.getElementById('energy-bar').style.width = (energy / maxE) * 100 + "%";
+            document.getElementById('spin-left-ui').innerText = (5 - spinsDone);
 
-            // Limits Display
+            // Refill & Turbo UI
             document.getElementById('refill-limit').innerText = (3 - refillCount) + "/3 left";
             document.getElementById('turbo-limit').innerText = (3 - turboCount) + "/3 left";
             document.getElementById('btn-refill').disabled = refillCount >= 3;
@@ -162,13 +165,17 @@
                 if(i === tier) el.classList.add('active'); else el.classList.remove('active');
             }
 
-            // Upgrades
+            // Upgrades UI
             setBtn('btn-tap', 'tap-s', tapL, 100);
             setBtn('btn-lim', 'lim-s', limL, 200);
             setBtn('btn-rech', 'rech-s', rechL, 500);
             if(hasBot) { document.getElementById('bot-status').innerText = "Active 🤖"; document.getElementById('btn-bot').innerText = "OWNED"; document.getElementById('btn-bot').disabled = true; }
 
-            localStorage.setItem('L_Score', score); localStorage.setItem('L_Eng', energy); localStorage.setItem('L_Bot', hasBot); localStorage.setItem('L_Refill', refillCount); localStorage.setItem('L_Turbo', turboCount); localStorage.setItem('L_Date', today); localStorage.setItem('L_Tap', tapL); localStorage.setItem('L_Lim', limL); localStorage.setItem('L_Rech', rechL);
+            // Save Data
+            localStorage.setItem('L_Score', score); localStorage.setItem('L_Eng', energy); localStorage.setItem('L_Bot', hasBot);
+            localStorage.setItem('L_SpinCount', spinsDone); localStorage.setItem('L_SpinDate', today);
+            localStorage.setItem('L_Refill', refillCount); localStorage.setItem('L_Turbo', turboCount); localStorage.setItem('L_Date', today);
+            localStorage.setItem('L_Tap', tapL); localStorage.setItem('L_Lim', limL); localStorage.setItem('L_Rech', rechL);
         }
 
         function setBtn(id, sId, lvl, base) {
@@ -192,9 +199,38 @@
             }
         }
 
+        // New Spin Logic with Ad Reward
+        function startSpin() {
+            if (spinsDone >= 5) { alert("Daily Limit Reached! 🛑"); return; }
+
+            // Simulating Ad
+            let adNotice = confirm("WATCH AD TO SPIN? 📺\n(Rewarding Ads will load)");
+            if(adNotice) {
+                document.getElementById('spin-btn').disabled = true;
+                document.getElementById('spin-btn').innerText = "Ad Playing...";
+                
+                // Wait for Ad (3 seconds)
+                setTimeout(() => {
+                    document.getElementById('spin-btn').innerText = "Spinning...";
+                    let deg = Math.floor(Math.random() * 360) + 3600;
+                    document.getElementById('wheel').style.transform = `rotate(${deg}deg)`;
+                    
+                    setTimeout(() => {
+                        let actualDeg = deg % 360;
+                        let winAmt = (actualDeg < 90) ? 1000 : (actualDeg < 180) ? 5000 : (actualDeg < 270) ? 10000 : 50000;
+                        score += winAmt;
+                        spinsDone++;
+                        updateUI();
+                        alert(`Congrats! You won ${winAmt.toLocaleString()} Coins! 🎉`);
+                        document.getElementById('spin-btn').disabled = false;
+                        document.getElementById('spin-btn').innerText = "Watch Ad to Spin";
+                    }, 4000);
+                }, 3000);
+            }
+        }
+
         function useFullEnergy() { if(refillCount < 3) { energy = 1000 + ((limL - 1) * 500); refillCount++; updateUI(); showPage('game'); } }
         function useTurbo() { if(turboCount < 3) { turboActive = true; turboCount++; updateUI(); showPage('game'); setTimeout(() => { turboActive = false; updateUI(); }, 10000); } }
-        
         function upgrade(type) {
             let lvl = (type==='tap')?tapL : (type==='limit'?limL : rechL);
             let p = (type==='tap'?100 : (type==='limit'?200 : 500)) * Math.pow(2, lvl-1);
@@ -210,22 +246,8 @@
             if(document.getElementById('btn-'+p)) document.getElementById('btn-'+p).classList.add('active');
             if(p === 'leaderboard') {
                 const list = document.getElementById('leaderboard-list'); list.innerHTML = '';
-                for (let i = 1; i <= 20; i++) list.innerHTML += `<div class="glass-card py-3"><span>#${i} Miner_${i}</span><span class="font-bold text-yellow-500">${(100000 - i*2000).toLocaleString()}</span></div>`;
+                for (let i = 1; i <= 20; i++) list.innerHTML += `<div class="glass-card py-3"><span>#${i} Player_${100+i}</span><span class="font-bold text-yellow-500">${(100000 - i*3000).toLocaleString()}</span></div>`;
             }
         }
 
-        function buyBot() { if(score >= 50000 && !hasBot) { score -= 50000; hasBot = true; updateUI(); } }
-        function startSpin() { let deg = Math.floor(Math.random()*360)+3600; document.getElementById('wheel').style.transform = `rotate(${deg}deg)`; setTimeout(()=>alert("Spin Success!"), 4000); }
-        function doTask(amt, btn) { score += amt; btn.innerText = "DONE ✅"; btn.disabled = true; updateUI(); }
-
-        setInterval(() => {
-            let maxE = 1000 + ((limL - 1) * 500);
-            if (energy < maxE) energy = Math.min(maxE, energy + (1 + rechL));
-            if (hasBot) score += 1;
-            updateUI();
-        }, 1000);
-        updateUI();
-    </script>
-</body>
-            </html>
-                                                                                                          
+        function buy
