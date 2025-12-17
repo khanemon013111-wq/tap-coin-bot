@@ -3,35 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Balanced Edition</title>
+    <title>Lite Coin - Pro Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
         body { background: radial-gradient(circle at center, #1e293b 0%, #020617 100%); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; touch-action: none; }
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 110px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
-        
-        /* প্রিমিয়াম গোল্ডেন শাইনি কয়েন */
         .coin-wrapper { perspective: 1000px; margin: 30px auto; display: flex; justify-content: center; }
         #coin {
-            width: 260px; height: 260px; border-radius: 50%;
+            width: 250px; height: 250px; border-radius: 50%;
             background: linear-gradient(145deg, #fbbf24, #d97706);
-            border: 10px solid #f59e0b;
-            box-shadow: 0 0 50px rgba(251, 191, 36, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.6);
+            border: 8px solid #f59e0b;
+            box-shadow: 0 0 40px rgba(251, 191, 36, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.5);
             display: flex; align-items: center; justify-content: center;
             position: relative; cursor: pointer; transition: transform 0.1s;
         }
-        .coin-logo { width: 100px; height: 100px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
-
-        .tap-effect { position: absolute; color: #fbbf24; font-size: 38px; font-weight: 900; pointer-events: none; animation: floatUp 0.8s ease-out forwards; z-index: 100; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-160px) scale(1.5); opacity: 0; } }
-
+        .coin-logo { width: 90px; height: 90px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
+        .tap-effect { position: absolute; color: #fbbf24; font-size: 35px; font-weight: 900; pointer-events: none; animation: floatUp 0.8s ease-out forwards; z-index: 100; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-150px) scale(1.4); opacity: 0; } }
         .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        
         .footer-nav { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); position: fixed; bottom: 0; left: 0; z-index: 1000; display: flex; justify-content: space-around; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 11px; font-weight: bold; cursor: pointer; }
         .nav-btn.active { color: #fbbf24; }
-        .nav-btn span:first-child { font-size: 24px; }
     </style>
 </head>
 <body>
@@ -39,19 +33,17 @@
     <div id="game-page" class="page items-center">
         <div class="mt-12 text-center">
             <h1 class="text-6xl font-black text-white" id="score">0</h1>
-            <p class="text-yellow-500 tracking-[5px] font-bold mt-2 uppercase">Lite League</p>
+            <p class="text-yellow-500 tracking-[4px] font-bold mt-2 uppercase">Lite League</p>
         </div>
-        
         <div class="coin-wrapper">
             <div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)">
                 <div class="coin-logo"></div>
             </div>
         </div>
-
         <div class="w-full px-10">
             <div class="flex justify-between font-black text-yellow-400 mb-2">
-                <span class="text-xl">⚡ <span id="energy-val">1000</span></span>
-                <span id="energy-max-text" class="text-gray-400">1000</span>
+                <span>⚡ <span id="energy-val">1000</span></span>
+                <span id="energy-max-text">1000</span>
             </div>
             <div class="h-4 w-full bg-gray-900 rounded-full border border-white/10 overflow-hidden">
                 <div id="energy-bar" class="h-full bg-gradient-to-r from-yellow-400 to-orange-600 transition-all duration-200" style="width: 100%;"></div>
@@ -59,36 +51,41 @@
         </div>
     </div>
 
-    <div id="tasks-page" class="page hidden px-6 pt-12">
-        <h2 class="text-4xl font-black mb-10 text-center text-yellow-500">Tasks</h2>
+    <div id="boost-page" class="page hidden px-6 pt-12">
+        <h2 class="text-3xl font-black mb-6 text-center text-yellow-500">Boosters</h2>
+        
+        <p class="text-gray-400 text-xs font-bold mb-3 uppercase tracking-widest">Free Daily Boosters</p>
+        <div class="glass-card mb-8">
+            <div><h4 class="font-bold">Full Energy</h4><p class="text-xs text-yellow-500" id="boost-count">3/3 left</p></div>
+            <button onclick="useFullEnergy()" id="boost-btn" class="bg-gradient-to-r from-blue-500 to-cyan-500 px-4 py-2 rounded-xl text-xs font-bold">REFILL</button>
+        </div>
+
+        <p class="text-gray-400 text-xs font-bold mb-3 uppercase tracking-widest">Paid Upgrades</p>
         <div class="glass-card">
-            <div><h4 class="font-bold">Join Telegram</h4><p class="text-xs text-yellow-500">+50,000</p></div>
-            <button onclick="doTask('https://t.me/', 50000)" class="bg-yellow-500 text-black px-5 py-2 rounded-xl font-bold text-xs">Join</button>
+            <div><h4 class="font-bold">Multitap</h4><p class="text-xs text-yellow-500" id="tap-status">Level 1</p></div>
+            <button onclick="upgradeItem('tap')" id="tap-upgrade-btn" class="bg-yellow-600 px-4 py-2 rounded-xl text-xs font-bold">100</button>
+        </div>
+        
+        <div class="glass-card">
+            <div><h4 class="font-bold">Tap Bot 🤖</h4><p class="text-xs text-yellow-500" id="bot-status">Auto Tap (200k)</p></div>
+            <button onclick="buyBot()" id="bot-buy-btn" class="bg-purple-600 px-4 py-2 rounded-xl text-xs font-bold">BUY</button>
         </div>
     </div>
 
-    <div id="boost-page" class="page hidden px-6 pt-12">
-        <h2 class="text-4xl font-black mb-10 text-center text-yellow-500">Boosters</h2>
+    <div id="tasks-page" class="page hidden px-6 pt-12">
+        <h2 class="text-3xl font-black mb-8 text-center text-yellow-500">Tasks</h2>
         <div class="glass-card">
-            <div><h4 class="font-bold">Multitap</h4><p class="text-xs text-yellow-500" id="tap-status">Level 1</p></div>
-            <button id="tap-upgrade-btn" onclick="upgradeItem('tap')" class="bg-blue-600 px-4 py-2 rounded-xl text-xs font-bold">100</button>
-        </div>
-        <div class="glass-card">
-            <div><h4 class="font-bold">Energy Limit</h4><p class="text-xs text-yellow-500" id="limit-status">Level 1</p></div>
-            <button id="limit-upgrade-btn" onclick="upgradeItem('limit')" class="bg-orange-600 px-4 py-2 rounded-xl text-xs font-bold">100</button>
-        </div>
-        <div class="glass-card">
-            <div><h4 class="font-bold">Recharge Speed</h4><p class="text-xs text-yellow-500" id="speed-status">Level 1</p></div>
-            <button id="speed-upgrade-btn" onclick="upgradeItem('speed')" class="bg-green-600 px-4 py-2 rounded-xl text-xs font-bold">100</button>
+            <div><h4 class="font-bold">Join Community</h4><p class="text-xs text-yellow-500">+50,000</p></div>
+            <button onclick="doTask('https://t.me/', 50000)" class="bg-yellow-500 text-black px-4 py-2 rounded-xl font-bold text-xs">JOIN</button>
         </div>
     </div>
 
     <div id="friends-page" class="page hidden px-6 pt-12 text-center">
-        <h2 class="text-4xl font-black mb-10 text-yellow-500">Friends</h2>
+        <h2 class="text-3xl font-black mb-8 text-yellow-500">Friends</h2>
         <div class="glass-card flex-col py-10">
             <h3 class="text-6xl font-black text-white" id="refer-count">0</h3>
         </div>
-        <button onclick="shareInvite()" class="bg-yellow-500 text-black w-full py-5 rounded-2xl font-black text-xl mt-6">Invite Friend</button>
+        <button onclick="shareInvite()" class="bg-yellow-500 text-black w-full py-5 rounded-2xl font-black text-xl mt-4">Invite Friend</button>
     </div>
 
     <div class="footer-nav">
@@ -104,6 +101,8 @@
         let limitLevel = parseInt(localStorage.getItem('limitLevel')) || 1;
         let rechargeLevel = parseInt(localStorage.getItem('rechargeLevel')) || 1;
         let refers = parseInt(localStorage.getItem('liteRefers')) || 0;
+        let hasBot = localStorage.getItem('liteBot') === 'true';
+        let boostLeft = parseInt(localStorage.getItem('liteBoost')) || 3;
         let energy = parseInt(localStorage.getItem('liteEnergy'));
 
         function updateUI() {
@@ -115,55 +114,35 @@
             document.getElementById('energy-max-text').innerText = maxEnergy;
             document.getElementById('energy-bar').style.width = (energy / maxEnergy) * 100 + "%";
             document.getElementById('refer-count').innerText = refers;
+            document.getElementById('boost-count').innerText = boostLeft + "/3 left";
+            
+            if(hasBot) {
+                document.getElementById('bot-status').innerText = "Active ✅ (1 coin/sec)";
+                document.getElementById('bot-buy-btn').classList.add('hidden');
+            }
 
-            updateBtn('tap-upgrade-btn', 'tap-status', tapLevel, 100);
-            updateBtn('limit-upgrade-btn', 'limit-status', limitLevel, 100);
-            updateBtn('speed-upgrade-btn', 'speed-status', rechargeLevel, 100);
+            let tapPrice = 100 * Math.pow(2, tapLevel - 1);
+            document.getElementById('tap-status').innerText = "Level " + tapLevel;
+            document.getElementById('tap-upgrade-btn').innerText = tapPrice.toLocaleString();
 
             localStorage.setItem('liteScore', score);
             localStorage.setItem('liteEnergy', Math.floor(energy));
             localStorage.setItem('tapLevel', tapLevel);
-            localStorage.setItem('limitLevel', limitLevel);
-            localStorage.setItem('rechargeLevel', rechargeLevel);
+            localStorage.setItem('liteBot', hasBot);
+            localStorage.setItem('liteBoost', boostLeft);
             localStorage.setItem('liteRefers', refers);
-        }
-
-        function updateBtn(btnId, statusId, level, base) {
-            let btn = document.getElementById(btnId);
-            let p = base * Math.pow(2, level - 1); 
-            document.getElementById(statusId).innerText = "Level " + level;
-            btn.innerText = p.toLocaleString() + " 🪙";
-        }
-
-        function upgradeItem(type) {
-            let level, base = 100;
-            if(type === 'tap') level = tapLevel;
-            if(type === 'limit') level = limitLevel;
-            if(type === 'speed') level = rechargeLevel;
-            let price = base * Math.pow(2, level - 1);
-            if(score >= price) {
-                score -= price;
-                if(type === 'tap') tapLevel++;
-                if(type === 'limit') limitLevel++;
-                if(type === 'speed') rechargeLevel++;
-                updateUI();
-            }
         }
 
         function handleTap(e) {
             if (e.type === 'touchstart') e.preventDefault();
-            let maxEnergy = 1000 + ((limitLevel - 1) * 500);
-            
             if (energy >= tapLevel) {
-                score += tapLevel; 
-                energy -= tapLevel;
-                
+                score += tapLevel; energy -= tapLevel;
                 const coin = document.getElementById('coin');
                 coin.style.transform = 'scale(0.92)';
                 setTimeout(() => coin.style.transform = 'scale(1)', 100);
-
-                const x = (e.clientX || (e.touches && e.touches[0].clientX)) || window.innerWidth/2;
-                const y = (e.clientY || (e.touches && e.touches[0].clientY)) || window.innerHeight/2;
+                
+                const x = (e.clientX || e.touches[0].clientX);
+                const y = (e.clientY || e.touches[0].clientY);
                 const effect = document.createElement('div');
                 effect.className = 'tap-effect'; effect.innerText = "+" + tapLevel;
                 effect.style.left = x + 'px'; effect.style.top = y + 'px';
@@ -172,6 +151,38 @@
                 updateUI();
             }
         }
+
+        function useFullEnergy() {
+            if (boostLeft > 0) {
+                let maxEnergy = 1000 + ((limitLevel - 1) * 500);
+                energy = maxEnergy;
+                boostLeft--;
+                updateUI();
+                showPage('game');
+            }
+        }
+
+        function buyBot() {
+            if (score >= 200000) {
+                score -= 200000; hasBot = true; updateUI();
+            }
+        }
+
+        function upgradeItem(type) {
+            let price = 100 * Math.pow(2, tapLevel - 1);
+            if (score >= price) { score -= price; tapLevel++; updateUI(); }
+        }
+
+        // Tap Bot Logic (অ্যাপ খোলা থাকলে প্রতি সেকেন্ডে ১ কয়েন দিবে)
+        setInterval(() => {
+            if (hasBot) { score += 1; updateUI(); }
+        }, 1000);
+
+        // এনার্জি রিচার্জ (ধীরে ধীরে)
+        setInterval(() => {
+            let maxEnergy = 1000 + ((limitLevel - 1) * 500);
+            if (energy < maxEnergy) { energy = Math.min(maxEnergy, energy + 1); updateUI(); }
+        }, 2000);
 
         function showPage(p) {
             document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
@@ -182,19 +193,9 @@
 
         function doTask(url, reward) { window.open(url, '_blank'); score += reward; updateUI(); }
         function shareInvite() { refers++; score += 50000; updateUI(); }
-
-        // এনার্জি রিচার্জ সিস্টেম - প্রতি ২ সেকেন্ডে রিচার্জ হবে
-        setInterval(() => {
-            let maxEnergy = 1000 + ((limitLevel - 1) * 500);
-            if (energy < maxEnergy) {
-                // রিচার্জ লেভেল অনুযায়ী এনার্জি বাড়বে (১, ২, ৩...)
-                energy = Math.min(maxEnergy, energy + rechargeLevel);
-                updateUI();
-            }
-        }, 2000);
-
+        
         updateUI();
     </script>
 </body>
-    </html>
+</html>
 
