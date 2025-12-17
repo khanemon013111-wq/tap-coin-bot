@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Complete Edition</title>
+    <title>Lite Coin - Fixed Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -11,17 +11,15 @@
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 110px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
         
-        /* কয়েন ডিজাইন */
         .coin-wrapper { position: relative; width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin: 30px auto; }
-        .coin-wrapper:active { transform: scale(0.95); }
+        .coin-wrapper:active { transform: scale(0.92); }
         .outer-rim { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(145deg, #334155, #000000); box-shadow: 0 10px 40px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; }
         .coin-body { width: 88%; height: 88%; background: radial-gradient(circle, #1a1a2e 10%, #000000 90%); border-radius: 50%; border: 2px solid rgba(255,0,0,0.4); position: relative; display: flex; align-items: center; justify-content: center; }
         .curved-svg { position: absolute; width: 100%; height: 100%; animation: rotateText 15s linear infinite; }
         @keyframes rotateText { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* ট্যাপ ইফেক্ট */
-        .tap-effect { position: absolute; color: #fbbf24; font-size: 35px; font-weight: 900; pointer-events: none; animation: tapFloat 0.7s ease-out forwards; z-index: 100; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        @keyframes tapFloat { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-150px) scale(1.2); opacity: 0; } }
+        .tap-effect { position: absolute; color: #fbbf24; font-size: 38px; font-weight: 900; pointer-events: none; animation: tapFloat 0.7s ease-out forwards; z-index: 100; text-shadow: 0 0 15px rgba(0,0,0,0.8); }
+        @keyframes tapFloat { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-160px) scale(1.3); opacity: 0; } }
 
         .task-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .footer-card { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.08); position: fixed; bottom: 0; left: 0; z-index: 1000; }
@@ -34,7 +32,7 @@
     <div id="game-page" class="page items-center justify-between">
         <div class="mt-12 text-center">
             <h1 class="text-6xl font-black text-yellow-500" id="score">0</h1>
-            <div class="bg-gray-800/60 px-5 py-1 rounded-full text-[11px] font-bold text-red-500 mt-3 border border-red-500/20 uppercase">Lite League</div>
+            <div class="bg-gray-800/60 px-5 py-1 rounded-full text-[11px] font-bold text-red-500 mt-3 border border-red-500/20 uppercase tracking-widest">Lite League</div>
         </div>
         <div class="coin-wrapper" id="coin">
             <div class="outer-rim">
@@ -85,11 +83,9 @@
     <div id="friends-page" class="page hidden px-6 pt-12 text-center">
         <h2 class="text-4xl font-black mb-8 text-purple-400">Friends</h2>
         <div class="bg-gray-800/30 p-8 rounded-3xl border border-white/5 mb-6">
-            <p class="text-gray-400 text-sm mb-2">Total Referrals</p>
             <h3 class="text-5xl font-black text-red-500" id="refer-count">0</h3>
         </div>
-        <button onclick="shareInvite()" class="bg-red-600 w-full py-5 rounded-2xl font-black text-xl active:scale-95 transition-transform">Invite a Friend</button>
-        <p class="mt-4 text-xs text-gray-500">+50,000 coins for every friend!</p>
+        <button onclick="shareInvite()" class="bg-red-600 w-full py-5 rounded-2xl font-black text-xl">Invite Friend</button>
     </div>
 
     <div class="footer-card">
@@ -170,13 +166,26 @@
             e.preventDefault();
             let maxEnergy = 1000 + ((limitLevel - 1) * 500);
             let energy = parseInt(localStorage.getItem('liteEnergy')) || maxEnergy;
-            if (energy >= tapLevel) {
+            
+            // Multitap লেভেল অনুযায়ী কয়েন যোগ হবে
+            let coinsToGain = tapLevel; 
+
+            if (energy >= coinsToGain) {
                 tapSound.currentTime = 0; tapSound.play();
-                score += tapLevel; energy -= tapLevel;
+                score += coinsToGain; 
+                energy -= coinsToGain;
                 localStorage.setItem('liteEnergy', energy);
-                const x = e.clientX || e.touches[0].clientX; const y = e.clientY || e.touches[0].clientY;
-                const effect = document.createElement('div'); effect.className = 'tap-effect'; effect.innerText = "+" + tapLevel; effect.style.left = x + 'px'; effect.style.top = y + 'px'; document.body.appendChild(effect);
-                setTimeout(() => effect.remove(), 700); updateUI();
+
+                // এনিমেশনেও সঠিক সংখ্যা দেখাবে
+                const x = (e.clientX || (e.touches && e.touches[0].clientX)) || window.innerWidth/2;
+                const y = (e.clientY || (e.touches && e.touches[0].clientY)) || window.innerHeight/2;
+                const effect = document.createElement('div');
+                effect.className = 'tap-effect';
+                effect.innerText = "+" + coinsToGain;
+                effect.style.left = x + 'px'; effect.style.top = y + 'px';
+                document.body.appendChild(effect);
+                setTimeout(() => effect.remove(), 700);
+                updateUI();
             }
         }
 
@@ -207,5 +216,5 @@
         updateUI();
     </script>
 </body>
-</html>
-
+                                                                                                        </html>
+    
