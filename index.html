@@ -100,6 +100,8 @@
         </div>
         <div class="glass-card"><div><h4 class="font-bold text-sm">Multitap</h4><p id="tap-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-tap" onclick="upgrade('tap')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold uppercase">100</button></div>
         <div class="glass-card"><div><h4 class="font-bold text-sm">Energy Limit</h4><p id="lim-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-lim" onclick="upgrade('limit')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold uppercase">200</button></div>
+        <div class="glass-card"><div><h4 class="font-bold text-sm">Recharge Speed</h4><p id="rech-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-rech" onclick="upgrade('rech')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold uppercase">500</button></div>
+        
         <div class="glass-card border-purple-500/30"><div><h4 class="font-bold text-sm">Tap Bot 🤖</h4><p id="bot-status" class="text-[10px] text-purple-400">Not Owned</p></div><button id="btn-bot" onclick="buyBot()" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase">50,000</button></div>
     </div>
 
@@ -135,6 +137,7 @@
         let score = parseInt(localStorage.getItem('L_Score')) || 0;
         let tapL = parseInt(localStorage.getItem('L_Tap')) || 1;
         let limL = parseInt(localStorage.getItem('L_Lim')) || 1;
+        let rechL = parseInt(localStorage.getItem('L_Rech')) || 1;
         let energy = localStorage.getItem('L_Eng') === null ? 1000 : parseInt(localStorage.getItem('L_Eng'));
         let hasBot = localStorage.getItem('L_Bot') === 'true';
         let turboActive = false;
@@ -148,6 +151,7 @@
             document.getElementById('energy-max').innerText = "/ " + maxE;
             document.getElementById('energy-bar').style.width = (energy / maxE) * 100 + "%";
 
+            // League Logic
             let lName = "Bronze", target = 25000, start = 0, tier = 1;
             if(score >= 500000) { lName = "Diamond"; target = 1000000; start = 500000; tier = 4; }
             else if(score >= 100000) { lName = "Gold"; target = 500000; start = 100000; tier = 3; }
@@ -158,22 +162,20 @@
             document.getElementById('prog-next-target').innerText = "Next: " + target.toLocaleString();
             document.getElementById('league-progress-fill').style.width = Math.min(100, ((score - start) / (target - start)) * 100) + "%";
 
-            for(let i=1; i<=4; i++) {
-                let el = document.getElementById('l-tier-'+i);
-                if(i === tier) el.classList.add('active'); else el.classList.remove('active');
-            }
-
+            // Update Level Buttons
             setBtn('btn-tap', 'tap-s', tapL, 100);
             setBtn('btn-lim', 'lim-s', limL, 200);
+            setBtn('btn-rech', 'rech-s', rechL, 500);
+
             if(hasBot) { document.getElementById('bot-status').innerText = "Active 🤖"; document.getElementById('btn-bot').innerText = "OWNED"; document.getElementById('btn-bot').disabled = true; }
 
-            localStorage.setItem('L_Score', score); localStorage.setItem('L_Eng', energy); localStorage.setItem('L_Bot', hasBot); localStorage.setItem('L_Tap', tapL); localStorage.setItem('L_Lim', limL);
+            localStorage.setItem('L_Score', score); localStorage.setItem('L_Eng', energy); localStorage.setItem('L_Bot', hasBot); localStorage.setItem('L_Tap', tapL); localStorage.setItem('L_Lim', limL); localStorage.setItem('L_Rech', rechL);
         }
 
         function setBtn(id, sId, lvl, base) {
             let p = base * Math.pow(2, lvl-1);
-            document.getElementById(sId).innerText = "Lvl " + lvl;
-            document.getElementById(id).innerText = p.toLocaleString();
+            if(document.getElementById(sId)) document.getElementById(sId).innerText = "Lvl " + lvl;
+            if(document.getElementById(id)) document.getElementById(id).innerText = p.toLocaleString();
         }
 
         function handleTap(e) {
@@ -216,9 +218,9 @@
         }
 
         function upgrade(type) {
-            let lvl = type==='tap'?tapL : limL;
-            let p = (type==='tap'?100 : 200) * Math.pow(2, lvl-1);
-            if(score >= p) { score -= p; if(type==='tap') tapL++; else limL++; updateUI(); }
+            let lvl = (type==='tap')?tapL : (type==='limit'?limL : rechL);
+            let p = (type==='tap'?100 : (type==='limit'?200 : 500)) * Math.pow(2, lvl-1);
+            if(score >= p) { score -= p; if(type==='tap') tapL++; else if(type==='limit') limL++; else rechL++; updateUI(); }
         }
 
         function buyBot() { if(score >= 50000 && !hasBot) { score -= 50000; hasBot = true; updateUI(); } }
@@ -228,7 +230,7 @@
 
         setInterval(() => {
             let mE = 1000 + ((limL - 1) * 500);
-            if (energy < mE) energy = Math.min(mE, energy + 2);
+            if (energy < mE) energy = Math.min(mE, energy + (1 + rechL));
             if (hasBot) score += 1;
             updateUI();
         }, 1000);
@@ -236,5 +238,5 @@
         updateUI();
     </script>
 </body>
-    </html>
+</html>
 
