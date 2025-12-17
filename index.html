@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Classic League Fixed</title>
+    <title>Lite Coin - Pro Leaderboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -19,7 +19,6 @@
 
         .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         
-        /* League List Styling */
         .league-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .league-item.active { border-color: #fbbf24; background: rgba(251, 191, 36, 0.05); }
 
@@ -29,6 +28,10 @@
 
         .progress-container { width: 100%; height: 10px; background: #1e293b; border-radius: 10px; margin-top: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); width: 0%; transition: width 0.5s ease-out; }
+
+        /* Custom Scrollbar for Leaderboard */
+        #leaderboard-list::-webkit-scrollbar { width: 4px; }
+        #leaderboard-list::-webkit-scrollbar-thumb { background: #fbbf24; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -50,8 +53,7 @@
             <h2 class="text-2xl font-black text-yellow-500 uppercase">Leagues</h2>
             <button onclick="showPage('game')" class="text-xs font-bold text-gray-500 bg-white/5 px-3 py-1 rounded-lg">BACK</button>
         </div>
-
-        <div class="glass-card p-5 border-yellow-500/20 bg-yellow-500/5 mb-6 block">
+        <div class="glass-card p-5 border-yellow-500/20 bg-yellow-500/5 mb-6 block text-center">
             <h3 class="text-xl font-black mt-1" id="prog-league-name">Bronze League</h3>
             <div class="progress-container"><div id="league-progress-fill" class="progress-fill"></div></div>
             <div class="flex justify-between mt-3 text-[10px] font-bold">
@@ -59,21 +61,11 @@
                 <span id="prog-next-target" class="text-yellow-500">Next: 25,000</span>
             </div>
         </div>
-
         <div class="space-y-2">
-            <div class="league-item" id="l-tier-1">
-                <div class="flex items-center"><span class="text-lg mr-3">🥉</span><div><h4 class="text-xs font-bold">Bronze League</h4><p class="text-[9px] text-gray-500">0 coins</p></div></div>
-                <span class="text-[9px] font-bold text-yellow-500">CURRENT</span>
-            </div>
-            <div class="league-item" id="l-tier-2">
-                <div class="flex items-center"><span class="text-lg mr-3">🥈</span><div><h4 class="text-xs font-bold">Silver League</h4><p class="text-[9px] text-gray-500">25,000 coins</p></div></div>
-            </div>
-            <div class="league-item" id="l-tier-3">
-                <div class="flex items-center"><span class="text-lg mr-3">🥇</span><div><h4 class="text-xs font-bold">Gold League</h4><p class="text-[9px] text-gray-500">100,000 coins</p></div></div>
-            </div>
-            <div class="league-item" id="l-tier-4">
-                <div class="flex items-center"><span class="text-lg mr-3">💎</span><div><h4 class="text-xs font-bold">Diamond League</h4><p class="text-[9px] text-gray-500">500,000 coins</p></div></div>
-            </div>
+            <div class="league-item" id="l-tier-1"><span>🥉 Bronze</span><span class="text-[9px] font-bold">0+</span></div>
+            <div class="league-item" id="l-tier-2"><span>🥈 Silver</span><span class="text-[9px] font-bold">25,000+</span></div>
+            <div class="league-item" id="l-tier-3"><span>🥇 Gold</span><span class="text-[9px] font-bold">100,000+</span></div>
+            <div class="league-item" id="l-tier-4"><span>💎 Diamond</span><span class="text-[9px] font-bold">500,000+</span></div>
         </div>
     </div>
 
@@ -100,7 +92,23 @@
         <button onclick="alert('Link Copied!')" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black">COPY INVITE LINK</button>
     </div>
 
-    <div id="leaderboard-page" class="page hidden px-6 pt-10 text-center"><h2 class="text-3xl font-black text-yellow-500 mb-8 uppercase">Leaderboard</h2><div class="glass-card"><span>You</span><span id="bord-score">0</span></div></div>
+    <div id="leaderboard-page" class="page hidden px-6 pt-10">
+        <h2 class="text-3xl font-black text-yellow-500 mb-4 text-center uppercase">Leaderboard</h2>
+        
+        <div class="glass-card border-yellow-500/50 bg-yellow-500/10 mb-4">
+            <div class="flex items-center">
+                <span class="text-xl mr-3">⭐</span>
+                <div class="text-left"><h4 class="font-bold text-sm">You</h4><p class="text-[10px] text-gray-400">Rank: Checking...</p></div>
+            </div>
+            <span id="bord-score" class="font-black text-yellow-500">0</span>
+        </div>
+
+        <p class="text-[10px] text-gray-500 uppercase font-bold mb-2 ml-1">Top 500 Miners</p>
+        
+        <div id="leaderboard-list" class="flex-1 overflow-y-auto pr-1 space-y-2">
+            </div>
+    </div>
+
     <div id="spin-page" class="page hidden px-6 pt-12 text-center">
         <h2 class="text-3xl font-black text-yellow-500 mb-6 uppercase">Spin</h2>
         <div id="wheel" class="w-64 h-64 border-4 border-yellow-500 rounded-full mx-auto" style="transition: transform 4s; background: conic-gradient(#fbbf24 0deg 90deg, #d97706 90deg 180deg, #fbbf24 180deg 270deg, #d97706 270deg 360deg);"></div>
@@ -131,7 +139,6 @@
             document.getElementById('energy-max').innerText = "/ " + maxE;
             document.getElementById('energy-bar').style.width = (energy / maxE) * 100 + "%";
 
-            // League Update
             let lName = "Bronze", target = 25000, start = 0, tier = 1;
             if(score >= 500000) { lName = "Diamond"; target = 1000000; start = 500000; tier = 4; }
             else if(score >= 100000) { lName = "Gold"; target = 500000; start = 100000; tier = 3; }
@@ -155,6 +162,26 @@
             localStorage.setItem('L_Score', score);
             localStorage.setItem('L_Eng', energy);
             localStorage.setItem('L_Bot', hasBot);
+        }
+
+        // Leaderboard Generation
+        function loadLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+            for (let i = 1; i <= 500; i++) {
+                const userScore = Math.floor(Math.random() * 1000000) + 5000;
+                const card = document.createElement('div');
+                card.className = 'glass-card py-3';
+                card.innerHTML = `
+                    <div class="flex items-center">
+                        <span class="text-xs font-bold text-gray-500 w-6">#${i}</span>
+                        <div class="w-8 h-8 bg-gray-700 rounded-full mr-3 flex items-center justify-center text-[10px]">U${i}</div>
+                        <div class="text-left"><h4 class="font-bold text-xs">Player_${i}</h4></div>
+                    </div>
+                    <span class="text-xs font-bold">${userScore.toLocaleString()}</span>
+                `;
+                list.appendChild(card);
+            }
         }
 
         function setBtn(id, sId, lvl, base) {
@@ -188,6 +215,7 @@
                 document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
                 document.getElementById('btn-' + p).classList.add('active');
             }
+            if(p === 'leaderboard') loadLeaderboard(); // Load when opening
         }
 
         setInterval(() => {
@@ -200,5 +228,5 @@
         updateUI();
     </script>
 </body>
-</html>
-
+                                                                                                                                                         </html>
+                                                                                                                                                         
