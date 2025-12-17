@@ -83,8 +83,8 @@
             <button onclick="upgradeItem('speed')" id="speed-upgrade-btn" class="bg-green-600 px-4 py-2 rounded-xl text-xs font-bold">100</button>
         </div>
         <div class="glass-card">
-            <div><h4 class="font-bold">Tap Bot 🤖</h4><p class="text-xs text-yellow-500" id="bot-status">Auto Tap (200k)</p></div>
-            <button onclick="buyBot()" id="bot-buy-btn" class="bg-purple-600 px-4 py-2 rounded-xl text-xs font-bold">BUY</button>
+            <div><h4 class="font-bold">Tap Bot 🤖</h4><p class="text-xs text-yellow-500" id="bot-status">Auto Tap (500k)</p></div>
+            <button onclick="buyBot()" id="bot-buy-btn" class="bg-purple-600 px-4 py-2 rounded-xl text-xs font-bold">500,000</button>
         </div>
     </div>
 
@@ -116,7 +116,6 @@
     </div>
 
     <script>
-        // ডেটা সেটআপ
         let score = parseInt(localStorage.getItem('liteScore')) || 0;
         let tapLevel = parseInt(localStorage.getItem('tapLevel')) || 1;
         let limitLevel = parseInt(localStorage.getItem('limitLevel')) || 1;
@@ -128,7 +127,6 @@
 
         function updateUI() {
             let maxEnergy = 1000 + ((limitLevel - 1) * 500);
-            
             document.getElementById('score').innerText = score.toLocaleString();
             document.getElementById('energy-val').innerText = Math.floor(energy);
             document.getElementById('energy-max-text').innerText = maxEnergy;
@@ -136,7 +134,6 @@
             document.getElementById('refer-count').innerText = refers;
             document.getElementById('boost-count').innerText = boostLeft + "/3 left";
 
-            // বাটন টেক্সট ও প্রাইস (১০০ থেকে ডাবল)
             updateBtn('tap-upgrade-btn', 'tap-status', tapLevel, 100);
             updateBtn('limit-upgrade-btn', 'limit-status', limitLevel, 100);
             updateBtn('speed-upgrade-btn', 'speed-status', rechargeLevel, 100);
@@ -146,7 +143,6 @@
                 document.getElementById('bot-buy-btn').classList.add('hidden');
             }
 
-            // লোকাল স্টোরেজ সেভ
             localStorage.setItem('liteScore', score);
             localStorage.setItem('liteEnergy', energy);
             localStorage.setItem('tapLevel', tapLevel);
@@ -183,7 +179,6 @@
                 const coin = document.getElementById('coin');
                 coin.style.transform = 'scale(0.92)';
                 setTimeout(() => coin.style.transform = 'scale(1)', 100);
-                
                 const x = (e.clientX || (e.touches && e.touches[0].clientX));
                 const y = (e.clientY || (e.touches && e.touches[0].clientY));
                 const effect = document.createElement('div');
@@ -205,8 +200,8 @@
         }
 
         function buyBot() {
-            if (score >= 200000) {
-                score -= 200000; hasBot = true; updateUI();
+            if (score >= 500000) { // দাদু এখানে ৫ লাখ করে দিয়েছি
+                score -= 500000; hasBot = true; updateUI();
             }
         }
 
@@ -217,7 +212,6 @@
             document.getElementById('btn-' + p).classList.add('active');
         }
 
-        // রিচার্জ এবং বট লজিক
         setInterval(() => {
             let maxEnergy = 1000 + ((limitLevel - 1) * 500);
             if (energy < maxEnergy) energy = Math.min(maxEnergy, energy + rechargeLevel);
@@ -227,7 +221,6 @@
 
         function doTask(url, reward) { window.open(url, '_blank'); score += reward; updateUI(); }
         function shareInvite() { refers++; score += 50000; updateUI(); }
-        
         updateUI();
     </script>
 </body>
