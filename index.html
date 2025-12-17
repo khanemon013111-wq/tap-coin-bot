@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Full Pro Edition</title>
+    <title>Lite Coin - Ultimate Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -11,12 +11,13 @@
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 170px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
         
+        /* Floating Spin Button */
+        .floating-spin-btn { position: fixed; left: 10px; top: 40%; width: 55px; height: 55px; background: linear-gradient(145deg, #fbbf24, #d97706); border-radius: 50%; border: 3px solid #f59e0b; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; cursor: pointer; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
         /* Floating Popup Number Style */
         .pop-number { position: absolute; font-size: 28px; font-weight: 900; color: white; pointer-events: none; animation: popUp 0.8s ease-out forwards; z-index: 9999; }
         @keyframes popUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
-
-        .floating-spin-btn { position: fixed; left: 10px; top: 40%; width: 55px; height: 55px; background: linear-gradient(145deg, #fbbf24, #d97706); border-radius: 50%; border: 3px solid #f59e0b; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; cursor: pointer; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         #coin { width: 220px; height: 220px; border-radius: 50%; background: linear-gradient(145deg, #fbbf24, #d97706); border: 8px solid #f59e0b; box-shadow: 0 0 40px rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s; position: relative; }
         #coin:active { transform: scale(0.92); }
@@ -32,6 +33,11 @@
 
         .progress-container { width: 100%; height: 10px; background: #1e293b; border-radius: 10px; margin-top: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); width: 0%; transition: width 0.5s ease-out; }
+
+        /* Wheel Styles */
+        #wheel { width: 260px; height: 260px; border: 8px solid #fbbf24; border-radius: 50%; position: relative; overflow: hidden; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); background: #d97706; }
+        .wheel-segment { position: absolute; width: 50%; height: 50%; transform-origin: 100% 100%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: black; font-size: 14px; }
+        .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100; }
     </style>
 </head>
 <body>
@@ -40,12 +46,12 @@
         <source src="https://www.soundjay.com/buttons/sounds/button-37a.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="floating-spin-btn" onclick="showPage('spin')"><span>🎡</span><span class="text-[8px] font-black text-black uppercase">Spin</span></div>
+    <div id="floating-spin" class="floating-spin-btn" onclick="showPage('spin')"><span>🎡</span><span class="text-[8px] font-black text-black uppercase">Spin</span></div>
 
     <div id="game-page" class="page items-center text-center pt-8">
         <button onclick="showPage('league')" id="display-league" class="bg-yellow-500/20 text-yellow-500 px-5 py-1.5 rounded-full text-xs font-bold border border-yellow-500/30 mb-2">Bronze League ❯</button>
         <h1 class="text-6xl font-black text-white mt-2" id="score">0</h1>
-        <div class="mt-12 flex justify-center w-full">
+        <div class="mt-12 flex justify-center w-full relative">
             <div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)">
                 <div class="coin-logo"></div>
             </div>
@@ -81,11 +87,6 @@
         <div id="leaderboard-list" class="flex-1 overflow-y-auto pr-1 space-y-2"></div>
     </div>
 
-    <div id="tasks-page" class="page hidden px-6 pt-10 text-center">
-        <h2 class="text-3xl font-black text-yellow-500 mb-8 uppercase">Tasks</h2>
-        <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-[10px] text-yellow-500">+10k</p></div><button onclick="doTask(10000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
-    </div>
-
     <div id="boost-page" class="page hidden px-6 pt-10">
         <h2 class="text-3xl font-black text-yellow-500 mb-6 text-center uppercase">Boosters</h2>
         <div class="grid grid-cols-2 gap-3 mb-6">
@@ -106,19 +107,28 @@
 
     <div id="spin-page" class="page hidden px-6 pt-12 text-center">
         <h2 class="text-3xl font-black text-yellow-500 mb-6 uppercase">Spin & Win</h2>
-        <div id="wheel" class="w-64 h-64 border-4 border-yellow-500 rounded-full mx-auto" style="transition: transform 4s; background: conic-gradient(#fbbf24 0deg 90deg, #d97706 90deg 180deg, #fbbf24 180deg 270deg, #d97706 270deg 360deg);"></div>
-        <button onclick="startSpin()" class="mt-10 bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Spin Now</button>
+        <div class="relative mx-auto w-64 h-64 mb-8">
+            <div class="pointer"></div>
+            <div id="wheel">
+                <div class="wheel-segment" style="transform: rotate(0deg); background: #fbbf24;"> <span style="transform: rotate(45deg);">1k</span> </div>
+                <div class="wheel-segment" style="transform: rotate(90deg); background: #f59e0b;"> <span style="transform: rotate(45deg);">5k</span> </div>
+                <div class="wheel-segment" style="transform: rotate(180deg); background: #fbbf24;"> <span style="transform: rotate(45deg);">10k</span> </div>
+                <div class="wheel-segment" style="transform: rotate(270deg); background: #f59e0b;"> <span style="transform: rotate(45deg);">JACKPOT</span> </div>
+            </div>
+        </div>
+        <button onclick="startSpin()" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Spin Now</button>
+        <button onclick="showPage('game')" class="mt-4 text-xs font-bold text-gray-500 uppercase">Go Back</button>
     </div>
 
     <div class="footer-nav">
         <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span>🪙</span><span>Earn</span></div>
         <div onclick="showPage('leaderboard')" id="btn-leaderboard" class="nav-btn"><span>🏆</span><span>Board</span></div>
-        <div onclick="showPage('tasks')" id="btn-tasks" class="nav-btn"><span>📋</span><span>Tasks</span></div>
         <div onclick="showPage('boost')" id="btn-boost" class="nav-btn"><span>🚀</span><span>Boost</span></div>
         <div onclick="showPage('friends')" id="btn-friends" class="nav-btn"><span>👥</span><span>Friends</span></div>
     </div>
 
     <script>
+        // Initial Game Variables
         let score = parseInt(localStorage.getItem('L_Score')) || 0;
         let tapL = parseInt(localStorage.getItem('L_Tap')) || 1;
         let limL = parseInt(localStorage.getItem('L_Lim')) || 1;
@@ -136,18 +146,18 @@
             document.getElementById('energy-max').innerText = "/ " + maxE;
             document.getElementById('energy-bar').style.width = (energy / maxE) * 100 + "%";
 
-            // League Logic
+            // League Update
             let lName = "Bronze", target = 25000, start = 0, tier = 1;
             if(score >= 500000) { lName = "Diamond"; target = 1000000; start = 500000; tier = 4; }
             else if(score >= 100000) { lName = "Gold"; target = 500000; start = 100000; tier = 3; }
             else if(score >= 25000) { lName = "Silver"; target = 100000; start = 25000; tier = 2; }
-            
             document.getElementById('display-league').innerText = lName + " League ❯";
             document.getElementById('prog-league-name').innerText = lName + " League";
             document.getElementById('prog-current-score').innerText = score.toLocaleString();
             document.getElementById('prog-next-target').innerText = "Next: " + target.toLocaleString();
             document.getElementById('league-progress-fill').style.width = Math.min(100, ((score - start) / (target - start)) * 100) + "%";
 
+            // Active League Class
             for(let i=1; i<=4; i++) {
                 let el = document.getElementById('l-tier-'+i);
                 if(i === tier) el.classList.add('active'); else el.classList.remove('active');
@@ -177,56 +187,72 @@
             if (e.type === 'touchstart') e.preventDefault();
             let p = turboActive ? tapL * 5 : tapL;
             if (energy >= tapL || turboActive) {
-                score += p;
-                if(!turboActive) energy -= tapL;
+                score += p; if(!turboActive) energy -= tapL;
                 
-                // Sound Effect
-                tapSound.currentTime = 0;
-                tapSound.play().catch(()=>{});
-
-                // Floating +Number Logic
+                // Sound & Animation
+                tapSound.currentTime = 0; tapSound.play().catch(()=>{});
                 const popup = document.createElement('div');
                 popup.innerText = `+${p}`;
                 popup.className = 'pop-number';
                 let x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
                 let y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
-                popup.style.left = `${x - 20}px`;
-                popup.style.top = `${y - 40}px`;
+                popup.style.left = `${x - 20}px`; popup.style.top = `${y - 40}px`;
                 document.body.appendChild(popup);
                 setTimeout(() => popup.remove(), 800);
-
+                
                 updateUI();
             }
         }
 
-        function upgrade(type) {
-            let lvl = type==='tap'?tapL : (type==='limit'?limL : rechL);
-            let base = type==='tap'?100 : (type==='limit'?200 : 500);
-            let p = base * Math.pow(2, lvl-1);
-            if(score >= p) { score -= p; if(type==='tap') tapL++; else if(type==='limit') limL++; else rechL++; updateUI(); }
-        }
-
-        function buyBot() { if(score >= 50000 && !hasBot) { score -= 50000; hasBot = true; updateUI(); } }
-        function doTask(amt, btn) { score += amt; btn.innerText = "DONE ✅"; btn.disabled = true; updateUI(); }
-        function useFullEnergy() { energy = 1000+((limL-1)*500); updateUI(); showPage('game'); }
-        function useTurbo() { turboActive = true; showPage('game'); setTimeout(()=>{turboActive=false;}, 10000); }
-        function startSpin() { document.getElementById('wheel').style.transform = `rotate(${Math.floor(Math.random()*360)+3600}deg)`; setTimeout(() => { score += 5000; updateUI(); }, 4000); }
-
         function showPage(p) {
             document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
             document.getElementById(p + '-page').classList.remove('hidden');
+            
+            // Logic to hide SPIN button on other pages
+            const spinBtn = document.getElementById('floating-spin');
+            if(p === 'game') spinBtn.classList.remove('hidden'); else spinBtn.classList.add('hidden');
+
+            // Footer Nav Styling
             if(p !== 'spin' && p !== 'league') {
                 document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-                document.getElementById('btn-' + p).classList.add('active');
+                if(document.getElementById('btn-' + p)) document.getElementById('btn-' + p).classList.add('active');
             }
+
+            // Generate Leaderboard
             if(p === 'leaderboard') {
                 const list = document.getElementById('leaderboard-list'); list.innerHTML = '';
                 for (let i = 1; i <= 500; i++) {
-                    list.innerHTML += `<div class="glass-card py-3"><span>#${i} Player_${i}</span><span class="font-bold text-yellow-500">${(Math.floor(Math.random()*100000)).toLocaleString()}</span></div>`;
+                    list.innerHTML += `<div class="glass-card py-3"><span>#${i} Miner_${i}</span><span class="font-bold text-yellow-500">${(Math.floor(Math.random()*100000)).toLocaleString()}</span></div>`;
                 }
             }
         }
 
+        function startSpin() {
+            let randomDeg = Math.floor(Math.random() * 360) + 3600;
+            document.getElementById('wheel').style.transform = `rotate(${randomDeg}deg)`;
+            setTimeout(() => {
+                let actualDeg = randomDeg % 360;
+                let winAmt = 1000;
+                if(actualDeg >= 0 && actualDeg < 90) winAmt = 1000;
+                else if(actualDeg >= 90 && actualDeg < 180) winAmt = 5000;
+                else if(actualDeg >= 180 && actualDeg < 270) winAmt = 10000;
+                else winAmt = 50000;
+                score += winAmt; updateUI();
+                alert("Congratulation! You won " + winAmt.toLocaleString() + " coins!");
+            }, 4000);
+        }
+
+        function upgrade(type) {
+            let lvl = type==='tap'?tapL : (type==='limit'?limL : rechL);
+            let p = (type==='tap'?100 : (type==='limit'?200 : 500)) * Math.pow(2, lvl-1);
+            if(score >= p) { score -= p; if(type==='tap') tapL++; else if(type==='limit') limL++; else rechL++; updateUI(); }
+        }
+
+        function buyBot() { if(score >= 50000 && !hasBot) { score -= 50000; hasBot = true; updateUI(); } }
+        function useFullEnergy() { energy = 1000+((limL-1)*500); updateUI(); showPage('game'); }
+        function useTurbo() { turboActive = true; showPage('game'); setTimeout(()=>{turboActive=false;}, 10000); }
+
+        // Energy Refill Interval
         setInterval(() => {
             let mE = 1000 + ((limL - 1) * 500);
             if (energy < mE) energy = Math.min(mE, energy + (1 + rechL));
@@ -237,5 +263,5 @@
         updateUI();
     </script>
 </body>
-                                         </html>
-            
+</html>
+
