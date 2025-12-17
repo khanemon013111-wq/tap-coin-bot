@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - League Edition</title>
+    <title>Lite Coin - All Features Integrated</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -11,6 +11,10 @@
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 170px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
         
+        /* Floating Spin */
+        .floating-spin-btn { position: fixed; left: 10px; top: 40%; width: 55px; height: 55px; background: linear-gradient(145deg, #fbbf24, #d97706); border-radius: 50%; border: 3px solid #f59e0b; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; cursor: pointer; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
         /* Coin UI */
         #coin { width: 220px; height: 220px; border-radius: 50%; background: linear-gradient(145deg, #fbbf24, #d97706); border: 8px solid #f59e0b; box-shadow: 0 0 40px rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; position: relative; }
         .coin-logo { width: 80px; height: 80px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
@@ -21,18 +25,17 @@
         .footer-nav { background: rgba(15, 23, 42, 0.98); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); position: fixed; bottom: 0; left: 0; z-index: 1000; display: flex; justify-content: space-around; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 11px; font-weight: bold; cursor: pointer; }
         .nav-btn.active { color: #fbbf24; }
-
-        /* League Specific */
-        .league-item { padding: 15px; border-radius: 20px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
-        .league-active { background: rgba(251, 191, 36, 0.15); border-color: #fbbf24; }
     </style>
 </head>
 <body>
 
+    <div class="floating-spin-btn" onclick="showPage('spin')">
+        <span class="text-xl">🎡</span>
+        <span class="text-[8px] font-black text-black">SPIN</span>
+    </div>
+
     <div id="game-page" class="page items-center text-center pt-8">
-        <button onclick="showPage('league')" class="bg-yellow-500/20 text-yellow-500 px-5 py-1.5 rounded-full text-xs font-bold border border-yellow-500/30 mb-2 active:scale-95 transition-all">
-            <span id="display-league">Bronze League</span> ❯
-        </button>
+        <button onclick="showPage('league')" id="display-league" class="bg-yellow-500/20 text-yellow-500 px-5 py-1.5 rounded-full text-xs font-bold border border-yellow-500/30 mb-2">Bronze League ❯</button>
         <h1 class="text-6xl font-black text-white mt-2" id="score">0</h1>
         
         <div class="mt-12 flex justify-center w-full">
@@ -42,8 +45,8 @@
         </div>
 
         <div class="energy-section">
-            <div class="flex justify-between font-black text-yellow-400 mb-1 px-1">
-                <span class="text-lg">⚡ <span id="energy-val">1000</span></span>
+            <div class="flex justify-between font-black text-yellow-400 mb-1 px-1 text-lg">
+                <span>⚡ <span id="energy-val">1000</span></span>
                 <span id="energy-max" class="text-gray-500 text-xs">/ 1000</span>
             </div>
             <div class="h-3 w-full bg-gray-900 rounded-full overflow-hidden border border-white/10">
@@ -53,31 +56,36 @@
     </div>
 
     <div id="league-page" class="page hidden px-6 pt-10">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-3xl font-black text-yellow-500 uppercase">Leagues</h2>
-            <button onclick="showPage('game')" class="text-gray-500 font-bold text-sm">CLOSE</button>
-        </div>
-        
-        <div class="space-y-3">
-            <div id="L-1" class="league-item"><div><h4 class="font-bold">🥉 Bronze</h4><p class="text-[10px] text-gray-500">From 0</p></div><span class="text-xs font-bold text-yellow-500">Current</span></div>
-            <div id="L-2" class="league-item"><div><h4 class="font-bold">🥈 Silver</h4><p class="text-[10px] text-gray-500">From 25,000</p></div><span class="text-xs font-bold text-gray-600">Locked</span></div>
-            <div id="L-3" class="league-item"><div><h4 class="font-bold">🥇 Gold</h4><p class="text-[10px] text-gray-500">From 100,000</p></div><span class="text-xs font-bold text-gray-600">Locked</span></div>
-            <div id="L-4" class="league-item"><div><h4 class="font-bold">💎 Platinum</h4><p class="text-[10px] text-gray-500">From 500,000</p></div><span class="text-xs font-bold text-gray-600">Locked</span></div>
-            <div id="L-5" class="league-item"><div><h4 class="font-bold">👑 Diamond</h4><p class="text-[10px] text-gray-500">From 1,000,000</p></div><span class="text-xs font-bold text-gray-600">Locked</span></div>
+        <h2 class="text-3xl font-black text-yellow-500 mb-6 text-center uppercase">Leagues</h2>
+        <div id="L-1" class="glass-card"><span>🥉 Bronze</span><span>0+</span></div>
+        <div id="L-2" class="glass-card"><span>🥈 Silver</span><span>25k+</span></div>
+        <div id="L-3" class="glass-card"><span>🥇 Gold</span><span>100k+</span></div>
+        <div id="L-4" class="glass-card text-yellow-500"><span>💎 Platinum</span><span>500k+</span></div>
+    </div>
+
+    <div id="leaderboard-page" class="page hidden px-6 pt-10">
+        <h2 class="text-3xl font-black text-yellow-500 text-center uppercase mb-8">Bord</h2>
+        <div class="glass-card border-yellow-500/30"><span>You</span><span id="bord-score">0</span></div>
+        <div class="mt-4 space-y-2 opacity-60">
+            <div class="glass-card"><span>1. CryptoKing</span><span>5.2M</span></div>
+            <div class="glass-card"><span>2. NotWhale</span><span>3.1M</span></div>
         </div>
     </div>
 
-    <div id="leaderboard-page" class="page hidden px-6 pt-10"><h2 class="text-3xl font-black text-yellow-500 text-center uppercase">Leaderboard</h2><div class="mt-8 glass-card"><span>You</span><span id="rank-val">0</span></div></div>
-    <div id="tasks-page" class="page hidden px-6 pt-10"><h2 class="text-3xl font-black text-yellow-500 text-center uppercase">Tasks</h2><div class="mt-8 glass-card"><span>Join Telegram</span><button class="bg-yellow-500 text-black px-4 py-1 rounded-lg font-bold">GO</button></div></div>
-    
+    <div id="tasks-page" class="page hidden px-6 pt-10">
+        <h2 class="text-3xl font-black text-yellow-500 text-center uppercase mb-8">Tasks</h2>
+        <div class="glass-card"><span>Join Telegram</span><button class="bg-yellow-500 text-black px-4 py-1 rounded-lg text-xs font-bold">GO</button></div>
+        <div class="glass-card"><span>Follow Twitter</span><button class="bg-yellow-500 text-black px-4 py-1 rounded-lg text-xs font-bold">GO</button></div>
+    </div>
+
     <div id="boost-page" class="page hidden px-6 pt-10">
-        <h2 class="text-3xl font-black text-yellow-500 mb-6 text-center">BOOSTERS</h2>
+        <h2 class="text-3xl font-black text-yellow-500 mb-6 text-center uppercase">Boosters</h2>
         <div class="grid grid-cols-2 gap-3 mb-6">
             <div class="bg-white/5 p-4 rounded-2xl border border-white/10 text-center">
-                <span class="text-xl">⚡</span><h4 class="text-[10px] font-bold mt-1">Full Energy</h4><p id="f-e-c" class="text-[9px] text-blue-400">3/3</p><button onclick="useFullEnergy()" class="bg-blue-600 text-[10px] px-3 py-1 rounded-lg font-bold">REFILL</button>
+                <span class="text-xl">⚡</span><h4 class="text-[10px] font-bold">Full Energy</h4><p id="f-e-c" class="text-[9px]">3/3</p><button onclick="useFullEnergy()" class="bg-blue-600 text-[10px] px-3 py-1 rounded-lg">GET</button>
             </div>
             <div class="bg-white/5 p-4 rounded-2xl border border-white/10 text-center">
-                <span class="text-xl">🚀</span><h4 class="text-[10px] font-bold mt-1">Turbo</h4><p id="f-t-c" class="text-[9px] text-red-400">3/3</p><button onclick="useTurbo()" class="bg-red-600 text-[10px] px-3 py-1 rounded-lg font-bold">START</button>
+                <span class="text-xl">🚀</span><h4 class="text-[10px] font-bold">Turbo</h4><p id="f-t-c" class="text-[9px]">3/3</p><button onclick="useTurbo()" class="bg-red-600 text-[10px] px-3 py-1 rounded-lg">START</button>
             </div>
         </div>
         <div class="glass-card"><div><h4 class="font-bold text-sm">Multitap</h4><p id="tap-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-tap" onclick="upgrade('tap')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold">100</button></div>
@@ -85,7 +93,17 @@
         <div class="glass-card"><div><h4 class="font-bold text-sm">Recharge Speed</h4><p id="spd-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-spd" onclick="upgrade('speed')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold">150</button></div>
     </div>
 
-    <div id="friends-page" class="page hidden px-6 pt-10 text-center"><h2 class="text-3xl font-black text-yellow-500 mb-10 uppercase">Friends</h2><div class="bg-white/5 py-12 rounded-3xl border border-white/10"><h1 class="text-5xl font-black">0</h1><p class="text-xs text-gray-500 mt-2">Invited</p></div><button onclick="alert('Link Copied!')" class="bg-yellow-500 text-black w-full py-4 mt-10 rounded-2xl font-black">INVITE</button></div>
+    <div id="friends-page" class="page hidden px-6 pt-10 text-center">
+        <h2 class="text-3xl font-black text-yellow-500 mb-10 uppercase">Friends</h2>
+        <div class="bg-white/5 py-12 rounded-3xl border border-white/10 mb-8"><h1 class="text-5xl font-black">0</h1><p class="text-xs">Invited</p></div>
+        <button onclick="alert('Link Copied!')" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black">INVITE</button>
+    </div>
+
+    <div id="spin-page" class="page hidden px-6 pt-12 text-center">
+        <h2 class="text-3xl font-black text-yellow-500 mb-6 uppercase">Spin & Win</h2>
+        <div id="wheel" class="w-64 h-64 border-4 border-yellow-500 rounded-full mx-auto bg-gray-800" style="transition: transform 4s; background: conic-gradient(#fbbf24 0deg 90deg, #d97706 90deg 180deg, #fbbf24 180deg 270deg, #d97706 270deg 360deg);"></div>
+        <button onclick="startSpin()" class="mt-10 bg-yellow-500 text-black w-full py-4 rounded-2xl font-black">SPIN NOW</button>
+    </div>
 
     <div class="footer-nav">
         <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span>🪙</span><span>Earn</span></div>
@@ -103,39 +121,19 @@
         let energy = localStorage.getItem('L_Eng') === null ? 1000 : parseInt(localStorage.getItem('L_Eng'));
         let freeE = parseInt(localStorage.getItem('L_FE')) || 3;
         let freeT = parseInt(localStorage.getItem('L_FT')) || 3;
-
         let turboActive = false;
 
         function updateUI() {
             let maxE = 1000 + ((limL - 1) * 500);
             document.getElementById('score').innerText = score.toLocaleString();
-            document.getElementById('rank-val').innerText = score.toLocaleString();
+            document.getElementById('bord-score').innerText = score.toLocaleString();
             document.getElementById('energy-val').innerText = Math.floor(energy);
             document.getElementById('energy-max').innerText = "/ " + maxE;
             document.getElementById('energy-bar').style.width = (energy / maxE) * 100 + "%";
             
-            // League Update Logic
-            let leagueName = "Bronze League";
-            let leagueId = "L-1";
-            if(score >= 1000000) { leagueName = "Diamond League"; leagueId = "L-5"; }
-            else if(score >= 500000) { leagueName = "Platinum League"; leagueId = "L-4"; }
-            else if(score >= 100000) { leagueName = "Gold League"; leagueId = "L-3"; }
-            else if(score >= 25000) { leagueName = "Silver League"; leagueId = "L-2"; }
-            
-            document.getElementById('display-league').innerText = leagueName;
-            
-            // Update League Page Visuals
-            document.querySelectorAll('.league-item').forEach(el => {
-                el.classList.remove('league-active');
-                el.querySelector('span').innerText = "Locked";
-                el.querySelector('span').className = "text-xs font-bold text-gray-600";
-            });
-            let activeL = document.getElementById(leagueId);
-            activeL.classList.add('league-active');
-            activeL.querySelector('span').innerText = "Current";
-            activeL.querySelector('span').className = "text-xs font-bold text-yellow-500";
+            let lName = "Bronze League"; if(score>=1000000) lName="Diamond League"; else if(score>=500000) lName="Platinum League"; else if(score>=100000) lName="Gold League"; else if(score>=25000) lName="Silver League";
+            document.getElementById('display-league').innerText = lName + " ❯";
 
-            // Counts
             document.getElementById('f-e-c').innerText = freeE + "/3";
             document.getElementById('f-t-c').innerText = freeT + "/3";
 
@@ -168,30 +166,21 @@
             let lvl = type==='tap'?tapL : (type==='limit'?limL : spdL);
             let base = type==='tap'?100 : (type==='limit'?200 : 150);
             let p = base * Math.pow(2, lvl-1);
-            if(score >= p) {
-                score -= p; if(type==='tap') tapL++; else if(type==='limit') limL++; else spdL++;
-                localStorage.setItem('L_Tap', tapL); localStorage.setItem('L_Lim', limL); localStorage.setItem('L_Spd', spdL);
-                updateUI();
-            }
+            if(score >= p) { score -= p; if(type==='tap') tapL++; else if(type==='limit') limL++; else spdL++; updateUI(); }
         }
 
-        function useFullEnergy() {
-            if(freeE > 0) { energy = 1000+((limL-1)*500); freeE--; localStorage.setItem('L_FE', freeE); updateUI(); showPage('game'); }
+        function startSpin() {
+            document.getElementById('wheel').style.transform = `rotate(${Math.floor(Math.random()*360)+3600}deg)`;
+            setTimeout(() => { score += 5000; alert("Won 5,000!"); updateUI(); }, 4000);
         }
 
-        function useTurbo() {
-            if(freeT > 0 && !turboActive) {
-                freeT--; localStorage.setItem('L_FT', freeT); turboActive = true;
-                showPage('game');
-                setTimeout(() => { turboActive = false; updateUI(); }, 10000);
-                updateUI();
-            }
-        }
+        function useFullEnergy() { if(freeE > 0) { energy = 1000+((limL-1)*500); freeE--; updateUI(); showPage('game'); } }
+        function useTurbo() { if(freeT > 0 && !turboActive) { freeT--; turboActive = true; showPage('game'); setTimeout(() => { turboActive = false; updateUI(); }, 10000); updateUI(); } }
 
         function showPage(p) {
             document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
             document.getElementById(p + '-page').classList.remove('hidden');
-            if(p !== 'league') {
+            if(p !== 'spin' && p !== 'league') {
                 document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
                 document.getElementById('btn-' + p).classList.add('active');
             }
@@ -206,5 +195,5 @@
         updateUI();
     </script>
 </body>
-</html>
-
+                                                                                                                                                         </html>
+                                                  
