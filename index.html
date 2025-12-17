@@ -11,14 +11,18 @@
         .page { display: flex; flex-direction: column; height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding-bottom: 170px; transition: 0.3s; overflow-y: auto; }
         .hidden { display: none !important; }
         
+        /* Floating Popup Number Style */
+        .pop-number { position: absolute; font-size: 28px; font-weight: 900; color: white; pointer-events: none; animation: popUp 0.8s ease-out forwards; z-index: 9999; }
+        @keyframes popUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
+
         .floating-spin-btn { position: fixed; left: 10px; top: 40%; width: 55px; height: 55px; background: linear-gradient(145deg, #fbbf24, #d97706); border-radius: 50%; border: 3px solid #f59e0b; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; cursor: pointer; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        #coin { width: 220px; height: 220px; border-radius: 50%; background: linear-gradient(145deg, #fbbf24, #d97706); border: 8px solid #f59e0b; box-shadow: 0 0 40px rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; position: relative; }
+        #coin { width: 220px; height: 220px; border-radius: 50%; background: linear-gradient(145deg, #fbbf24, #d97706); border: 8px solid #f59e0b; box-shadow: 0 0 40px rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s; position: relative; }
+        #coin:active { transform: scale(0.92); }
         .coin-logo { width: 80px; height: 80px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
 
         .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        
         .league-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .league-item.active { border-color: #fbbf24; background: rgba(251, 191, 36, 0.05); }
 
@@ -28,19 +32,24 @@
 
         .progress-container { width: 100%; height: 10px; background: #1e293b; border-radius: 10px; margin-top: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); width: 0%; transition: width 0.5s ease-out; }
-
-        #leaderboard-list::-webkit-scrollbar { width: 4px; }
-        #leaderboard-list::-webkit-scrollbar-thumb { background: #fbbf24; border-radius: 10px; }
     </style>
 </head>
 <body>
+
+    <audio id="tap-sound" preload="auto">
+        <source src="https://www.soundjay.com/buttons/sounds/button-37a.mp3" type="audio/mpeg">
+    </audio>
 
     <div class="floating-spin-btn" onclick="showPage('spin')"><span>🎡</span><span class="text-[8px] font-black text-black uppercase">Spin</span></div>
 
     <div id="game-page" class="page items-center text-center pt-8">
         <button onclick="showPage('league')" id="display-league" class="bg-yellow-500/20 text-yellow-500 px-5 py-1.5 rounded-full text-xs font-bold border border-yellow-500/30 mb-2">Bronze League ❯</button>
         <h1 class="text-6xl font-black text-white mt-2" id="score">0</h1>
-        <div class="mt-12 flex justify-center w-full"><div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)"><div class="coin-logo"></div></div></div>
+        <div class="mt-12 flex justify-center w-full">
+            <div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)">
+                <div class="coin-logo"></div>
+            </div>
+        </div>
         <div class="fixed bottom-[85px] w-full px-6">
             <div class="flex justify-between font-bold text-yellow-400 mb-1"><span>⚡ <span id="energy-val">1000</span></span><span class="text-xs text-gray-500" id="energy-max">/ 1000</span></div>
             <div class="h-3 w-full bg-gray-900 rounded-full overflow-hidden border border-white/10"><div id="energy-bar" class="h-full bg-yellow-500 transition-all"></div></div>
@@ -75,7 +84,6 @@
     <div id="tasks-page" class="page hidden px-6 pt-10 text-center">
         <h2 class="text-3xl font-black text-yellow-500 mb-8 uppercase">Tasks</h2>
         <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-[10px] text-yellow-500">+10k</p></div><button onclick="doTask(10000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
-        <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Follow Twitter</h4><p class="text-[10px] text-yellow-500">+5k</p></div><button onclick="doTask(5000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
     </div>
 
     <div id="boost-page" class="page hidden px-6 pt-10">
@@ -86,9 +94,7 @@
         </div>
         <div class="glass-card"><div><h4 class="font-bold text-sm">Multitap</h4><p id="tap-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-tap" onclick="upgrade('tap')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold uppercase">100</button></div>
         <div class="glass-card"><div><h4 class="font-bold text-sm">Energy Limit</h4><p id="lim-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-lim" onclick="upgrade('limit')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold uppercase">200</button></div>
-        
         <div class="glass-card"><div><h4 class="font-bold text-sm">Recharge Speed</h4><p id="rech-s" class="text-[10px] text-yellow-500">Lvl 1</p></div><button id="btn-rech" onclick="upgrade('rech')" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-bold uppercase">500</button></div>
-        
         <div class="glass-card border-purple-500/30"><div><h4 class="font-bold text-sm">Tap Bot 🤖</h4><p id="bot-status" class="text-[10px] text-purple-400">Not Owned</p></div><button id="btn-bot" onclick="buyBot()" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase">50,000</button></div>
     </div>
 
@@ -113,7 +119,6 @@
     </div>
 
     <script>
-        // Core Game Variables
         let score = parseInt(localStorage.getItem('L_Score')) || 0;
         let tapL = parseInt(localStorage.getItem('L_Tap')) || 1;
         let limL = parseInt(localStorage.getItem('L_Lim')) || 1;
@@ -121,6 +126,7 @@
         let energy = localStorage.getItem('L_Eng') === null ? 1000 : parseInt(localStorage.getItem('L_Eng'));
         let hasBot = localStorage.getItem('L_Bot') === 'true';
         let turboActive = false;
+        const tapSound = document.getElementById('tap-sound');
 
         function updateUI() {
             let maxE = 1000 + ((limL - 1) * 500);
@@ -147,7 +153,6 @@
                 if(i === tier) el.classList.add('active'); else el.classList.remove('active');
             }
 
-            // Button Prices
             setBtn('btn-tap', 'tap-s', tapL, 100);
             setBtn('btn-lim', 'lim-s', limL, 200);
             setBtn('btn-rech', 'rech-s', rechL, 500);
@@ -171,7 +176,27 @@
         function handleTap(e) {
             if (e.type === 'touchstart') e.preventDefault();
             let p = turboActive ? tapL * 5 : tapL;
-            if (energy >= tapL || turboActive) { score += p; if(!turboActive) energy -= tapL; updateUI(); }
+            if (energy >= tapL || turboActive) {
+                score += p;
+                if(!turboActive) energy -= tapL;
+                
+                // Sound Effect
+                tapSound.currentTime = 0;
+                tapSound.play().catch(()=>{});
+
+                // Floating +Number Logic
+                const popup = document.createElement('div');
+                popup.innerText = `+${p}`;
+                popup.className = 'pop-number';
+                let x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+                let y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+                popup.style.left = `${x - 20}px`;
+                popup.style.top = `${y - 40}px`;
+                document.body.appendChild(popup);
+                setTimeout(() => popup.remove(), 800);
+
+                updateUI();
+            }
         }
 
         function upgrade(type) {
@@ -185,7 +210,7 @@
         function doTask(amt, btn) { score += amt; btn.innerText = "DONE ✅"; btn.disabled = true; updateUI(); }
         function useFullEnergy() { energy = 1000+((limL-1)*500); updateUI(); showPage('game'); }
         function useTurbo() { turboActive = true; showPage('game'); setTimeout(()=>{turboActive=false;}, 10000); }
-        function startSpin() { document.getElementById('wheel').style.transform = `rotate(${Math.floor(Math.random()*360)+3600}deg)`; setTimeout(() => { score += 5000; updateUI(); alert("Won 5k!"); }, 4000); }
+        function startSpin() { document.getElementById('wheel').style.transform = `rotate(${Math.floor(Math.random()*360)+3600}deg)`; setTimeout(() => { score += 5000; updateUI(); }, 4000); }
 
         function showPage(p) {
             document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
@@ -202,7 +227,6 @@
             }
         }
 
-        // Energy Recharge Loop (Based on Recharge Speed Level)
         setInterval(() => {
             let mE = 1000 + ((limL - 1) * 500);
             if (energy < mE) energy = Math.min(mE, energy + (1 + rechL));
@@ -213,5 +237,5 @@
         updateUI();
     </script>
 </body>
-  </html>
-      
+                                         </html>
+            
