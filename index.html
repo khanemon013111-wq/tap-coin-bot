@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Pro Integrated Edition</title>
+    <title>Lite Coin - Bot Fixed Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -24,9 +24,6 @@
         .coin-logo { width: 80px; height: 80px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
 
         .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .league-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .league-item.active { border-color: #fbbf24; background: rgba(251, 191, 36, 0.05); }
-
         .footer-nav { background: rgba(15, 23, 42, 0.98); width: 100%; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); position: fixed; bottom: 0; left: 0; z-index: 1000; display: flex; justify-content: space-around; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 10px; font-weight: bold; cursor: pointer; }
         .nav-btn.active { color: #fbbf24; }
@@ -57,18 +54,18 @@
         </div>
     </div>
 
-    <div id="league-page" class="page hidden px-6 pt-8">
+    <div id="league-page" class="page hidden px-6 pt-8 text-center">
         <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-black text-yellow-500 uppercase">Leagues</h2><button onclick="showPage('game')" class="text-xs font-bold text-gray-500 bg-white/5 px-3 py-1 rounded-lg uppercase">Back</button></div>
-        <div class="glass-card p-5 border-yellow-500/20 bg-yellow-500/5 mb-6 block text-center">
+        <div class="glass-card p-5 border-yellow-500/20 bg-yellow-500/5 mb-6 block">
             <h3 class="text-xl font-black mt-1" id="prog-league-name">Bronze League</h3>
             <div class="progress-container"><div id="league-progress-fill" class="progress-fill"></div></div>
             <div class="flex justify-between mt-3 text-[10px] font-bold"><span id="prog-current-score">0</span><span id="prog-next-target" class="text-yellow-500">Next: 25,000</span></div>
         </div>
         <div class="space-y-2">
-            <div id="l-tier-1" class="league-item">🥉 Bronze <span class="text-[9px]">0+</span></div>
-            <div id="l-tier-2" class="league-item">🥈 Silver <span class="text-[9px]">25,000+</span></div>
-            <div id="l-tier-3" class="league-item">🥇 Gold <span class="text-[9px]">100,000+</span></div>
-            <div id="l-tier-4" class="league-item">💎 Diamond <span class="text-[9px]">500,000+</span></div>
+            <div id="l-tier-1" class="glass-card p-3">🥉 Bronze <span class="text-[10px]">0+</span></div>
+            <div id="l-tier-2" class="glass-card p-3">🥈 Silver <span class="text-[10px]">25,000+</span></div>
+            <div id="l-tier-3" class="glass-card p-3">🥇 Gold <span class="text-[10px]">100,000+</span></div>
+            <div id="l-tier-4" class="glass-card p-3">💎 Diamond <span class="text-[10px]">500,000+</span></div>
         </div>
     </div>
 
@@ -94,23 +91,14 @@
         <div class="glass-card border-purple-500/30"><div><h4 class="font-bold text-sm">Tap Bot 🤖</h4><p id="bot-status" class="text-[10px] text-purple-400">Not Owned</p></div><button id="btn-bot" onclick="buyBot()" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase">50,000</button></div>
     </div>
 
-    <div id="tasks-page" class="page hidden px-6 pt-10">
-        <h2 class="text-3xl font-black text-yellow-500 mb-8 text-center uppercase">Tasks</h2>
-        <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Join Telegram</h4><p class="text-[10px] text-yellow-500">+10,000</p></div><button onclick="doTask(10000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
-        <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Subscribe YT</h4><p class="text-[10px] text-yellow-500">+20,000</p></div><button onclick="doTask(20000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
+    <div id="tasks-page" class="page hidden px-6 pt-10 text-center">
+        <h2 class="text-3xl font-black text-yellow-500 mb-8 uppercase">Tasks</h2>
+        <div class="glass-card"><div><h4 class="font-bold text-sm text-left">Join Telegram</h4><p class="text-[10px] text-yellow-500 text-left">+10,000</p></div><button onclick="doTask(10000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
     </div>
 
     <div id="spin-page" class="page hidden px-6 pt-12 text-center">
         <h2 class="text-3xl font-black text-yellow-500 mb-6 uppercase">Spin & Win</h2>
-        <div class="relative mx-auto w-64 h-64 mb-8">
-            <div class="pointer"></div>
-            <div id="wheel" class="mx-auto">
-                <div class="wheel-segment" style="transform: rotate(0deg); background: #fbbf24;">1k</div>
-                <div class="wheel-segment" style="transform: rotate(90deg); background: #f59e0b;">5k</div>
-                <div class="wheel-segment" style="transform: rotate(180deg); background: #fbbf24;">10k</div>
-                <div class="wheel-segment" style="transform: rotate(270deg); background: #f59e0b;">50k</div>
-            </div>
-        </div>
+        <div class="relative mx-auto w-64 h-64 mb-8"><div class="pointer"></div><div id="wheel" class="mx-auto"><div class="wheel-segment" style="transform: rotate(0deg); background: #fbbf24;">1k</div><div class="wheel-segment" style="transform: rotate(90deg); background: #f59e0b;">5k</div><div class="wheel-segment" style="transform: rotate(180deg); background: #fbbf24;">10k</div><div class="wheel-segment" style="transform: rotate(270deg); background: #f59e0b;">50k</div></div></div>
         <button id="spin-btn-action" onclick="startSpin()" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Spin Now</button>
     </div>
 
@@ -119,6 +107,7 @@
         <div class="bg-white/5 p-10 rounded-3xl border border-white/10 mb-8"><h1 class="text-3xl font-black text-yellow-500">🎁 5,000</h1><p class="text-xs text-gray-400 mt-2 font-bold uppercase">Invite Bonus</p></div>
         <button onclick="alert('Link Copied!')" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Invite Friends</button>
     </div>
+
     <div id="leaderboard-page" class="page hidden px-6 pt-10 text-center"><h2 class="text-3xl font-black text-yellow-500 mb-4 uppercase">Board</h2><div id="leaderboard-list" class="space-y-2"></div></div>
 
     <div class="footer-nav">
@@ -130,17 +119,30 @@
     </div>
 
     <script>
+        // --- DATA INITIALIZATION ---
         let score = parseInt(localStorage.getItem('L_Score')) || 0;
         let tapL = parseInt(localStorage.getItem('L_Tap')) || 1;
         let limL = parseInt(localStorage.getItem('L_Lim')) || 1;
         let rechL = parseInt(localStorage.getItem('L_Rech')) || 1;
         let energy = localStorage.getItem('L_Eng') === null ? 1000 : parseInt(localStorage.getItem('L_Eng'));
         let hasBot = localStorage.getItem('L_Bot') === 'true';
+        let lastTime = parseInt(localStorage.getItem('L_Time')) || Date.now();
 
         let today = new Date().toDateString();
         let refillCount = (localStorage.getItem('L_Date') === today) ? (parseInt(localStorage.getItem('L_Refill')) || 0) : 0;
         let turboCount = (localStorage.getItem('L_Date') === today) ? (parseInt(localStorage.getItem('L_Turbo')) || 0) : 0;
         let turboActive = false;
+
+        // --- OFFLINE BOT CALCULATION ---
+        if(hasBot) {
+            let currentTime = Date.now();
+            let secondsAway = Math.floor((currentTime - lastTime) / 1000);
+            if(secondsAway > 10) { // অন্তত ১০ সেকেন্ড দূরে থাকলে
+                let offlineEarnings = Math.min(secondsAway, 10800); // সর্বোচ্চ ৩ ঘণ্টা (১০৮০০ সেকেন্ড) মাইনিং করবে
+                score += offlineEarnings;
+                setTimeout(() => alert(`Welcome back! 🤖 Your Bot mined ${offlineEarnings.toLocaleString()} coins while you were away!`), 1000);
+            }
+        }
 
         function updateUI() {
             let maxE = 1000 + ((limL - 1) * 500);
@@ -149,59 +151,66 @@
             document.getElementById('energy-max').innerText = "/ " + maxE;
             document.getElementById('energy-bar').style.width = (energy / maxE) * 100 + "%";
 
-            // Refill & Turbo Counts
+            // Bot & Limits Status
             document.getElementById('refill-limit').innerText = (3 - refillCount) + "/3 left";
             document.getElementById('turbo-limit').innerText = (3 - turboCount) + "/3 left";
-
-            // Leagues logic
-            let lName = "Bronze", target = 25000, start = 0, tier = 1;
-            if(score >= 500000) { lName = "Diamond"; target = 1000000; start = 500000; tier = 4; }
-            else if(score >= 100000) { lName = "Gold"; target = 500000; start = 100000; tier = 3; }
-            else if(score >= 25000) { lName = "Silver"; target = 100000; start = 25000; tier = 2; }
             
-            if(!turboActive) document.getElementById('display-league').innerText = lName + " League ❯";
-            document.getElementById('prog-league-name').innerText = lName + " League";
-            document.getElementById('prog-current-score').innerText = score.toLocaleString();
-            document.getElementById('prog-next-target').innerText = "Next: " + target.toLocaleString();
-            document.getElementById('league-progress-fill').style.width = Math.min(100, ((score - start) / (target - start)) * 100) + "%";
-            
-            for(let i=1; i<=4; i++) {
-                let el = document.getElementById('l-tier-'+i);
-                if(i === tier) el.classList.add('active'); else el.classList.remove('active');
+            if(hasBot) {
+                document.getElementById('bot-status').innerText = "Active 🤖";
+                document.getElementById('btn-bot').innerText = "OWNED";
+                document.getElementById('btn-bot').disabled = true;
+                document.getElementById('btn-bot').classList.replace('bg-purple-600', 'bg-gray-600');
             }
 
-            // Upgrades UI
-            setBtnUI('btn-tap', 'tap-s', tapL, 100);
-            setBtnUI('btn-lim', 'lim-s', limL, 200);
-            setBtnUI('btn-rech', 'rech-s', rechL, 500);
-            if(hasBot) { document.getElementById('bot-status').innerText = "Active 🤖"; document.getElementById('btn-bot').innerText = "OWNED"; document.getElementById('btn-bot').disabled = true; }
+            // Upgrades Prices
+            setBtnPrice('btn-tap', 'tap-s', tapL, 100);
+            setBtnPrice('btn-lim', 'lim-s', limL, 200);
+            setBtnPrice('btn-rech', 'rech-s', rechL, 500);
 
-            localStorage.setItem('L_Score', score); 
-            localStorage.setItem('L_Eng', energy); 
-            localStorage.setItem('L_Bot', hasBot); 
-            localStorage.setItem('L_Refill', refillCount); 
-            localStorage.setItem('L_Turbo', turboCount); 
+            // Leagues Logic
+            updateLeagues();
+
+            // Save Data
+            localStorage.setItem('L_Score', score);
+            localStorage.setItem('L_Eng', energy);
+            localStorage.setItem('L_Bot', hasBot);
+            localStorage.setItem('L_Refill', refillCount);
+            localStorage.setItem('L_Turbo', turboCount);
             localStorage.setItem('L_Date', today);
             localStorage.setItem('L_Tap', tapL);
             localStorage.setItem('L_Lim', limL);
             localStorage.setItem('L_Rech', rechL);
+            localStorage.setItem('L_Time', Date.now());
         }
 
-        function setBtnUI(id, sId, lvl, base) {
+        function setBtnPrice(id, sId, lvl, base) {
             let p = base * Math.pow(2, lvl-1);
             document.getElementById(sId).innerText = "Lvl " + lvl;
             document.getElementById(id).innerText = p.toLocaleString();
+        }
+
+        function updateLeagues() {
+            let lName = "Bronze", target = 25000, start = 0;
+            if(score >= 500000) { lName = "Diamond"; target = 1000000; start = 500000; }
+            else if(score >= 100000) { lName = "Gold"; target = 500000; start = 100000; }
+            else if(score >= 25000) { lName = "Silver"; target = 100000; start = 25000; }
+            
+            document.getElementById('display-league').innerText = lName + " League ❯";
+            document.getElementById('prog-league-name').innerText = lName + " League";
+            document.getElementById('prog-current-score').innerText = score.toLocaleString();
+            document.getElementById('prog-next-target').innerText = "Next: " + target.toLocaleString();
+            document.getElementById('league-progress-fill').style.width = Math.min(100, ((score - start) / (target - start)) * 100) + "%";
         }
 
         function handleTap(e) {
             if (e.type === 'touchstart') e.preventDefault();
             let gain = turboActive ? tapL * 5 : tapL;
             if (energy >= tapL || turboActive) {
-                score += gain; 
+                score += gain;
                 if(!turboActive) energy -= tapL;
                 
+                // Sound & Pop Animation
                 const snd = document.getElementById('tap-sound'); snd.currentTime=0; snd.play().catch(()=>{});
-                
                 const pop = document.createElement('div');
                 pop.innerText = `+${gain}`;
                 pop.className = 'pop-number';
@@ -214,78 +223,67 @@
             }
         }
 
-        function useFullEnergy() { 
-            if(refillCount < 3) { 
-                let maxE = 1000 + ((limL - 1) * 500);
-                energy = maxE; refillCount++; updateUI(); showPage('game'); 
-            } 
+        // --- MASTER LOOP (EVERY 1 SECOND) ---
+        setInterval(() => {
+            // 1. Energy Recharge
+            let maxE = 1000 + ((limL - 1) * 500);
+            if (energy < maxE) energy = Math.min(maxE, energy + (1 + rechL));
+            
+            // 2. Bot Mining (If Owned)
+            if (hasBot) {
+                score += 1; // প্রতি সেকেন্ডে ১ কয়েন
+            }
+            
+            // 3. UI Sync
+            document.getElementById('score').innerText = score.toLocaleString();
+            document.getElementById('energy-val').innerText = Math.floor(energy);
+            localStorage.setItem('L_Score', score);
+            localStorage.setItem('L_Eng', energy);
+            localStorage.setItem('L_Time', Date.now());
+        }, 1000);
+
+        // --- OTHER FUNCTIONS ---
+        function buyBot() {
+            if(score >= 50000 && !hasBot) {
+                score -= 50000;
+                hasBot = true;
+                updateUI();
+                alert("Tap Bot is now Active! 🤖 It will mine even when you are offline.");
+            } else if(score < 50000) {
+                alert("You need 50,000 coins!");
+            }
         }
 
+        function useFullEnergy() { if(refillCount < 3) { energy = 1000 + ((limL - 1) * 500); refillCount++; updateUI(); showPage('game'); } }
         function useTurbo() { 
             if(turboCount < 3) { 
                 turboActive = true; turboCount++; 
                 document.getElementById('coin').style.filter = "hue-rotate(150deg) brightness(1.5) drop-shadow(0 0 15px cyan)";
-                document.getElementById('display-league').innerText = "🚀 TURBO ACTIVE (5X)";
                 updateUI(); showPage('game'); 
-                setTimeout(() => { 
-                    turboActive = false; 
-                    document.getElementById('coin').style.filter = "none";
-                    updateUI(); 
-                }, 10000); 
+                setTimeout(() => { turboActive = false; document.getElementById('coin').style.filter = "none"; updateUI(); }, 10000); 
             } 
         }
 
         function upgrade(type) {
             let lvl = (type==='tap')?tapL : (type==='limit'?limL : rechL);
             let p = (type==='tap'?100 : (type==='limit'?200 : 500)) * Math.pow(2, lvl-1);
-            if(score >= p) { 
-                score -= p; 
-                if(type==='tap') tapL++; 
-                else if(type==='limit') limL++; 
-                else rechL++; 
-                updateUI(); 
-            }
+            if(score >= p) { score -= p; if(type==='tap') tapL++; else if(type==='limit') limL++; else rechL++; updateUI(); }
         }
-
-        function doTask(amt, btn) {
-            if(btn.innerText === "DONE ✅") return;
-            btn.innerText = "Verifying... ⏳";
-            btn.disabled = true;
-            setTimeout(() => {
-                score += amt;
-                btn.innerText = "DONE ✅";
-                btn.style.background = "#16a34a";
-                updateUI();
-                alert("Task Success! Earned " + amt.toLocaleString());
-            }, 5000);
-        }
-
-        function startSpin() {
-            let btn = document.getElementById('spin-btn-action');
-            btn.disabled = true;
-            let deg = Math.floor(Math.random()*360)+3600;
-            document.getElementById('wheel').style.transform = `rotate(${deg}deg)`;
-            
-            setTimeout(() => {
-                let finalDeg = deg % 360;
-                let prize = 1000;
-                // Reverse calculation: because wheel rotates, the prize at top (pointer) is (360 - deg%360)
-                let pointerPos = (360 - finalDeg) % 360;
-                if(pointerPos >= 0 && pointerPos < 90) prize = 1000;
-                else if(pointerPos >= 90 && pointerPos < 180) prize = 50000; // Actually segments are 1k, 5k, 10k, 50k
-                else if(pointerPos >= 180 && pointerPos < 270) prize = 10000;
-                else prize = 5000;
-                
-                score += prize;
-                updateUI();
-                alert("🎉 You won " + prize.toLocaleString() + " coins!");
-                btn.disabled = false;
-            }, 4000);
-        }
-
-        function buyBot() { if(score >= 50000 && !hasBot) { score -= 50000; hasBot = true; updateUI(); } }
 
         function showPage(p) {
             document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
             document.getElementById(p + '-page').classList.remove('hidden');
-            c
+            document.getElementById('floating-spin').style.display = (p === 'game') ? 'flex' : 'none';
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            if(document.getElementById('btn-'+p)) document.getElementById('btn-'+p).classList.add('active');
+        }
+
+        function doTask(amt, btn) {
+            btn.innerText = "Verifying... ⏳"; btn.disabled = true;
+            setTimeout(() => { score += amt; btn.innerText = "DONE ✅"; btn.style.background = "#16a34a"; updateUI(); }, 5000);
+        }
+
+        function startSpin() {
+            let btn = document.getElementById('spin-btn-action'); btn.disabled = true;
+            let deg = Math.floor(Math.random()*360)+3600;
+            document.getElementById('wheel').style.transform = `rota
