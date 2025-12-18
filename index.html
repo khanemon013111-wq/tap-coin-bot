@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Diamond - Firebase Edition</title>
+    <title>Royal Diamond - Full Firebase</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
-        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; display: flex; flex-direction: column; align-items: center; }
-        .wheel-box { position: relative; width: 280px; height: 280px; border-radius: 50%; padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); border: 4px solid #78350f; }
-        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
-        .tab-content { display: none; width: 100%; max-width: 400px; padding: 15px; animation: fadeIn 0.4s; }
+        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; }
+        .tab-content { display: none; width: 100%; max-width: 400px; margin: auto; padding: 15px; animation: fadeIn 0.4s; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
+        .wheel-box { position: relative; width: 280px; height: 280px; border-radius: 50%; padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); margin: auto; border: 4px solid #78350f; }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; }
         .nav-item { font-size: 10px; color: #94a3b8; cursor: pointer; text-align: center; flex: 1; }
         .nav-item.active { color: #fbbf24; font-weight: bold; }
-        #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
     </style>
 </head>
 <body>
@@ -30,40 +28,49 @@
     </div>
 
     <div id="spin-tab" class="tab-content active-tab text-center">
-        <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 inline-block border border-white/20">
-            <span class="text-yellow-400 font-bold text-sm">💎 BALANCE:</span> 
-            <span id="balance" class="text-lg font-black ml-1 text-white">0.00</span>
+        <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 inline-block">
+            <span class="text-yellow-400 font-bold">💎 BALANCE:</span> <span id="balance">0.00</span>
         </div>
-        <div class="wheel-box mx-auto">
-            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100;"></div>
+        <div class="wheel-box">
+            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100;"></div>
             <canvas id="wheel"></canvas>
         </div>
-        <button onclick="handleAction('spin')" class="mt-12 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black py-4 px-14 rounded-full shadow-2xl active:scale-95 transition-all">SPIN NOW</button>
+        <button onclick="spin()" class="mt-10 bg-yellow-500 text-black font-black py-4 px-12 rounded-full">SPIN NOW</button>
     </div>
 
-    <div id="withdraw-tab" class="tab-content text-center">
+    <div id="leader-tab" class="tab-content">
         <div class="glass-card">
-            <h2 class="text-blue-400 font-black text-xl mb-2">WALLET</h2>
-            <p class="text-gray-400 text-xs mb-8">Minimum Withdraw: 100 Diamonds</p>
-            <input type="number" id="uid-input" placeholder="Enter Player UID" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl text-white mb-4 text-center outline-none">
-            <button onclick="submitWithdraw()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl">REDEEM NOW</button>
+            <h2 class="text-yellow-500 font-black text-center mb-4">🏆 TOP PLAYERS</h2>
+            <div id="leader-list" class="space-y-2"></div>
         </div>
     </div>
 
-    <div id="ad-modal">
-        <div class="text-center">
-            <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Loading Reward...</p>
+    <div id="refer-tab" class="tab-content text-center">
+        <div class="glass-card">
+            <h2 class="text-green-400 font-bold mb-2">REFER & EARN</h2>
+            <p class="text-xs text-gray-400 mb-6">Earn 5.00 Diamonds for each friend!</p>
+            <div class="bg-black/20 p-4 rounded-xl mb-4 text-[10px] break-all" id="ref-link">https://t.me/YourBot?start=</div>
+            <button onclick="copyRef()" class="w-full bg-green-600 py-3 rounded-lg font-bold">COPY LINK</button>
+        </div>
+    </div>
+
+    <div id="wallet-tab" class="tab-content text-center">
+        <div class="glass-card">
+            <h2 class="text-blue-400 font-bold mb-4">REDEEM</h2>
+            <input type="number" id="uid-input" placeholder="Enter Player UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none">
+            <button onclick="withdraw()" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-xl">WITHDRAW NOW</button>
         </div>
     </div>
 
     <div class="nav-bar">
-        <div onclick="switchTab('spin-tab', this)" class="nav-item active"><div>🌀</div><span>Spin</span></div>
-        <div onclick="switchTab('withdraw-tab', this)" class="nav-item"><div>💳</div><span>Wallet</span></div>
+        <div onclick="switchTab('spin-tab', this)" class="nav-item active"><div>🌀</div>Spin</div>
+        <div onclick="switchTab('leader-tab', this)" class="nav-item"><div>🏆</div>Board</div>
+        <div onclick="switchTab('refer-tab', this)" class="nav-item"><div>👥</div>Refer</div>
+        <div onclick="switchTab('wallet-tab', this)" class="nav-item"><div>💳</div>Wallet</div>
     </div>
 
     <script>
-        // --- YOUR FIREBASE CONFIG ---
+        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
             authDomain: "royaldiamondbot.firebaseapp.com",
@@ -76,84 +83,78 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Unique ID for each user (You can link this to Telegram ID later)
-        let userId = localStorage.getItem('user_uid') || "user_" + Math.floor(Math.random() * 100000);
+        let userId = localStorage.getItem('user_uid') || "Player_" + Math.floor(Math.random() * 8999 + 1000);
         localStorage.setItem('user_uid', userId);
+        document.getElementById('ref-link').innerText += userId;
 
-        let currentBalance = 0;
+        let currentBal = 0;
 
-        // LOAD DATA FROM FIREBASE
-        db.ref('users/' + userId).on('value', (snapshot) => {
-            const data = snapshot.val();
-            if(data) {
-                currentBalance = data.balance;
-                document.getElementById('balance').innerText = currentBalance.toFixed(2);
-            }
+        // FETCH USER DATA
+        db.ref('users/' + userId).on('value', snap => {
+            currentBal = snap.val() ? snap.val().balance : 0;
+            document.getElementById('balance').innerText = currentBal.toFixed(2);
         });
 
-        // WHEEL SETUP
+        // LEADERBOARD LOGIC
+        db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
+            let list = "";
+            let players = [];
+            snap.forEach(child => { players.push({name: child.key, bal: child.val().balance}); });
+            players.reverse().forEach((p, i) => {
+                list += `<div class="flex justify-between p-3 bg-white/5 rounded-lg text-sm">
+                            <span>${i+1}. ${p.name}</span>
+                            <span class="text-yellow-400 font-bold">${p.bal.toFixed(2)} 💎</span>
+                         </div>`;
+            });
+            document.getElementById('leader-list').innerHTML = list;
+        });
+
+        // WHEEL DRAWING
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
         const items = ["0", "0.2", "1", "3", "0.5", "2", "15", "0.2", "1", "5", "0", "10", "0.5", "2", "0.8", "7", "0", "1"];
         const colors = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
-        const slices = 18; const sliceDeg = 360/slices; canvas.width = 280; canvas.height = 280;
-
+        canvas.width = 280; canvas.height = 280;
         function draw() {
-            for (let i = 0; i < slices; i++) {
-                ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(140, 140);
-                let startAngle = (i * sliceDeg - 90 - (sliceDeg / 2)) * (Math.PI / 180);
-                let endAngle = ((i + 1) * sliceDeg - 90 - (sliceDeg / 2)) * (Math.PI / 180);
-                ctx.arc(140, 140, 140, startAngle, endAngle); ctx.fill();
-                ctx.save(); ctx.translate(140, 140); ctx.rotate((i * sliceDeg - 90) * (Math.PI / 180));
-                ctx.textAlign = "right"; ctx.fillStyle = (colors[i] === "#1e293b") ? "#fbbf24" : "#1e293b";
-                ctx.font = "bold 11px Poppins"; ctx.fillText(items[i] === "0" ? "✖" : items[i], 130, 5); ctx.restore();
+            for(let i=0; i<18; i++){
+                ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(140,140);
+                ctx.arc(140,140,140,(i*20-100)*Math.PI/180,(i*20-80)*Math.PI/180); ctx.fill();
+                ctx.save(); ctx.translate(140,140); ctx.rotate((i*20-90)*Math.PI/180);
+                ctx.fillStyle = colors[i]=="#1e293b"?"#fbbf24":"#1e293b"; ctx.font="bold 10px Poppins";
+                ctx.fillText(items[i]=="0"?"✖":items[i], 125, 5); ctx.restore();
             }
         }
         draw();
 
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active-tab');
-            el.classList.add('active');
-        }
-
-        function handleAction(type) {
-            document.getElementById('ad-modal').style.display = 'flex';
-            setTimeout(() => {
-                document.getElementById('ad-modal').style.display = 'none';
-                if(type === 'spin') spin();
-            }, 2000);
-        }
-
-        let rotation = 0;
+        let rot = 0;
         function spin() {
-            let rand = Math.random() * 100;
-            let winIdx = rand < 80 ? [0,1,4,7,10,12,14,16][Math.floor(Math.random()*8)] : [2,3,5,6,8,9,11,13,15,17][Math.floor(Math.random()*10)];
-            rotation += (3600 + (slices - winIdx) * sliceDeg - (rotation % 360));
-            canvas.style.transform = `rotate(${rotation}deg)`;
+            let winIdx = Math.random() < 0.8 ? [0,1,4,7,10,12,14,16][Math.floor(Math.random()*8)] : Math.floor(Math.random()*18);
+            rot += (3600 + (18 - winIdx) * 20 - (rot % 360));
+            canvas.style.transform = `rotate(${rot}deg)`;
             setTimeout(() => {
                 let win = parseFloat(items[winIdx]);
-                if(win > 0) {
-                    currentBalance += win;
-                    // SAVE TO FIREBASE
-                    db.ref('users/' + userId).set({ balance: currentBalance });
-                } else { alert("Try Again!"); }
+                if(win > 0) db.ref('users/' + userId).update({ balance: currentBal + win });
+                else alert("Better luck!");
             }, 6500);
         }
 
-        function submitWithdraw() {
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active-tab'); el.classList.add('active');
+        }
+
+        function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-link').innerText); alert("Copied!"); }
+
+        function withdraw() {
             let uid = document.getElementById('uid-input').value;
-            if(currentBalance < 100) return alert("Need 100 Diamonds!");
+            if(currentBal < 100) return alert("Min 100 Diamonds!");
             if(!uid) return alert("Enter UID!");
-            
-            // SEND WITHDRAW TO FIREBASE
-            db.ref('withdrawals').push({ userId: userId, playerUid: uid, amount: currentBalance, status: "pending" });
-            currentBalance = 0;
-            db.ref('users/' + userId).set({ balance: 0 });
-            alert("Withdrawal Requested!");
+            db.ref('withdrawals').push({ user: userId, uid: uid, amount: currentBal, time: Date.now() });
+            db.ref('users/' + userId).update({ balance: 0 });
+            alert("Request Sent!");
         }
     </script>
 </body>
-</html>
-
+    </html>
+    
