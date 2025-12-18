@@ -3,51 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Diamond - Spin & Earn</title>
+    <title>Royal Diamond - Firebase Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
-        
-        body { 
-            background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); 
-            color: white; font-family: 'Poppins', sans-serif; 
-            min-height: 100vh; margin: 0; padding-bottom: 90px;
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        /* Wheel Styles */
-        .wheel-box { 
-            position: relative; width: 280px; height: 280px; border-radius: 50%; 
-            padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); 
-            box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); border: 4px solid #78350f;
-        }
+        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; display: flex; flex-direction: column; align-items: center; }
+        .wheel-box { position: relative; width: 280px; height: 280px; border-radius: 50%; padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); border: 4px solid #78350f; }
         #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
-
-        /* Tab Content Control */
         .tab-content { display: none; width: 100%; max-width: 400px; padding: 15px; animation: fadeIn 0.4s; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .glass-card { 
-            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px;
-        }
-
-        /* Bottom Nav Bar */
-        .nav-bar { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: rgba(15, 23, 42, 0.95); display: flex; 
-            justify-content: space-around; padding: 12px; 
-            border-top: 1px solid rgba(255,255,255,0.1); z-index: 500;
-        }
+        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; }
         .nav-item { font-size: 10px; color: #94a3b8; cursor: pointer; text-align: center; flex: 1; }
         .nav-item.active { color: #fbbf24; font-weight: bold; }
-        .nav-item div { font-size: 20px; margin-bottom: 2px; }
-
-        #ad-modal { 
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); 
-            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
-        }
+        #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
     </style>
 </head>
 <body>
@@ -61,89 +34,64 @@
             <span class="text-yellow-400 font-bold text-sm">💎 BALANCE:</span> 
             <span id="balance" class="text-lg font-black ml-1 text-white">0.00</span>
         </div>
-        
         <div class="wheel-box mx-auto">
             <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100;"></div>
             <canvas id="wheel"></canvas>
         </div>
-
-        <button onclick="handleAction('spin')" class="mt-12 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black py-4 px-14 rounded-full shadow-2xl active:scale-95 transition-all">
-            SPIN NOW
-        </button>
-    </div>
-
-    <div id="leader-tab" class="tab-content">
-        <div class="glass-card">
-            <h2 class="text-yellow-500 font-black text-xl mb-6 text-center italic">🏆 TOP EARNERS</h2>
-            <div id="leaderboard-list" class="space-y-3">
-                <div class="flex justify-between items-center bg-yellow-600/10 p-4 rounded-xl border border-yellow-500/20 text-sm">
-                    <span class="font-bold">🥇 Player_772</span>
-                    <span class="text-yellow-400 font-black">540.20 💎</span>
-                </div>
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl text-sm">
-                    <span>🥈 King_User</span>
-                    <span class="text-yellow-400 font-bold">420.50 💎</span>
-                </div>
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl text-sm">
-                    <span>🥉 Pro_Spinner</span>
-                    <span class="text-yellow-400 font-bold">310.00 💎</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="refer-tab" class="tab-content text-center">
-        <div class="glass-card">
-            <h2 class="text-green-400 font-black text-xl mb-2">REFER & EARN</h2>
-            <p class="text-gray-400 text-xs mb-6">Invite friends and earn 5.00 Diamonds!</p>
-            
-            <div class="bg-yellow-500/10 p-6 rounded-2xl border border-yellow-500/20 mb-6">
-                <div class="text-3xl mb-2">🎁</div>
-                <p class="text-sm">Bonus per Referral</p>
-                <p class="text-2xl font-black text-yellow-400">5.00 💎</p>
-            </div>
-
-            <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white font-black py-4 rounded-xl shadow-lg">
-                GET REFER LINK
-            </button>
-        </div>
+        <button onclick="handleAction('spin')" class="mt-12 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black py-4 px-14 rounded-full shadow-2xl active:scale-95 transition-all">SPIN NOW</button>
     </div>
 
     <div id="withdraw-tab" class="tab-content text-center">
         <div class="glass-card">
             <h2 class="text-blue-400 font-black text-xl mb-2">WALLET</h2>
             <p class="text-gray-400 text-xs mb-8">Minimum Withdraw: 100 Diamonds</p>
-            
-            <input type="number" id="uid-input" placeholder="Enter Player UID" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl text-white mb-4 text-center focus:border-yellow-500 outline-none">
-            
-            <button onclick="submitWithdraw()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl">
-                REDEEM NOW
-            </button>
+            <input type="number" id="uid-input" placeholder="Enter Player UID" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl text-white mb-4 text-center outline-none">
+            <button onclick="submitWithdraw()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl">REDEEM NOW</button>
         </div>
     </div>
 
     <div id="ad-modal">
-        <div id="loading-box" class="text-center">
+        <div class="text-center">
             <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm tracking-widest">Loading Reward...</p>
-        </div>
-        
-        <div id="refer-box" class="hidden w-full max-w-[300px] text-center p-6 bg-gray-900 rounded-3xl border border-yellow-500/30">
-            <p class="text-xs text-gray-400 mb-4">Copy your link to earn bonus 5💎:</p>
-            <div class="bg-black p-3 rounded-lg text-[10px] break-all text-yellow-500 border border-white/5 mb-4" id="ref-url">https://t.me/your_bot?start=user_id</div>
-            <button onclick="copyRef()" class="w-full bg-yellow-500 text-black font-bold py-2 rounded-lg">COPY LINK</button>
-            <button onclick="closeModal()" class="mt-4 text-gray-500 text-xs">Close</button>
+            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Loading Reward...</p>
         </div>
     </div>
 
     <div class="nav-bar">
         <div onclick="switchTab('spin-tab', this)" class="nav-item active"><div>🌀</div><span>Spin</span></div>
-        <div onclick="switchTab('leader-tab', this)" class="nav-item"><div>🏆</div><span>Board</span></div>
-        <div onclick="switchTab('refer-tab', this)" class="nav-item"><div>👥</div><span>Refer</span></div>
         <div onclick="switchTab('withdraw-tab', this)" class="nav-item"><div>💳</div><span>Wallet</span></div>
     </div>
 
     <script>
+        // --- YOUR FIREBASE CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
+            authDomain: "royaldiamondbot.firebaseapp.com",
+            databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com",
+            projectId: "royaldiamondbot",
+            storageBucket: "royaldiamondbot.firebasestorage.app",
+            messagingSenderId: "156914195366",
+            appId: "1:156914195366:web:e5ab56df62ecbf90550d67"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Unique ID for each user (You can link this to Telegram ID later)
+        let userId = localStorage.getItem('user_uid') || "user_" + Math.floor(Math.random() * 100000);
+        localStorage.setItem('user_uid', userId);
+
+        let currentBalance = 0;
+
+        // LOAD DATA FROM FIREBASE
+        db.ref('users/' + userId).on('value', (snapshot) => {
+            const data = snapshot.val();
+            if(data) {
+                currentBalance = data.balance;
+                document.getElementById('balance').innerText = currentBalance.toFixed(2);
+            }
+        });
+
+        // WHEEL SETUP
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
         const items = ["0", "0.2", "1", "3", "0.5", "2", "15", "0.2", "1", "5", "0", "10", "0.5", "2", "0.8", "7", "0", "1"];
@@ -172,56 +120,40 @@
 
         function handleAction(type) {
             document.getElementById('ad-modal').style.display = 'flex';
-            document.getElementById('loading-box').classList.remove('hidden');
-            document.getElementById('refer-box').classList.add('hidden');
             setTimeout(() => {
-                if(type === 'spin') { document.getElementById('ad-modal').style.display = 'none'; spin(); }
-                else { document.getElementById('loading-box').classList.add('hidden'); document.getElementById('refer-box').classList.remove('hidden'); }
-            }, 2500);
+                document.getElementById('ad-modal').style.display = 'none';
+                if(type === 'spin') spin();
+            }, 2000);
         }
 
-        let currentRotation = 0;
-        let totalDiamonds = 0; // এটি ডাটাবেস ব্যালেন্সের সাথে লিঙ্ক হবে
-
+        let rotation = 0;
         function spin() {
-            let winningIndex; let rand = Math.random() * 100;
-            // Dadu's Logic: 82% Low, 15% Medium, 3% Jackpot
-            if (rand < 82) winningIndex = [0, 1, 4, 7, 10, 12, 14, 16][Math.floor(Math.random() * 8)];
-            else if (rand < 97) winningIndex = [2, 3, 5, 8, 9, 13, 15, 17][Math.floor(Math.random() * 8)];
-            else winningIndex = [6, 11][Math.floor(Math.random() * 2)];
-
-            const targetDeg = (slices - winningIndex) * sliceDeg;
-            currentRotation += (3600 - (currentRotation % 360)) + targetDeg;
-            canvas.style.transform = `rotate(${currentRotation}deg)`;
+            let rand = Math.random() * 100;
+            let winIdx = rand < 80 ? [0,1,4,7,10,12,14,16][Math.floor(Math.random()*8)] : [2,3,5,6,8,9,11,13,15,17][Math.floor(Math.random()*10)];
+            rotation += (3600 + (slices - winIdx) * sliceDeg - (rotation % 360));
+            canvas.style.transform = `rotate(${rotation}deg)`;
             setTimeout(() => {
-                const win = parseFloat(items[winningIndex]);
+                let win = parseFloat(items[winIdx]);
                 if(win > 0) {
-                    totalDiamonds = (parseFloat(totalDiamonds) + win).toFixed(2);
-                    document.getElementById('balance').innerText = totalDiamonds;
-                } else { alert("Better luck next time!"); }
+                    currentBalance += win;
+                    // SAVE TO FIREBASE
+                    db.ref('users/' + userId).set({ balance: currentBalance });
+                } else { alert("Try Again!"); }
             }, 6500);
         }
 
-        function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-url').innerText); alert("Link Copied!"); }
-
-        // ফিক্সড উইথড্র লজিক
         function submitWithdraw() {
-            let currentBal = parseFloat(totalDiamonds);
             let uid = document.getElementById('uid-input').value;
-
-            if (currentBal < 100) {
-                alert("Insufficient Balance! You need at least 100 Diamonds to withdraw.");
-            } else if (uid.trim() === "" || uid.length < 5) {
-                alert("Please enter a valid Player UID.");
-            } else {
-                alert("Success! Your withdrawal request for " + currentBal + " Diamonds has been submitted.");
-                // রিকোয়েস্ট সফল হওয়ার পর আপনি চাইলে ব্যালেন্স জিরো করতে পারেন:
-                // totalDiamonds = 0; document.getElementById('balance').innerText = "0.00";
-            }
+            if(currentBalance < 100) return alert("Need 100 Diamonds!");
+            if(!uid) return alert("Enter UID!");
+            
+            // SEND WITHDRAW TO FIREBASE
+            db.ref('withdrawals').push({ userId: userId, playerUid: uid, amount: currentBalance, status: "pending" });
+            currentBalance = 0;
+            db.ref('users/' + userId).set({ balance: 0 });
+            alert("Withdrawal Requested!");
         }
-
-        function closeModal() { document.getElementById('ad-modal').style.display = 'none'; }
     </script>
 </body>
-                </html>
-    
+</html>
+
