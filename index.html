@@ -3,56 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>20 Slots Mega Diamond Spin</title>
+    <title>Fixed 20 Slot Spin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
         body { background: #020617; color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; overflow: hidden; }
         
-        /* চাকা একটু বড় করা হয়েছে */
-        .wheel-box { position: relative; width: 350px; height: 350px; border-radius: 50%; padding: 10px; background: #f59e0b; box-shadow: 0 0 60px rgba(245, 158, 11, 0.4); border: 6px solid #78350f; }
-        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 7s cubic-bezier(0.1, 0, 0.1, 1); }
+        .wheel-box { position: relative; width: 340px; height: 340px; border-radius: 50%; padding: 5px; background: #f59e0b; border: 5px solid #78350f; box-shadow: 0 0 50px rgba(245,158,11,0.3); }
         
-        .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 35px; height: 50px; background: #ef4444; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 30; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); }
+        /* চাকা ঘোরার এনিমেশন */
+        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.2, 0, 0, 1); }
         
-        .center-hub { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: #000; border: 4px solid #f59e0b; border-radius: 50%; z-index: 20; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px #f59e0b; }
+        /* লাল কাটার ঠিক পজিশন */
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 30px; height: 40px; background: #ef4444; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 50; filter: drop-shadow(0 4px 5px rgba(0,0,0,0.5)); }
+        
+        .center-hub { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #000; border: 3px solid #f59e0b; border-radius: 50%; z-index: 40; }
 
-        .spin-btn { margin-top: 40px; background: #f59e0b; color: #000; padding: 16px 70px; border-radius: 50px; font-weight: 900; letter-spacing: 2px; box-shadow: 0 8px 0 #b45309; transition: 0.1s; cursor: pointer; border: none; }
+        .spin-btn { margin-top: 40px; background: #f59e0b; color: #000; padding: 15px 60px; border-radius: 50px; font-weight: 900; letter-spacing: 2px; box-shadow: 0 8px 0 #b45309; transition: 0.1s; cursor: pointer; }
         .spin-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #b45309; }
-        .spin-btn:disabled { background: #4b5563; box-shadow: none; color: #9ca3af; }
-
         #ad-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
-        
-        #withdraw-card { display: none; margin-top: 25px; background: #1e293b; padding: 20px; border-radius: 20px; width: 340px; border: 2px solid #f59e0b; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="text-center mb-6">
-        <h1 class="text-3xl font-black text-yellow-500 italic">MEGA <span class="text-white">20</span> SPIN</h1>
-        <div class="bg-blue-900/50 text-blue-300 px-5 py-2 rounded-full inline-block mt-3 border border-blue-500/30 shadow-lg">
-            💎 BALANCE: <span id="balance" class="text-white font-black">0</span>
+        <h1 class="text-2xl font-black text-yellow-500 italic">PRECISION SPIN</h1>
+        <div class="bg-blue-900/50 text-blue-300 px-4 py-1 rounded-full inline-block mt-2 border border-blue-500/30">
+            💎 BALANCE: <span id="balance">0</span>
         </div>
     </div>
 
     <div class="wheel-box">
         <div class="pointer"></div>
-        <div class="center-hub">💎</div>
+        <div class="center-hub"></div>
         <canvas id="wheel"></canvas>
     </div>
 
-    <button id="main-btn" onclick="startProcess()" class="spin-btn">SPIN FOR DIAMOND</button>
-
-    <div id="withdraw-card">
-        <h2 class="text-yellow-500 font-bold text-xl mb-2">REDEEM NOW!</h2>
-        <input type="number" id="player-id" class="w-full p-3 mb-3 rounded-lg bg-black border-none text-yellow-500 text-center font-bold" placeholder="FREE FIRE UID">
-        <button onclick="submitWithdraw()" class="w-full bg-green-600 py-3 rounded-lg font-bold text-white shadow-lg">CLAIM DIAMONDS</button>
-    </div>
+    <button id="main-btn" onclick="startProcess()" class="spin-btn">SPIN NOW</button>
 
     <div id="ad-modal">
         <div class="text-center">
-            <div class="animate-spin rounded-full h-14 w-14 border-t-4 border-yellow-500 mb-4 mx-auto"></div>
-            <p class="text-yellow-500 font-bold tracking-widest">LOADING REWARDED AD...</p>
+            <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-yellow-500 mb-4 mx-auto"></div>
+            <p class="text-yellow-500 font-bold">LOADING AD...</p>
         </div>
     </div>
 
@@ -60,33 +52,39 @@
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
         
-        // ২০টি ঘরের নিখুঁত ডায়মন্ড হিসাব
-        const items = ["1", "0", "2", "0", "5", "0", "1", "10", "0", "1", "2", "0", "20", "0", "1", "5", "0", "2", "1", "1"];
+        // ২০টি ঘরের সঠিক ডায়মন্ড লিস্ট
+        const items = ["1", "0", "5", "0", "2", "0", "20", "0", "1", "2", "0", "10", "1", "0", "5", "0", "2", "1", "0", "1"];
         const colors = ["#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000"];
         
-        canvas.width = 330; canvas.height = 330;
-        const centerX = 165; const centerY = 165;
+        const numSlices = items.length;
+        const sliceAngle = (2 * Math.PI) / numSlices;
+        
+        canvas.width = 330;
+        canvas.height = 330;
 
         function draw() {
-            const arc = (2 * Math.PI) / items.length;
-            for (let i = 0; i < items.length; i++) {
+            ctx.clearRect(0,0,330,330);
+            for (let i = 0; i < numSlices; i++) {
                 ctx.beginPath();
                 ctx.fillStyle = colors[i];
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, centerX, i * arc, (i + 1) * arc);
+                ctx.moveTo(165, 165);
+                // -Math.PI/2 দেওয়া হয়েছে যাতে প্রথম ঘরটি ১২টার কাঁটা থেকে শুরু হয়
+                ctx.arc(165, 165, 165, (i * sliceAngle) - Math.PI/2, ((i + 1) * sliceAngle) - Math.PI/2);
                 ctx.fill();
+                ctx.stroke();
+
                 ctx.save();
-                ctx.translate(centerX, centerY);
-                ctx.rotate(i * arc + arc / 2);
+                ctx.translate(165, 165);
+                ctx.rotate((i * sliceAngle) + sliceAngle / 2 - Math.PI/2);
                 ctx.textAlign = "right";
                 ctx.fillStyle = (colors[i] === "#000000") ? "#f59e0b" : "#000000";
-                ctx.font = "bold 11px Orbitron";
-                ctx.fillText(items[i] + (items[i] === "0" ? "" : " 💎"), centerX - 15, 5);
+                ctx.font = "bold 12px Orbitron";
+                ctx.fillText(items[i], 145, 5);
                 ctx.restore();
             }
         }
 
-        let deg = 0;
+        let currentRotation = 0;
         let totalDiamonds = 0;
 
         function startProcess() {
@@ -95,40 +93,34 @@
             setTimeout(() => {
                 document.getElementById('ad-modal').style.display = 'none';
                 spin();
-            }, 3000);
+            }, 2000);
         }
 
         function spin() {
-            const extra = Math.floor(Math.random() * 360) + 4320; // ১২ বার ঘুরবে
-            deg += extra;
-            canvas.style.transform = `rotate(${deg}deg)`;
+            // রেন্ডমলি কত ডিগ্রি ঘুরবে
+            const randomExtra = Math.floor(Math.random() * 360);
+            const totalSpin = 3600 + randomExtra; // ১০ বার পূর্ণ ঘুরে তারপর এক্সট্রা
+            currentRotation += totalSpin;
+            
+            canvas.style.transform = `rotate(${currentRotation}deg)`;
 
             setTimeout(() => {
                 document.getElementById('main-btn').disabled = false;
-                // ২০টি ঘরের জন্য ১৮ ডিগ্রি প্রতি ঘর
-                const index = Math.floor((360 - (deg % 360)) / 18) % 20;
-                const win = parseInt(items[index]);
                 
+                // ক্যালকুলেশন লজিক ফিক্সড:
+                const stopAngle = currentRotation % 360;
+                // উল্টো দিকে হিসাব করে কোন ইন্ডেক্সে থামলো তা বের করা
+                const winningIndex = Math.floor(((360 - stopAngle) % 360) / (360 / numSlices));
+                
+                const win = parseInt(items[winningIndex]);
                 if(win > 0) {
                     totalDiamonds += win;
                     document.getElementById('balance').innerText = totalDiamonds;
-                    alert("সাবাস দাদু! আপনি জিতেছেন " + win + " 💎");
+                    alert("Congratulations! You won " + win + " 💎");
                 } else {
-                    alert("ওহ! এবার খালি। আবার ট্রাই করেন দাদু।");
+                    alert("Better luck next time!");
                 }
-
-                // ৫০ ডায়মন্ড হলে উইথড্র অপশন আসবে (আপনি চাইলে এটা কমাতে পারেন)
-                if(totalDiamonds >= 50) {
-                    document.getElementById('withdraw-card').style.display = 'block';
-                    document.getElementById('main-btn').style.display = 'none';
-                }
-            }, 7500);
-        }
-
-        function submitWithdraw() {
-            const uid = document.getElementById('player-id').value;
-            if(uid.length < 5) { alert("Invalid UID!"); return; }
-            alert("রিকোয়েস্ট পাঠানো হয়েছে! \nUID: " + uid + "\n২৪ ঘণ্টার মধ্যে ডায়মন্ড পৌঁছে যাবে।");
+            }, 6000);
         }
 
         draw();
