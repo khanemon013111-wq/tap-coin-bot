@@ -54,65 +54,36 @@
 <div id="shop-tab" class="tab-content text-center">
     <div class="glass-card">
         <h2 class="text-yellow-500 font-black mb-1 uppercase italic">Tap-Bot Shop</h2>
-        
         <div class="mb-4 p-4 bg-black/40 rounded-xl border border-white/10 text-left">
             <p class="text-xs">🤖 Active: <span id="active-bot" class="text-yellow-400 font-bold">None</span></p>
             <p class="text-xs">📊 Mined: <span id="mined-amount" class="text-green-400 font-bold">0.00</span> 💎</p>
             <p id="mining-status" class="text-[10px] mt-1 text-red-500 italic">🛑 Stopped</p>
         </div>
-
         <div class="flex gap-2 mb-6">
             <button onclick="handleAction('start_mining')" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold text-[11px] uppercase">🚀 Start (Ad)</button>
             <button onclick="handleAction('claim')" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-[11px] uppercase">📥 Claim</button>
         </div>
-
+        
         <h3 class="text-left text-[11px] font-bold text-yellow-500 mb-2 uppercase italic">📊 Profit Summary</h3>
         <div class="mb-6 overflow-hidden rounded-xl border border-white/10 bg-white/5 text-[9px]">
             <table class="w-full text-center">
                 <thead class="bg-yellow-500/20 text-yellow-500 font-bold">
                     <tr>
                         <th class="p-2 border-r border-white/10">Bot</th>
-                        <th class="p-2 border-r border-white/10">Daily</th>
-                        <th class="p-2 border-r border-white/10">Total</th>
-                        <th class="p-2">Profit</th>
+                        <th class="p-2 border-r border-white/10">8h Earn</th>
+                        <th class="p-2">Net Profit</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-300">
-                    <tr class="border-b border-white/5">
-                        <td class="p-2 border-r border-white/10 italic">🥉 Bronze</td>
-                        <td class="p-2 border-r border-white/10">81💎</td>
-                        <td class="p-2 border-r border-white/10">567💎</td>
-                        <td class="p-2 text-green-400 font-bold">+67💎</td>
-                    </tr>
-                    <tr class="border-b border-white/5">
-                        <td class="p-2 border-r border-white/10 italic">🥈 Silver</td>
-                        <td class="p-2 border-r border-white/10">180💎</td>
-                        <td class="p-2 border-r border-white/10">1800💎</td>
-                        <td class="p-2 text-green-400 font-bold">+300💎</td>
-                    </tr>
-                    <tr class="border-b border-white/5">
-                        <td class="p-2 border-r border-white/10 italic">🥇 Gold</td>
-                        <td class="p-2 border-r border-white/10">300💎</td>
-                        <td class="p-2 border-r border-white/10">4500💎</td>
-                        <td class="p-2 text-green-400 font-bold">+500💎</td>
-                    </tr>
-                    <tr class="border-b border-white/5">
-                        <td class="p-2 border-r border-white/10 italic">💎 Plat.</td>
-                        <td class="p-2 border-r border-white/10">615💎</td>
-                        <td class="p-2 border-r border-white/10">12300💎</td>
-                        <td class="p-2 text-green-400 font-bold">+2300💎</td>
-                    </tr>
-                    <tr>
-                        <td class="p-2 border-r border-white/10 italic">👑 Diam.</td>
-                        <td class="p-2 border-r border-white/10">1260💎</td>
-                        <td class="p-2 border-r border-white/10">37800💎</td>
-                        <td class="p-2 text-green-400 font-bold">+12800💎</td>
-                    </tr>
+                    <tr class="border-b border-white/5"><td>🥉 Bronze</td><td>27💎</td><td class="text-green-400">+67💎</td></tr>
+                    <tr class="border-b border-white/5"><td>🥈 Silver</td><td>60💎</td><td class="text-green-400">+300💎</td></tr>
+                    <tr class="border-b border-white/5"><td>🥇 Gold</td><td>100💎</td><td class="text-green-400">+500💎</td></tr>
+                    <tr class="border-b border-white/5"><td>💎 Plat.</td><td>205💎</td><td class="text-green-400">+2300💎</td></tr>
+                    <tr><td>👑 Diam.</td><td>420💎</td><td class="text-green-400">+12800💎</td></tr>
                 </tbody>
             </table>
         </div>
 
-        <h3 class="text-left text-[11px] font-bold text-yellow-500 mb-2 uppercase italic">🛒 Available Bots</h3>
         <div class="space-y-3" id="bot-store-list"></div>
     </div>
 </div>
@@ -141,9 +112,9 @@
             <p class="text-xl font-bold text-yellow-500"><span id="wallet-bal-display">0.00</span> 💎</p>
         </div>
         <input type="number" id="uid-input" placeholder="Enter Binance UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
-        <input type="number" id="amount-input" placeholder="How many Diamonds?" class="w-full p-4 bg-black/40 rounded-xl mb-6 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
+        <input type="number" id="amount-input" placeholder="Min 1000 Diamonds" class="w-full p-4 bg-black/40 rounded-xl mb-6 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
         <button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl shadow-lg uppercase">SUBMIT WITHDRAW</button>
-        <p class="mt-4 text-[10px] text-gray-500 italic">Minimum 100 Diamonds</p>
+        <p class="mt-4 text-[10px] text-red-500 font-bold italic underline">Minimum Withdrawal: 1000 Diamonds</p>
     </div>
 </div>
 
@@ -156,7 +127,6 @@
 </div>
 
 <script>
-// Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
     authDomain: "royaldiamondbot.firebaseapp.com",
@@ -257,9 +227,9 @@ function renderStore() {
         html += `<div class="bot-card flex justify-between items-center text-left">
             <div>
                 <p class="text-sm font-bold text-yellow-500">${b.icon} ${name}</p>
-                <p class="text-[9px] text-gray-400">Duration: ${b.days} Days | Cost: ${b.price}💎</p>
+                <p class="text-[9px] text-gray-400">Earn: ${b.earn_8h}💎/8h | ${b.days} Days</p>
             </div>
-            <button onclick="buyBot('${name}')" class="bg-yellow-500 text-black px-3 py-1 rounded-lg text-[10px] font-black uppercase">Buy Now</button>
+            <button onclick="buyBot('${name}')" class="bg-yellow-500 text-black px-3 py-1 rounded-lg text-[10px] font-black">${b.price} 💎</button>
         </div>`;
     }
     document.getElementById('bot-store-list').innerHTML = html;
@@ -269,18 +239,22 @@ renderStore();
 function buyBot(name) {
     const cost = BOT_PLANS[name].price;
     if (bal < cost) return alert("❌ Not enough diamonds!");
-    if (confirm("Purchase " + name + " for " + cost + " diamonds?")) {
+    if (confirm("Buy " + name + " for " + cost + " diamonds?")) {
         db.ref('users/' + userId).update({
             balance: bal - cost,
             activeBot: name,
             lastStartTime: 0
         });
-        alert("✅ " + name + " Activated!");
+        alert("✅ " + name + " Purchased!");
     }
 }
 
 function handleAction(type) {
     if (type === 'spin' && dailySpins >= 50) return alert("❌ Daily Limit Reached!");
+    
+    // Withdrawal limit check
+    if (type === 'withdraw' && bal < 1000) return alert("❌ আপনার ব্যালেন্সে কমপক্ষে ১০০০ ডাইমন্ড থাকতে হবে!");
+    
     document.getElementById('ad-modal').style.display = 'flex';
     if (typeof show_10343752 === 'function') {
         show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
@@ -295,6 +269,7 @@ function executeLogic(type) {
     if (type === 'start_mining') {
         if (activeBot === "None") return alert("❌ Buy a bot first!");
         db.ref('users/' + userId).update({ lastStartTime: Math.floor(Date.now() / 1000) });
+        alert("🚀 Mining Started for 8 Hours!");
     }
     if (type === 'claim') {
         const earned = parseFloat(document.getElementById('mined-amount').innerText);
@@ -313,11 +288,11 @@ function executeLogic(type) {
         let u = document.getElementById('uid-input').value;
         let a = parseFloat(document.getElementById('amount-input').value);
         if(!u) return alert("Enter Binance UID!");
-        if(isNaN(a) || a < 100) return alert("Min 100 Diamonds!");
+        if(isNaN(a) || a < 1000) return alert("Minimum withdrawal is 1000 Diamonds!");
         if(a > bal) return alert("Insufficient balance!");
         db.ref('withdrawals').push({ user: userId, uid: u, amount: a, status: "pending", time: new Date().toLocaleString() });
         db.ref('users/' + userId).update({ balance: bal - a });
-        alert("🚀 Request sent!");
+        alert("🚀 উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!");
     }
 }
 
@@ -382,4 +357,6 @@ function switchTab(id, el) {
 }
 setInterval(calculateMining, 10000);
 </script>
-</bo
+</body>
+    </html>
+    
