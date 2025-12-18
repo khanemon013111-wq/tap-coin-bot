@@ -102,6 +102,8 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 
 <h2 class="text-green-400 font-black mb-2 italic">Refer & Earn</h2>
 
+<p class="text-xs text-gray-300 mb-4">Invite friends and get <span class="text-yellow-400 font-bold">10 💎</span> per refer!</p>
+
 <div class="bg-black/40 p-5 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500 font-mono shadow-inner" id="ref-link-display">Generating...</div>
 
 <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold uppercase">COPY LINK</button>
@@ -172,6 +174,10 @@ const link = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
 document.getElementById('ref-link-display').innerText = link;
 
+// রেফার বোনাস লজিক যোগ করা হয়েছে
+const urlParams = new URLSearchParams(window.location.search);
+const referrerId = urlParams.get('start');
+
 let bal = 0;
 
 let dailySpins = 0;
@@ -183,6 +189,16 @@ db.ref('users/' + userId).on('value', snap => {
 const data = snap.val() || { balance: 0, lastDate: today, spinCount: 0 };
 
 bal = data.balance;
+
+// নতুন ইউজার রেফার লিঙ্কে আসলে রেফারারকে ১০ ডাইমন্ড দেওয়া
+if (!snap.exists() && referrerId && referrerId !== userId) {
+    db.ref('users/' + referrerId).once('value', rSnap => {
+        if(rSnap.exists()){
+            let rBal = rSnap.val().balance || 0;
+            db.ref('users/' + referrerId).update({ balance: rBal + 10 });
+        }
+    });
+}
 
 if (data.lastDate !== today) {
 
@@ -369,4 +385,4 @@ document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')
 document.getElementById(id).classList.add('active-tab'); el.classList.add('active');
 
 }</script></body></html>
-  
+
