@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Diamond - Firebase & Ads</title>
+    <title>Royal Diamond - Final Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -13,17 +13,23 @@
         .tab-content { display: none; width: 100%; max-width: 400px; margin: auto; padding: 15px; animation: fadeIn 0.4s; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .wheel-box { position: relative; width: 280px; height: 280px; border-radius: 50%; padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); margin: auto; border: 4px solid #78350f; box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+        .wheel-box { position: relative; width: 280px; height: 280px; border-radius: 50%; padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); margin: auto; border: 4px solid #78350f; box-shadow: 0 0 25px rgba(245, 158, 11, 0.4); }
         #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; }
         .nav-item { font-size: 10px; color: #94a3b8; cursor: pointer; text-align: center; flex: 1; }
         .nav-item.active { color: #fbbf24; font-weight: bold; }
         .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
-        /* AD MODAL STYLE */
         #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
     </style>
 </head>
 <body>
+
+    <div id="ad-modal">
+        <div class="text-center">
+            <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p id="ad-text" class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Loading Ad...</p>
+        </div>
+    </div>
 
     <div class="text-center my-6">
         <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600">ROYAL DIAMOND</h1>
@@ -31,43 +37,37 @@
 
     <div id="spin-tab" class="tab-content active-tab text-center">
         <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 inline-block border border-white/20">
-            <span class="text-yellow-400 font-bold">💎 BALANCE:</span> <span id="balance" class="text-white">0.00</span>
+            <span class="text-yellow-400 font-bold">💎 BALANCE:</span> <span id="balance">0.00</span>
         </div>
         <div class="wheel-box">
             <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100;"></div>
             <canvas id="wheel"></canvas>
         </div>
-        <button onclick="showAdAndSpin()" class="mt-10 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black py-4 px-12 rounded-full shadow-lg active:scale-95 transition-all">SPIN NOW</button>
+        <button onclick="handleAction('spin')" class="mt-10 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black py-4 px-12 rounded-full shadow-lg active:scale-95 transition-all">SPIN NOW</button>
     </div>
 
     <div id="leader-tab" class="tab-content">
         <div class="glass-card">
             <h2 class="text-yellow-500 font-black text-center mb-4">🏆 TOP PLAYERS</h2>
-            <div id="leader-list" class="space-y-2"></div>
+            <div id="leader-list" class="space-y-2 text-sm"></div>
         </div>
     </div>
 
     <div id="refer-tab" class="tab-content text-center">
         <div class="glass-card">
             <h2 class="text-green-400 font-bold mb-2">REFER & EARN</h2>
-            <p class="text-xs text-gray-400 mb-6">Earn 5.00 Diamonds for each friend!</p>
-            <div class="bg-black/20 p-4 rounded-xl mb-4 text-[10px] break-all border border-white/5" id="ref-link">https://t.me/YourBot?start=</div>
-            <button onclick="copyRef()" class="w-full bg-green-600 py-3 rounded-lg font-bold">COPY LINK</button>
+            <p class="text-[10px] text-gray-400 mb-6 uppercase tracking-wider">Share link & earn 5.00 Diamonds!</p>
+            <div class="bg-black/40 p-4 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500 font-mono" id="ref-link-display">Generating link...</div>
+            <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold shadow-lg">COPY REFER LINK</button>
         </div>
     </div>
 
     <div id="wallet-tab" class="tab-content text-center">
         <div class="glass-card">
-            <h2 class="text-blue-400 font-bold mb-4">REDEEM</h2>
+            <h2 class="text-blue-400 font-bold mb-4">WITHDRAW</h2>
+            <div class="text-[10px] text-gray-400 mb-4 uppercase">Min Withdraw: 100 Diamonds</div>
             <input type="number" id="uid-input" placeholder="Enter Player UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none border border-white/10 text-white">
-            <button onclick="withdraw()" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-xl">WITHDRAW NOW</button>
-        </div>
-    </div>
-
-    <div id="ad-modal">
-        <div class="text-center">
-            <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Loading Reward Ad...</p>
+            <button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-xl shadow-lg">SUBMIT REQUEST</button>
         </div>
     </div>
 
@@ -79,7 +79,7 @@
     </div>
 
     <script>
-        // FIREBASE CONFIG
+        // --- FIREBASE CONFIG (দাদুর ডাটাবেস) ---
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
             authDomain: "royaldiamondbot.firebaseapp.com",
@@ -92,9 +92,14 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let userId = localStorage.getItem('user_uid') || "Player_" + Math.floor(Math.random() * 8999 + 1000);
+        // USER ID & LINK SYSTEM
+        let userId = localStorage.getItem('user_uid') || "Player_" + Math.floor(Math.random() * 89999 + 10000);
         localStorage.setItem('user_uid', userId);
-        document.getElementById('ref-link').innerText += userId;
+        
+        // দাদু, নিচের লাইনে 'YourBotUsername' এর বদলে আপনার বটের নাম দিন
+        const botUser = "RoyalDiamond_Bot"; 
+        const fullRefLink = `https://t.me/${botUser}?start=${userId}`;
+        document.getElementById('ref-link-display').innerText = fullRefLink;
 
         let currentBal = 0;
 
@@ -104,19 +109,64 @@
             document.getElementById('balance').innerText = currentBal.toFixed(2);
         });
 
-        // LEADERBOARD LOGIC
+        // LEADERBOARD (রিয়েলটাইম আপডেট)
         db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
-            let list = "";
-            let players = [];
-            snap.forEach(child => { players.push({name: child.key, bal: child.val().balance}); });
+            let list = ""; let players = [];
+            snap.forEach(c => { players.push({name: c.key, bal: c.val().balance}); });
             players.reverse().forEach((p, i) => {
-                list += `<div class="flex justify-between p-3 bg-white/5 rounded-lg text-sm">
+                list += `<div class="flex justify-between p-3 bg-white/5 rounded-lg mb-1 border border-white/5">
                             <span>${i+1}. ${p.name}</span>
                             <span class="text-yellow-400 font-bold">${p.bal.toFixed(2)} 💎</span>
                          </div>`;
             });
             document.getElementById('leader-list').innerHTML = list;
         });
+
+        // AD CONTROLLER (অ্যাড লোডিং সিস্টেম)
+        function handleAction(type) {
+            // উইথড্র করার সময় ১০০ এর নিচে হলে অ্যাড দেখানোর দরকার নেই, আগে ব্লক করবে
+            if(type === 'withdraw' && currentBal < 100) {
+                return alert("❌ Sorry! You need at least 100 Diamonds to withdraw.");
+            }
+
+            document.getElementById('ad-modal').style.display = 'flex';
+            document.getElementById('ad-text').innerText = "Loading Reward Ad...";
+            
+            setTimeout(() => {
+                document.getElementById('ad-modal').style.display = 'none';
+                if(type === 'spin') spin();
+                if(type === 'refer') copyLink();
+                if(type === 'withdraw') processWithdraw();
+            }, 2500); // ২.৫ সেকেন্ড অ্যাড দেখাবে
+        }
+
+        // COPY REFER LINK
+        function copyLink() {
+            const el = document.createElement('textarea');
+            el.value = fullRefLink;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert("✅ Refer Link Copied! Share with friends to earn bonus.");
+        }
+
+        // WITHDRAW SYSTEM (১০০ ডায়মন্ডের নিচে ব্লক করা)
+        function processWithdraw() {
+            let uid = document.getElementById('uid-input').value;
+            if(!uid) return alert("Please enter your Player UID!");
+            
+            db.ref('withdrawals').push({
+                user: userId,
+                playerUid: uid,
+                amount: currentBal,
+                status: "pending",
+                time: new Date().toLocaleString()
+            });
+            db.ref('users/' + userId).update({ balance: 0 });
+            alert("🚀 Withdrawal Request Sent! Wait for admin approval.");
+            document.getElementById('uid-input').value = "";
+        }
 
         // WHEEL DRAWING
         const canvas = document.getElementById('wheel');
@@ -135,15 +185,6 @@
         }
         draw();
 
-        // AD MODAL LOGIC
-        function showAdAndSpin() {
-            document.getElementById('ad-modal').style.display = 'flex';
-            setTimeout(() => {
-                document.getElementById('ad-modal').style.display = 'none';
-                spin();
-            }, 2000); // 2 Seconds Wait
-        }
-
         let rot = 0;
         function spin() {
             let winIdx = Math.random() < 0.8 ? [0,1,4,7,10,12,14,16][Math.floor(Math.random()*8)] : Math.floor(Math.random()*18);
@@ -152,7 +193,7 @@
             setTimeout(() => {
                 let win = parseFloat(items[winIdx]);
                 if(win > 0) db.ref('users/' + userId).update({ balance: currentBal + win });
-                else alert("Better luck!");
+                else alert("Bad Luck! Try Again.");
             }, 6500);
         }
 
@@ -160,17 +201,6 @@
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active-tab'); el.classList.add('active');
-        }
-
-        function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-link').innerText); alert("Copied!"); }
-
-        function withdraw() {
-            let uid = document.getElementById('uid-input').value;
-            if(currentBal < 100) return alert("Min 100 Diamonds!");
-            if(!uid) return alert("Enter UID!");
-            db.ref('withdrawals').push({ user: userId, uid: uid, amount: currentBal, time: Date.now(), status: "pending" });
-            db.ref('users/' + userId).update({ balance: 0 });
-            alert("Request Sent!");
         }
     </script>
 </body>
