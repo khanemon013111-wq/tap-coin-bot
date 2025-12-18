@@ -3,89 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diamond Royal Spin</title>
+    <title>Royal Diamond - Spin & Earn</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
         
         body { 
             background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); 
-            color: white; 
-            font-family: 'Poppins', sans-serif; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            min-height: 100vh; margin: 0; padding: 20px;
+            color: white; font-family: 'Poppins', sans-serif; 
+            min-height: 100vh; margin: 0; padding-bottom: 80px;
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        /* রাজকীয় চাকার বর্ডার */
+        /* চাকার ডিজাইন */
         .wheel-box { 
-            position: relative; width: 320px; height: 320px; border-radius: 50%; 
+            position: relative; width: 300px; height: 300px; border-radius: 50%; 
             padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); 
-            box-shadow: 0 0 40px rgba(245, 158, 11, 0.4), inset 0 0 20px rgba(0,0,0,0.5);
-            border: 4px solid #78350f;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); border: 4px solid #78350f;
         }
-
         #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
 
-        /* নিয়ন গোল্ড বাটন */
-        .btn-action { 
-            width: 260px; margin-top: 15px; padding: 14px; border-radius: 12px; 
-            font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
-            transition: 0.3s; border: none; cursor: pointer;
-        }
-        .spin-btn { background: linear-gradient(to right, #f59e0b, #d97706); color: white; box-shadow: 0 5px 0 #92400e; }
-        .refer-btn { background: linear-gradient(to right, #10b981, #059669); color: white; box-shadow: 0 5px 0 #064e3b; }
-        
-        .btn-action:active { transform: translateY(4px); box-shadow: 0 1px 0 #000; }
+        /* ট্যাব কন্ট্রোল */
+        .tab-content { display: none; width: 100%; max-width: 400px; padding: 15px; animation: fadeIn 0.4s; }
+        .active-tab { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* পপআপ ডিজাইন */
+        /* গ্লাস ডিজাইন কার্ড */
+        .glass-card { 
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px;
+        }
+
+        /* বটম নেভিগেশন */
+        .nav-bar { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(15, 23, 42, 0.95); display: flex; 
+            justify-content: space-around; padding: 12px; 
+            border-top: 1px solid rgba(255,255,255,0.1); z-index: 500;
+        }
+        .nav-item { font-size: 11px; color: #94a3b8; cursor: pointer; text-align: center; }
+        .nav-item.active { color: #fbbf24; font-weight: bold; }
+
+        /* অ্যাড পপআপ */
         #ad-modal { 
             position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); 
-            display: none; flex-direction: column; align-items: center; justify-content: center; 
-            z-index: 1000; padding: 25px; text-align: center;
-        }
-
-        .copy-box {
-            background: #1e293b; border: 2px dashed #f59e0b; padding: 15px;
-            border-radius: 10px; width: 100%; max-width: 300px;
+            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
         }
     </style>
 </head>
 <body>
 
-    <div class="text-center mb-8">
-        <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 drop-shadow-lg">
-            ROYAL DIAMOND
-        </h1>
-        <div class="mt-3 bg-white/10 backdrop-blur-md border border-white/20 px-8 py-2 rounded-2xl shadow-xl">
+    <div class="text-center my-6">
+        <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 drop-shadow-md">ROYAL SPIN</h1>
+    </div>
+
+    <div id="spin-tab" class="tab-content active-tab text-center">
+        <div class="bg-white/10 px-8 py-2 rounded-2xl mb-8 inline-block border border-white/20">
             <span class="text-yellow-400 font-bold">💎 BALANCE:</span> 
-            <span id="balance" class="text-xl font-black ml-1 text-white">0.00</span>
-        </div>
-    </div>
-
-    <div class="wheel-box">
-        <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 35px solid #ef4444; z-index: 100; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));"></div>
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #fff; border: 4px solid #f59e0b; border-radius: 50%; z-index: 40; box-shadow: 0 0 15px rgba(0,0,0,0.5);"></div>
-        <canvas id="wheel"></canvas>
-    </div>
-
-    <button id="main-btn" onclick="startProcess('spin')" class="btn-action spin-btn">🌀 SPIN & WIN</button>
-    <button id="refer-btn" onclick="startProcess('refer')" class="btn-action refer-btn">👥 REFER (5💎)</button>
-
-    <div id="ad-modal">
-        <div id="ad-content">
-            <div class="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-yellow-500 font-bold animate-pulse">GENERATING REWARDS...</p>
+            <span id="balance" class="text-xl font-black ml-1">0.00</span>
         </div>
         
-        <div id="refer-link-box" class="hidden w-full flex flex-direction-column items-center flex-col">
-            <h2 class="text-xl font-bold text-green-400 mb-2">Success!</h2>
-            <p class="text-gray-400 text-sm mb-4">নিচের লিঙ্কটি বন্ধুদের পাঠান</p>
-            <div class="copy-box mb-4">
-                <p id="ref-url" class="text-xs text-yellow-500 break-all font-mono mb-3">https://t.me/your_bot?start=user123</p>
-                <button onclick="copyLink()" class="bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold text-sm w-full">COPY LINK</button>
-            </div>
-            <button onclick="closeAd()" class="text-gray-500 underline text-sm">Close</button>
+        <div class="wheel-box mx-auto">
+            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 35px solid #ef4444; z-index: 100;"></div>
+            <canvas id="wheel"></canvas>
         </div>
+
+        <button onclick="handleAction('spin')" class="mt-12 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black py-4 px-14 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all">
+            SPIN NOW
+        </button>
+    </div>
+
+    <div id="leader-tab" class="tab-content">
+        <div class="glass-card">
+            <h2 class="text-yellow-500 font-black text-xl mb-6 text-center italic">🏆 TOP EARNERS</h2>
+            <div id="leaderboard-list" class="space-y-3">
+                <div class="flex justify-between items-center bg-yellow-600/10 p-4 rounded-xl border border-yellow-500/20">
+                    <span class="font-bold">🥇 Player_772</span>
+                    <span class="text-yellow-400 font-black">540.20 💎</span>
+                </div>
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl">
+                    <span>🥈 King_Dadu</span>
+                    <span class="text-yellow-400 font-bold">420.50 💎</span>
+                </div>
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl">
+                    <span>🥉 Pro_Spinner</span>
+                    <span class="text-yellow-400 font-bold">310.00 💎</span>
+                </div>
+            </div>
+            
+            <button onclick="handleAction('refer')" class="mt-8 w-full bg-green-600 text-white font-bold py-3 rounded-xl shadow-lg border-b-4 border-green-800">
+                GET REFER LINK (5💎)
+            </button>
+        </div>
+    </div>
+
+    <div id="withdraw-tab" class="tab-content">
+        <div class="glass-card text-center">
+            <h2 class="text-blue-400 font-black text-xl mb-2">WITHDRAW</h2>
+            <p class="text-gray-400 text-xs mb-8">মিনিমাম উইথড্র: ১০০ ডায়মন্ড</p>
+            
+            <div class="text-left mb-4">
+                <label class="text-xs text-gray-500 ml-2">PLAYER UID</label>
+                <input type="number" id="uid-input" placeholder="Example: 123456789" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl text-white focus:outline-none focus:border-yellow-500">
+            </div>
+            
+            <button onclick="submitWithdraw()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl shadow-lg">
+                SUBMIT REQUEST
+            </button>
+            <p class="mt-4 text-[10px] text-gray-500">অনুরোধ করার ২৪ ঘণ্টার মধ্যে ডায়মন্ড পাঠানো হয়।</p>
+        </div>
+    </div>
+
+    <div id="ad-modal">
+        <div id="loading-box" class="text-center">
+            <div class="w-14 h-14 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-yellow-500 font-bold tracking-tighter animate-pulse">SECURING REWARD...</p>
+        </div>
+        
+        <div id="refer-box" class="hidden w-full max-w-[300px] text-center p-6 bg-gray-900 rounded-3xl border border-yellow-500/30">
+            <h3 class="text-green-400 font-bold mb-4">অ্যাড দেখা সফল!</h3>
+            <p class="text-xs text-gray-400 mb-4">নিচের লিঙ্কটি কপি করে ৫💎 জিতুন:</p>
+            <div class="bg-black p-3 rounded-lg text-[10px] break-all font-mono text-yellow-500 border border-white/5 mb-4" id="ref-url">https://t.me/your_bot?start=user_id</div>
+            <button onclick="copyRef()" class="w-full bg-yellow-500 text-black font-bold py-2 rounded-lg">COPY LINK</button>
+            <button onclick="closeModal()" class="mt-4 text-gray-500 text-xs">Close</button>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <div onclick="switchTab('spin-tab', this)" class="nav-item active"><div>🌀</div><span>Spin</span></div>
+        <div onclick="switchTab('leader-tab', this)" class="nav-item"><div>🏆</div><span>Board</span></div>
+        <div onclick="switchTab('withdraw-tab', this)" class="nav-item"><div>💳</div><span>Wallet</span></div>
     </div>
 
     <script>
@@ -93,52 +140,53 @@
         const ctx = canvas.getContext('2d');
         const items = ["0", "0.2", "1", "3", "0.5", "2", "15", "0.2", "1", "5", "0", "10", "0.5", "2", "0.8", "7", "0", "1"];
         const colors = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
-        const slices = items.length;
-        const sliceDeg = 360 / slices; 
-        canvas.width = 320; canvas.height = 320;
+        const slices = 18; const sliceDeg = 360/slices; canvas.width = 300; canvas.height = 300;
 
         function draw() {
             for (let i = 0; i < slices; i++) {
-                ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(160, 160);
+                ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(150, 150);
                 let startAngle = (i * sliceDeg - 90 - (sliceDeg / 2)) * (Math.PI / 180);
                 let endAngle = ((i + 1) * sliceDeg - 90 - (sliceDeg / 2)) * (Math.PI / 180);
-                ctx.arc(160, 160, 160, startAngle, endAngle); ctx.fill(); 
-                ctx.strokeStyle = "rgba(255,255,255,0.1)"; ctx.stroke();
-                ctx.save(); ctx.translate(160, 160); ctx.rotate((i * sliceDeg - 90) * (Math.PI / 180));
+                ctx.arc(150, 150, 150, startAngle, endAngle); ctx.fill();
+                ctx.save(); ctx.translate(150, 150); ctx.rotate((i * sliceDeg - 90) * (Math.PI / 180));
                 ctx.textAlign = "right"; ctx.fillStyle = (colors[i] === "#1e293b") ? "#fbbf24" : "#1e293b";
-                ctx.font = "bold 13px Poppins"; ctx.fillText(items[i] === "0" ? "✖" : items[i], 150, 5); ctx.restore();
+                ctx.font = "bold 12px Poppins"; ctx.fillText(items[i] === "0" ? "✖" : items[i], 140, 5); ctx.restore();
             }
         }
+        draw();
 
-        let currentRotation = 0;
-        let totalDiamonds = 0;
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active-tab');
+            el.classList.add('active');
+        }
 
-        function startProcess(type) {
+        function handleAction(type) {
             document.getElementById('ad-modal').style.display = 'flex';
-            document.getElementById('ad-content').classList.remove('hidden');
-            document.getElementById('refer-link-box').classList.add('hidden');
+            document.getElementById('loading-box').classList.remove('hidden');
+            document.getElementById('refer-box').classList.add('hidden');
             
             setTimeout(() => {
                 if(type === 'spin') {
                     document.getElementById('ad-modal').style.display = 'none';
                     spin();
                 } else {
-                    document.getElementById('ad-content').classList.add('hidden');
-                    document.getElementById('refer-link-box').classList.remove('hidden');
+                    document.getElementById('loading-box').classList.add('hidden');
+                    document.getElementById('refer-box').classList.remove('hidden');
                 }
-            }, 2500); 
+            }, 2500);
         }
 
+        let currentRotation = 0;
+        let totalDiamonds = 0;
+
         function spin() {
-            let winningIndex;
-            let rand = Math.random() * 100;
-            if (rand < 82) {
-                winningIndex = [0, 1, 4, 7, 10, 12, 14, 16][Math.floor(Math.random() * 8)];
-            } else if (rand < 97) {
-                winningIndex = [2, 3, 5, 8, 9, 13, 15, 17][Math.floor(Math.random() * 8)];
-            } else {
-                winningIndex = [6, 11][Math.floor(Math.random() * 2)];
-            }
+            let winningIndex; let rand = Math.random() * 100;
+            if (rand < 82) winningIndex = [0, 1, 4, 7, 10, 12, 14, 16][Math.floor(Math.random() * 8)];
+            else if (rand < 97) winningIndex = [2, 3, 5, 8, 9, 13, 15, 17][Math.floor(Math.random() * 8)];
+            else winningIndex = [6, 11][Math.floor(Math.random() * 2)];
+
             const targetDeg = (slices - winningIndex) * sliceDeg;
             currentRotation += (3600 - (currentRotation % 360)) + targetDeg;
             canvas.style.transform = `rotate(${currentRotation}deg)`;
@@ -147,19 +195,24 @@
                 if(win > 0) {
                     totalDiamonds = (parseFloat(totalDiamonds) + win).toFixed(2);
                     document.getElementById('balance').innerText = totalDiamonds;
-                } else { alert("Better luck next time!"); }
+                }
             }, 6500);
         }
 
-        function copyLink() {
-            const linkText = document.getElementById('ref-url').innerText;
-            navigator.clipboard.writeText(linkText).then(() => {
-                alert("লিঙ্ক কপি হয়েছে! বন্ধুদের পাঠিয়ে ৫💎 করে ইনকাম করুন।");
-            });
+        function copyRef() {
+            navigator.clipboard.writeText(document.getElementById('ref-url').innerText);
+            alert("লিঙ্ক কপি হয়েছে!");
         }
 
-        function closeAd() { document.getElementById('ad-modal').style.display = 'none'; }
-        draw();
+        function submitWithdraw() {
+            let bal = parseFloat(document.getElementById('balance').innerText);
+            let uid = document.getElementById('uid-input').value;
+            if(bal < 100) alert("কমপক্ষে ১০০ ডায়মন্ড লাগবে দাদু!");
+            else if(!uid) alert("প্লেয়ার UID দিন!");
+            else alert("সফল! আপনার রিকোয়েস্টটি দাদুর কাছে পৌঁছেছে।");
+        }
+
+        function closeModal() { document.getElementById('ad-modal').style.display = 'none'; }
     </script>
 </body>
 </html>
