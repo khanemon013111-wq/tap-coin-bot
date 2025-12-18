@@ -15,7 +15,7 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* চাকার ডিজাইন */
+        /* Wheel Styles */
         .wheel-box { 
             position: relative; width: 280px; height: 280px; border-radius: 50%; 
             padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); 
@@ -23,18 +23,17 @@
         }
         #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
 
-        /* ট্যাব কন্ট্রোল */
+        /* Tab Content Control */
         .tab-content { display: none; width: 100%; max-width: 400px; padding: 15px; animation: fadeIn 0.4s; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* কার্ড ডিজাইন */
         .glass-card { 
             background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); 
             border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px;
         }
 
-        /* বটম নেভিগেশন (৪টি বাটন) */
+        /* Bottom Nav Bar */
         .nav-bar { 
             position: fixed; bottom: 0; left: 0; right: 0; 
             background: rgba(15, 23, 42, 0.95); display: flex; 
@@ -45,7 +44,6 @@
         .nav-item.active { color: #fbbf24; font-weight: bold; }
         .nav-item div { font-size: 20px; margin-bottom: 2px; }
 
-        /* অ্যাড পপআপ */
         #ad-modal { 
             position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); 
             display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
@@ -61,7 +59,7 @@
     <div id="spin-tab" class="tab-content active-tab text-center">
         <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 inline-block border border-white/20">
             <span class="text-yellow-400 font-bold text-sm">💎 BALANCE:</span> 
-            <span id="balance" class="text-lg font-black ml-1">0.00</span>
+            <span id="balance" class="text-lg font-black ml-1 text-white">0.00</span>
         </div>
         
         <div class="wheel-box mx-auto">
@@ -76,19 +74,19 @@
 
     <div id="leader-tab" class="tab-content">
         <div class="glass-card">
-            <h2 class="text-yellow-500 font-black text-xl mb-6 text-center">🏆 TOP EARNERS</h2>
-            <div class="space-y-3">
-                <div class="flex justify-between items-center bg-yellow-600/10 p-4 rounded-xl border border-yellow-500/20">
+            <h2 class="text-yellow-500 font-black text-xl mb-6 text-center italic">🏆 TOP EARNERS</h2>
+            <div id="leaderboard-list" class="space-y-3">
+                <div class="flex justify-between items-center bg-yellow-600/10 p-4 rounded-xl border border-yellow-500/20 text-sm">
                     <span class="font-bold">🥇 Player_772</span>
-                    <span class="text-yellow-400 font-black text-sm">540.20 💎</span>
+                    <span class="text-yellow-400 font-black">540.20 💎</span>
                 </div>
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl">
-                    <span>🥈 King_Dadu</span>
-                    <span class="text-yellow-400 font-bold text-sm">420.50 💎</span>
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl text-sm">
+                    <span>🥈 King_User</span>
+                    <span class="text-yellow-400 font-bold">420.50 💎</span>
                 </div>
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl">
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl text-sm">
                     <span>🥉 Pro_Spinner</span>
-                    <span class="text-yellow-400 font-bold text-sm">310.00 💎</span>
+                    <span class="text-yellow-400 font-bold">310.00 💎</span>
                 </div>
             </div>
         </div>
@@ -97,16 +95,16 @@
     <div id="refer-tab" class="tab-content text-center">
         <div class="glass-card">
             <h2 class="text-green-400 font-black text-xl mb-2">REFER & EARN</h2>
-            <p class="text-gray-400 text-xs mb-6">বন্ধুকে ইনভাইট করলেই পাবেন ৫ ডায়মন্ড!</p>
+            <p class="text-gray-400 text-xs mb-6">Invite friends and earn 5.00 Diamonds!</p>
             
             <div class="bg-yellow-500/10 p-6 rounded-2xl border border-yellow-500/20 mb-6">
                 <div class="text-3xl mb-2">🎁</div>
-                <p class="text-sm">প্রতিটি সফল রেফারে বোনাস</p>
+                <p class="text-sm">Bonus per Referral</p>
                 <p class="text-2xl font-black text-yellow-400">5.00 💎</p>
             </div>
 
             <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white font-black py-4 rounded-xl shadow-lg">
-                GENERATE LINK
+                GET REFER LINK
             </button>
         </div>
     </div>
@@ -114,12 +112,12 @@
     <div id="withdraw-tab" class="tab-content text-center">
         <div class="glass-card">
             <h2 class="text-blue-400 font-black text-xl mb-2">WALLET</h2>
-            <p class="text-gray-400 text-xs mb-8">মিনিমাম উইথড্র: ১০০ ডায়মন্ড</p>
+            <p class="text-gray-400 text-xs mb-8">Minimum Withdraw: 100 Diamonds</p>
             
             <input type="number" id="uid-input" placeholder="Enter Player UID" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl text-white mb-4 text-center focus:border-yellow-500 outline-none">
             
             <button onclick="submitWithdraw()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl">
-                SUBMIT REQUEST
+                REDEEM NOW
             </button>
         </div>
     </div>
@@ -127,11 +125,11 @@
     <div id="ad-modal">
         <div id="loading-box" class="text-center">
             <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-yellow-500 font-bold animate-pulse">LOADING AD...</p>
+            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm tracking-widest">Loading Reward...</p>
         </div>
         
         <div id="refer-box" class="hidden w-full max-w-[300px] text-center p-6 bg-gray-900 rounded-3xl border border-yellow-500/30">
-            <p class="text-xs text-gray-400 mb-4">আপনার রেফার লিঙ্কটি কপি করুন:</p>
+            <p class="text-xs text-gray-400 mb-4">Copy your link to earn bonus 5💎:</p>
             <div class="bg-black p-3 rounded-lg text-[10px] break-all text-yellow-500 border border-white/5 mb-4" id="ref-url">https://t.me/your_bot?start=user_id</div>
             <button onclick="copyRef()" class="w-full bg-yellow-500 text-black font-bold py-2 rounded-lg">COPY LINK</button>
             <button onclick="closeModal()" class="mt-4 text-gray-500 text-xs">Close</button>
@@ -183,9 +181,11 @@
         }
 
         let currentRotation = 0;
-        let totalDiamonds = 0;
+        let totalDiamonds = 0; // এটি ডাটাবেস ব্যালেন্সের সাথে লিঙ্ক হবে
+
         function spin() {
             let winningIndex; let rand = Math.random() * 100;
+            // Dadu's Logic: 82% Low, 15% Medium, 3% Jackpot
             if (rand < 82) winningIndex = [0, 1, 4, 7, 10, 12, 14, 16][Math.floor(Math.random() * 8)];
             else if (rand < 97) winningIndex = [2, 3, 5, 8, 9, 13, 15, 17][Math.floor(Math.random() * 8)];
             else winningIndex = [6, 11][Math.floor(Math.random() * 2)];
@@ -198,14 +198,30 @@
                 if(win > 0) {
                     totalDiamonds = (parseFloat(totalDiamonds) + win).toFixed(2);
                     document.getElementById('balance').innerText = totalDiamonds;
-                }
+                } else { alert("Better luck next time!"); }
             }, 6500);
         }
 
-        function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-url').innerText); alert("লিঙ্ক কপি হয়েছে!"); }
-        function submitWithdraw() { alert("রিকোয়েস্ট পাঠানো হয়েছে!"); }
+        function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-url').innerText); alert("Link Copied!"); }
+
+        // ফিক্সড উইথড্র লজিক
+        function submitWithdraw() {
+            let currentBal = parseFloat(totalDiamonds);
+            let uid = document.getElementById('uid-input').value;
+
+            if (currentBal < 100) {
+                alert("Insufficient Balance! You need at least 100 Diamonds to withdraw.");
+            } else if (uid.trim() === "" || uid.length < 5) {
+                alert("Please enter a valid Player UID.");
+            } else {
+                alert("Success! Your withdrawal request for " + currentBal + " Diamonds has been submitted.");
+                // রিকোয়েস্ট সফল হওয়ার পর আপনি চাইলে ব্যালেন্স জিরো করতে পারেন:
+                // totalDiamonds = 0; document.getElementById('balance').innerText = "0.00";
+            }
+        }
+
         function closeModal() { document.getElementById('ad-modal').style.display = 'none'; }
     </script>
 </body>
-</html>
-
+                </html>
+    
