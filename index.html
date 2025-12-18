@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - The Perfect Edition</title>
+    <title>Lite Coin - Pro Integrated Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
     <style>
@@ -19,7 +19,7 @@
         .pop-number { position: absolute; font-size: 28px; font-weight: 900; color: white; pointer-events: none; animation: popUp 0.8s ease-out forwards; z-index: 9999; }
         @keyframes popUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px); } }
 
-        #coin { width: 220px; height: 220px; border-radius: 50%; background: linear-gradient(145deg, #fbbf24, #d97706); border: 8px solid #f59e0b; box-shadow: 0 0 40px rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s; position: relative; }
+        #coin { width: 220px; height: 220px; border-radius: 50%; background: linear-gradient(145deg, #fbbf24, #d97706); border: 8px solid #f59e0b; box-shadow: 0 0 40px rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s, filter 0.3s; position: relative; }
         #coin:active { transform: scale(0.92); }
         .coin-logo { width: 80px; height: 80px; background: #000; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); }
 
@@ -100,18 +100,26 @@
         <div class="glass-card"><div class="text-left"><h4 class="font-bold text-sm">Subscribe YT</h4><p class="text-[10px] text-yellow-500">+20,000</p></div><button onclick="doTask(20000, this)" class="bg-yellow-500 text-black px-4 py-1.5 rounded-xl text-xs font-bold uppercase">Claim</button></div>
     </div>
 
+    <div id="spin-page" class="page hidden px-6 pt-12 text-center">
+        <h2 class="text-3xl font-black text-yellow-500 mb-6 uppercase">Spin & Win</h2>
+        <div class="relative mx-auto w-64 h-64 mb-8">
+            <div class="pointer"></div>
+            <div id="wheel" class="mx-auto">
+                <div class="wheel-segment" style="transform: rotate(0deg); background: #fbbf24;">1k</div>
+                <div class="wheel-segment" style="transform: rotate(90deg); background: #f59e0b;">5k</div>
+                <div class="wheel-segment" style="transform: rotate(180deg); background: #fbbf24;">10k</div>
+                <div class="wheel-segment" style="transform: rotate(270deg); background: #f59e0b;">50k</div>
+            </div>
+        </div>
+        <button id="spin-btn-action" onclick="startSpin()" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Spin Now</button>
+    </div>
+
     <div id="friends-page" class="page hidden px-6 pt-10 text-center">
         <h2 class="text-3xl font-black text-yellow-500 mb-8 uppercase">Friends</h2>
         <div class="bg-white/5 p-10 rounded-3xl border border-white/10 mb-8"><h1 class="text-3xl font-black text-yellow-500">🎁 5,000</h1><p class="text-xs text-gray-400 mt-2 font-bold uppercase">Invite Bonus</p></div>
         <button onclick="alert('Link Copied!')" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Invite Friends</button>
     </div>
-
-    <div id="leaderboard-page" class="page hidden px-6 pt-10 text-center"><h2 class="text-3xl font-black text-yellow-500 mb-4 uppercase">Board</h2><div id="leaderboard-list"></div></div>
-    <div id="spin-page" class="page hidden px-6 pt-12 text-center">
-        <h2 class="text-3xl font-black text-yellow-500 mb-6 uppercase">Spin & Win</h2>
-        <div class="relative mx-auto w-64 h-64 mb-8"><div class="pointer"></div><div id="wheel" class="mx-auto"><div class="wheel-segment" style="transform: rotate(0deg); background: #fbbf24;">1k</div><div class="wheel-segment" style="transform: rotate(90deg); background: #f59e0b;">5k</div><div class="wheel-segment" style="transform: rotate(180deg); background: #fbbf24;">10k</div><div class="wheel-segment" style="transform: rotate(270deg); background: #f59e0b;">50k</div></div></div>
-        <button onclick="startSpin()" class="bg-yellow-500 text-black w-full py-4 rounded-2xl font-black uppercase">Spin Now</button>
-    </div>
+    <div id="leaderboard-page" class="page hidden px-6 pt-10 text-center"><h2 class="text-3xl font-black text-yellow-500 mb-4 uppercase">Board</h2><div id="leaderboard-list" class="space-y-2"></div></div>
 
     <div class="footer-nav">
         <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span>🪙</span><span>Earn</span></div>
@@ -141,37 +149,45 @@
             document.getElementById('energy-max').innerText = "/ " + maxE;
             document.getElementById('energy-bar').style.width = (energy / maxE) * 100 + "%";
 
-            // Limits Display
+            // Refill & Turbo Counts
             document.getElementById('refill-limit').innerText = (3 - refillCount) + "/3 left";
             document.getElementById('turbo-limit').innerText = (3 - turboCount) + "/3 left";
-            document.getElementById('btn-refill').disabled = refillCount >= 3;
-            document.getElementById('btn-turbo').disabled = turboCount >= 3;
 
             // Leagues logic
             let lName = "Bronze", target = 25000, start = 0, tier = 1;
             if(score >= 500000) { lName = "Diamond"; target = 1000000; start = 500000; tier = 4; }
             else if(score >= 100000) { lName = "Gold"; target = 500000; start = 100000; tier = 3; }
             else if(score >= 25000) { lName = "Silver"; target = 100000; start = 25000; tier = 2; }
-            document.getElementById('display-league').innerText = lName + " League ❯";
+            
+            if(!turboActive) document.getElementById('display-league').innerText = lName + " League ❯";
             document.getElementById('prog-league-name').innerText = lName + " League";
             document.getElementById('prog-current-score').innerText = score.toLocaleString();
             document.getElementById('prog-next-target').innerText = "Next: " + target.toLocaleString();
             document.getElementById('league-progress-fill').style.width = Math.min(100, ((score - start) / (target - start)) * 100) + "%";
+            
             for(let i=1; i<=4; i++) {
                 let el = document.getElementById('l-tier-'+i);
                 if(i === tier) el.classList.add('active'); else el.classList.remove('active');
             }
 
-            // Upgrades
-            setBtn('btn-tap', 'tap-s', tapL, 100);
-            setBtn('btn-lim', 'lim-s', limL, 200);
-            setBtn('btn-rech', 'rech-s', rechL, 500);
+            // Upgrades UI
+            setBtnUI('btn-tap', 'tap-s', tapL, 100);
+            setBtnUI('btn-lim', 'lim-s', limL, 200);
+            setBtnUI('btn-rech', 'rech-s', rechL, 500);
             if(hasBot) { document.getElementById('bot-status').innerText = "Active 🤖"; document.getElementById('btn-bot').innerText = "OWNED"; document.getElementById('btn-bot').disabled = true; }
 
-            localStorage.setItem('L_Score', score); localStorage.setItem('L_Eng', energy); localStorage.setItem('L_Bot', hasBot); localStorage.setItem('L_Refill', refillCount); localStorage.setItem('L_Turbo', turboCount); localStorage.setItem('L_Date', today); localStorage.setItem('L_Tap', tapL); localStorage.setItem('L_Lim', limL); localStorage.setItem('L_Rech', rechL);
+            localStorage.setItem('L_Score', score); 
+            localStorage.setItem('L_Eng', energy); 
+            localStorage.setItem('L_Bot', hasBot); 
+            localStorage.setItem('L_Refill', refillCount); 
+            localStorage.setItem('L_Turbo', turboCount); 
+            localStorage.setItem('L_Date', today);
+            localStorage.setItem('L_Tap', tapL);
+            localStorage.setItem('L_Lim', limL);
+            localStorage.setItem('L_Rech', rechL);
         }
 
-        function setBtn(id, sId, lvl, base) {
+        function setBtnUI(id, sId, lvl, base) {
             let p = base * Math.pow(2, lvl-1);
             document.getElementById(sId).innerText = "Lvl " + lvl;
             document.getElementById(id).innerText = p.toLocaleString();
@@ -179,53 +195,97 @@
 
         function handleTap(e) {
             if (e.type === 'touchstart') e.preventDefault();
-            let p = turboActive ? tapL * 5 : tapL;
+            let gain = turboActive ? tapL * 5 : tapL;
             if (energy >= tapL || turboActive) {
-                score += p; if(!turboActive) energy -= tapL;
+                score += gain; 
+                if(!turboActive) energy -= tapL;
+                
                 const snd = document.getElementById('tap-sound'); snd.currentTime=0; snd.play().catch(()=>{});
-                const pop = document.createElement('div'); pop.innerText = `+${p}`; pop.className = 'pop-number';
+                
+                const pop = document.createElement('div');
+                pop.innerText = `+${gain}`;
+                pop.className = 'pop-number';
                 let x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
                 let y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
                 pop.style.left = `${x-20}px`; pop.style.top = `${y-40}px`;
-                document.body.appendChild(pop); setTimeout(()=>pop.remove(), 800);
+                document.body.appendChild(pop);
+                setTimeout(()=>pop.remove(), 800);
                 updateUI();
             }
         }
 
-        function useFullEnergy() { if(refillCount < 3) { energy = 1000 + ((limL - 1) * 500); refillCount++; updateUI(); showPage('game'); } }
-        function useTurbo() { if(turboCount < 3) { turboActive = true; turboCount++; updateUI(); showPage('game'); setTimeout(() => { turboActive = false; updateUI(); }, 10000); } }
-        
+        function useFullEnergy() { 
+            if(refillCount < 3) { 
+                let maxE = 1000 + ((limL - 1) * 500);
+                energy = maxE; refillCount++; updateUI(); showPage('game'); 
+            } 
+        }
+
+        function useTurbo() { 
+            if(turboCount < 3) { 
+                turboActive = true; turboCount++; 
+                document.getElementById('coin').style.filter = "hue-rotate(150deg) brightness(1.5) drop-shadow(0 0 15px cyan)";
+                document.getElementById('display-league').innerText = "🚀 TURBO ACTIVE (5X)";
+                updateUI(); showPage('game'); 
+                setTimeout(() => { 
+                    turboActive = false; 
+                    document.getElementById('coin').style.filter = "none";
+                    updateUI(); 
+                }, 10000); 
+            } 
+        }
+
         function upgrade(type) {
             let lvl = (type==='tap')?tapL : (type==='limit'?limL : rechL);
             let p = (type==='tap'?100 : (type==='limit'?200 : 500)) * Math.pow(2, lvl-1);
-            if(score >= p) { score -= p; if(type==='tap') tapL++; else if(type==='limit') limL++; else rechL++; updateUI(); }
+            if(score >= p) { 
+                score -= p; 
+                if(type==='tap') tapL++; 
+                else if(type==='limit') limL++; 
+                else rechL++; 
+                updateUI(); 
+            }
         }
+
+        function doTask(amt, btn) {
+            if(btn.innerText === "DONE ✅") return;
+            btn.innerText = "Verifying... ⏳";
+            btn.disabled = true;
+            setTimeout(() => {
+                score += amt;
+                btn.innerText = "DONE ✅";
+                btn.style.background = "#16a34a";
+                updateUI();
+                alert("Task Success! Earned " + amt.toLocaleString());
+            }, 5000);
+        }
+
+        function startSpin() {
+            let btn = document.getElementById('spin-btn-action');
+            btn.disabled = true;
+            let deg = Math.floor(Math.random()*360)+3600;
+            document.getElementById('wheel').style.transform = `rotate(${deg}deg)`;
+            
+            setTimeout(() => {
+                let finalDeg = deg % 360;
+                let prize = 1000;
+                // Reverse calculation: because wheel rotates, the prize at top (pointer) is (360 - deg%360)
+                let pointerPos = (360 - finalDeg) % 360;
+                if(pointerPos >= 0 && pointerPos < 90) prize = 1000;
+                else if(pointerPos >= 90 && pointerPos < 180) prize = 50000; // Actually segments are 1k, 5k, 10k, 50k
+                else if(pointerPos >= 180 && pointerPos < 270) prize = 10000;
+                else prize = 5000;
+                
+                score += prize;
+                updateUI();
+                alert("🎉 You won " + prize.toLocaleString() + " coins!");
+                btn.disabled = false;
+            }, 4000);
+        }
+
+        function buyBot() { if(score >= 50000 && !hasBot) { score -= 50000; hasBot = true; updateUI(); } }
 
         function showPage(p) {
             document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
             document.getElementById(p + '-page').classList.remove('hidden');
-            const spinBtn = document.getElementById('floating-spin');
-            if(p === 'game') spinBtn.classList.remove('hidden'); else spinBtn.classList.add('hidden');
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            if(document.getElementById('btn-'+p)) document.getElementById('btn-'+p).classList.add('active');
-            if(p === 'leaderboard') {
-                const list = document.getElementById('leaderboard-list'); list.innerHTML = '';
-                for (let i = 1; i <= 20; i++) list.innerHTML += `<div class="glass-card py-3"><span>#${i} Miner_${i}</span><span class="font-bold text-yellow-500">${(100000 - i*2000).toLocaleString()}</span></div>`;
-            }
-        }
-
-        function buyBot() { if(score >= 50000 && !hasBot) { score -= 50000; hasBot = true; updateUI(); } }
-        function startSpin() { let deg = Math.floor(Math.random()*360)+3600; document.getElementById('wheel').style.transform = `rotate(${deg}deg)`; setTimeout(()=>alert("Spin Success!"), 4000); }
-        function doTask(amt, btn) { score += amt; btn.innerText = "DONE ✅"; btn.disabled = true; updateUI(); }
-
-        setInterval(() => {
-            let maxE = 1000 + ((limL - 1) * 500);
-            if (energy < maxE) energy = Math.min(maxE, energy + (1 + rechL));
-            if (hasBot) score += 1;
-            updateUI();
-        }, 1000);
-        updateUI();
-    </script>
-</body>
-    </html>
-                                                                                                          
+            c
