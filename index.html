@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Diamond - Final Master</title>
+    <title>Royal Diamond - Auto Refer System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
-        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; }
+        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; overflow-x: hidden; }
         .tab-content { display: none; width: 100%; max-width: 400px; margin: auto; padding: 15px; animation: fadeIn 0.4s; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -27,12 +27,12 @@
     <div id="ad-modal">
         <div class="text-center">
             <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p id="ad-text" class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Loading Ad...</p>
+            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Loading Ad...</p>
         </div>
     </div>
 
     <div class="text-center my-6">
-        <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600">ROYAL DIAMOND</h1>
+        <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 uppercase">Royal Diamond</h1>
     </div>
 
     <div id="spin-tab" class="tab-content active-tab text-center">
@@ -43,12 +43,12 @@
             <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100;"></div>
             <canvas id="wheel"></canvas>
         </div>
-        <button onclick="handleAction('spin')" class="mt-10 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black py-4 px-12 rounded-full shadow-lg active:scale-95 transition-all">SPIN NOW</button>
+        <button onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-12 rounded-full shadow-lg active:scale-95 transition-all uppercase">Spin Now</button>
     </div>
 
     <div id="leader-tab" class="tab-content">
         <div class="glass-card">
-            <h2 class="text-yellow-500 font-black text-center mb-4">🏆 TOP PLAYERS</h2>
+            <h2 class="text-yellow-500 font-black text-center mb-4 uppercase">🏆 Top Players</h2>
             <div id="leader-list" class="space-y-2 text-sm"></div>
         </div>
     </div>
@@ -56,18 +56,18 @@
     <div id="refer-tab" class="tab-content text-center">
         <div class="glass-card">
             <h2 class="text-green-400 font-bold mb-2">REFER & EARN</h2>
-            <p class="text-[10px] text-gray-400 mb-6 uppercase tracking-wider">Share link & earn 5.00 Diamonds!</p>
+            <p class="text-[10px] text-gray-400 mb-6 uppercase">Get 5.00 Diamonds for every new friend!</p>
             <div class="bg-black/40 p-4 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500 font-mono" id="ref-link-display">Generating link...</div>
-            <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold shadow-lg">COPY REFER LINK</button>
+            <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold shadow-lg uppercase">Copy Refer Link</button>
         </div>
     </div>
 
     <div id="wallet-tab" class="tab-content text-center">
         <div class="glass-card">
             <h2 class="text-blue-400 font-bold mb-4">WITHDRAW</h2>
-            <div class="text-[10px] text-gray-400 mb-4 uppercase">Min Withdraw: 100 Diamonds</div>
+            <p class="text-[10px] text-gray-400 mb-4 uppercase">Minimum: 100 💎</p>
             <input type="number" id="uid-input" placeholder="Enter Player UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none border border-white/10 text-white">
-            <button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-xl shadow-lg">SUBMIT REQUEST</button>
+            <button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-xl shadow-lg uppercase">Submit</button>
         </div>
     </div>
 
@@ -79,7 +79,7 @@
     </div>
 
     <script>
-        // --- FIREBASE CONFIG (দাদুর ডাটাবেস) ---
+        // ফায়ারবেজ কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
             authDomain: "royaldiamondbot.firebaseapp.com",
@@ -92,83 +92,74 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // USER ID & LINK SYSTEM
+        // ইউজার আইডি লোড করা
         let userId = localStorage.getItem('user_uid') || "Player_" + Math.floor(Math.random() * 89999 + 10000);
+        let isFirstTime = !localStorage.getItem('user_uid');
         localStorage.setItem('user_uid', userId);
         
-        // দাদু, নিচের লাইনে 'YourBotUsername' এর বদলে আপনার বটের নাম দিন
-        const botUser = "RoyalDiamond_Bot"; 
-        const fullRefLink = `https://t.me/${botUser}?start=${userId}`;
-        document.getElementById('ref-link-display').innerText = fullRefLink;
+        // আপনার বটের ইউজারনেম
+        const botName = "Referralincamebd013111_bot"; 
+        const refLink = `https://t.me/${botName}?start=${userId}`;
+        document.getElementById('ref-link-display').innerText = refLink;
 
         let currentBal = 0;
 
-        // FETCH USER DATA
+        // অটো রেফারেল বোনাস লজিক (টেলিগ্রাম প্যারামিটার চেক)
+        const urlParams = new URLSearchParams(window.location.search);
+        const referrerId = urlParams.get('tgWebAppStartParam');
+
         db.ref('users/' + userId).on('value', snap => {
-            currentBal = snap.val() ? snap.val().balance : 0;
+            const data = snap.val();
+            // যদি নতুন ইউজার হয় এবং কারো লিংকে আসে তবে রেফারকারীকে ৫ বোনাস দাও
+            if (!data && isFirstTime && referrerId && referrerId !== userId) {
+                db.ref('users/' + referrerId).once('value', rSnap => {
+                    if (rSnap.val()) {
+                        db.ref('users/' + referrerId).update({ balance: (rSnap.val().balance || 0) + 5.00 });
+                    }
+                });
+                db.ref('users/' + userId).set({ balance: 0 }); // নতুন ইউজার এন্ট্রি
+            }
+            currentBal = data ? data.balance : 0;
             document.getElementById('balance').innerText = currentBal.toFixed(2);
         });
 
-        // LEADERBOARD (রিয়েলটাইম আপডেট)
+        // লিডারবোর্ড
         db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
             let list = ""; let players = [];
-            snap.forEach(c => { players.push({name: c.key, bal: c.val().balance}); });
+            snap.forEach(c => { players.push({id: c.key, b: c.val().balance}); });
             players.reverse().forEach((p, i) => {
                 list += `<div class="flex justify-between p-3 bg-white/5 rounded-lg mb-1 border border-white/5">
-                            <span>${i+1}. ${p.name}</span>
-                            <span class="text-yellow-400 font-bold">${p.bal.toFixed(2)} 💎</span>
+                            <span>${i+1}. ${p.id}</span>
+                            <span class="text-yellow-400 font-bold">${p.b.toFixed(2)} 💎</span>
                          </div>`;
             });
             document.getElementById('leader-list').innerHTML = list;
         });
 
-        // AD CONTROLLER (অ্যাড লোডিং সিস্টেম)
         function handleAction(type) {
-            // উইথড্র করার সময় ১০০ এর নিচে হলে অ্যাড দেখানোর দরকার নেই, আগে ব্লক করবে
-            if(type === 'withdraw' && currentBal < 100) {
-                return alert("❌ Sorry! You need at least 100 Diamonds to withdraw.");
-            }
-
+            if (type === 'withdraw' && currentBal < 100) return alert("❌ Minimum 100 Diamonds required!");
             document.getElementById('ad-modal').style.display = 'flex';
-            document.getElementById('ad-text').innerText = "Loading Reward Ad...";
-            
             setTimeout(() => {
                 document.getElementById('ad-modal').style.display = 'none';
-                if(type === 'spin') spin();
-                if(type === 'refer') copyLink();
-                if(type === 'withdraw') processWithdraw();
-            }, 2500); // ২.৫ সেকেন্ড অ্যাড দেখাবে
+                if (type === 'spin') spin();
+                if (type === 'refer') {
+                    const el = document.createElement('textarea');
+                    el.value = refLink; document.body.appendChild(el);
+                    el.select(); document.execCommand('copy');
+                    document.body.removeChild(el);
+                    alert("✅ Refer Link Copied!");
+                }
+                if (type === 'withdraw') {
+                    let uid = document.getElementById('uid-input').value;
+                    if (!uid) return alert("Enter Player UID!");
+                    db.ref('withdrawals').push({ user: userId, playerUid: uid, amount: currentBal, status: "pending", time: new Date().toLocaleString() });
+                    db.ref('users/' + userId).update({ balance: 0 });
+                    alert("🚀 Request Sent Successfully!");
+                }
+            }, 2500);
         }
 
-        // COPY REFER LINK
-        function copyLink() {
-            const el = document.createElement('textarea');
-            el.value = fullRefLink;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            alert("✅ Refer Link Copied! Share with friends to earn bonus.");
-        }
-
-        // WITHDRAW SYSTEM (১০০ ডায়মন্ডের নিচে ব্লক করা)
-        function processWithdraw() {
-            let uid = document.getElementById('uid-input').value;
-            if(!uid) return alert("Please enter your Player UID!");
-            
-            db.ref('withdrawals').push({
-                user: userId,
-                playerUid: uid,
-                amount: currentBal,
-                status: "pending",
-                time: new Date().toLocaleString()
-            });
-            db.ref('users/' + userId).update({ balance: 0 });
-            alert("🚀 Withdrawal Request Sent! Wait for admin approval.");
-            document.getElementById('uid-input').value = "";
-        }
-
-        // WHEEL DRAWING
+        // স্পিন হুইল ড্রয়িং
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
         const items = ["0", "0.2", "1", "3", "0.5", "2", "15", "0.2", "1", "5", "0", "10", "0.5", "2", "0.8", "7", "0", "1"];
@@ -191,9 +182,9 @@
             rot += (3600 + (18 - winIdx) * 20 - (rot % 360));
             canvas.style.transform = `rotate(${rot}deg)`;
             setTimeout(() => {
-                let win = parseFloat(items[winIdx]);
-                if(win > 0) db.ref('users/' + userId).update({ balance: currentBal + win });
-                else alert("Bad Luck! Try Again.");
+                let winVal = parseFloat(items[winIdx]);
+                if (winVal > 0) db.ref('users/' + userId).update({ balance: currentBal + winVal });
+                else alert("Oops! Better luck next time.");
             }, 6500);
         }
 
