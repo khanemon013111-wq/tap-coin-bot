@@ -1,388 +1,346 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Royal Diamond - Official Pro</title>
-
-<script src='//libtl.com/sdk.js' data-zone='10343752' data-sdk='show_10343752'></script>
-
-<script src="https://cdn.tailwindcss.com"></script>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-<style>
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
-
-body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; overflow-x: hidden; }
-
-.tab-content { display: none; width: 100%; max-width: 400px; margin: auto; padding: 15px; animation: fadeIn 0.4s; }
-
-.active-tab { display: block; }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.wheel-box { position: relative; width: 280px; height: 280px; border-radius: 50%; padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); margin: auto; border: 6px solid #78350f; box-shadow: 0 0 30px rgba(245, 158, 11, 0.5); }
-
-.pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100; }
-
-#wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
-
-.nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; backdrop-filter: blur(10px); }
-
-.nav-item { font-size: 10px; color: #94a3b8; cursor: pointer; text-align: center; flex: 1; transition: 0.3s; }
-
-.nav-item.active { color: #fbbf24; font-weight: bold; transform: translateY(-5px); }
-
-.glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
-
-#ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
-
-</style></head><body>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Diamond - Official Pro</title>
+    <script src='//libtl.com/sdk.js' data-zone='10343752' data-sdk='show_10343752'></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
+        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; overflow-x: hidden; }
+        .tab-content { display: none; width: 100%; max-width: 400px; margin: auto; padding: 15px; animation: fadeIn 0.4s; }
+        .active-tab { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .wheel-box { position: relative; width: 280px; height: 280px; border-radius: 50%; padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); margin: auto; border: 6px solid #78350f; box-shadow: 0 0 30px rgba(245, 158, 11, 0.5); }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100; }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; backdrop-filter: blur(10px); }
+        .nav-item { font-size: 10px; color: #94a3b8; cursor: pointer; text-align: center; flex: 1; transition: 0.3s; }
+        .nav-item.active { color: #fbbf24; font-weight: bold; transform: translateY(-5px); }
+        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
+        #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        .bot-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 12px; margin-bottom: 10px; transition: 0.3s; }
+        .bot-card:hover { border-color: #fbbf24; }
+    </style>
+</head>
+<body>
 
 <div id="ad-modal">
-
-<div class="text-center">
-
-<div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-
-<p class="text-yellow-500 font-bold uppercase text-sm">Ad Loading...</p>
-
-</div></div>
+    <div class="text-center">
+        <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-yellow-500 font-bold uppercase text-sm">Ad Loading...</p>
+    </div>
+</div>
 
 <div class="text-center my-6">
-
-<h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 uppercase italic">Royal Diamond</h1>
-
+    <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 uppercase italic">Royal Diamond</h1>
 </div>
 
 <div id="spin-tab" class="tab-content active-tab text-center">
-
-<p class="text-[11px] text-gray-400 mb-2">Daily Spin Limit: <span id="spin-left" class="text-yellow-400 font-bold">50</span>/50</p>
-
-<div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 border border-white/20 inline-block shadow-inner">
-
-<span class="text-yellow-400 font-bold uppercase">💎 Balance:</span> <span id="balance">0.00</span>
-
+    <p class="text-[11px] text-gray-400 mb-2">Daily Spin Limit: <span id="spin-left" class="text-yellow-400 font-bold">50</span>/50</p>
+    <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 border border-white/20 inline-block shadow-inner">
+        <span class="text-yellow-400 font-bold uppercase">💎 Balance:</span> <span id="balance">0.00</span>
+    </div>
+    <div class="wheel-box">
+        <div class="pointer"></div>
+        <canvas id="wheel"></canvas>
+    </div>
+    <button id="spin-btn" onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-14 rounded-full shadow-lg active:scale-95 transition-all uppercase">SPIN NOW</button>
 </div>
 
-<div class="wheel-box">
-
-<div class="pointer"></div>
-
-<canvas id="wheel"></canvas>
-
-</div>
-
-<button id="spin-btn" onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-14 rounded-full shadow-lg active:scale-95 transition-all uppercase">SPIN NOW</button>
-
+<div id="shop-tab" class="tab-content text-center">
+    <div class="glass-card">
+        <h2 class="text-yellow-500 font-black mb-1 uppercase italic">Tap-Bot Shop</h2>
+        <div class="mb-4 p-4 bg-black/40 rounded-xl border border-white/10 text-left">
+            <p class="text-xs">🤖 Active: <span id="active-bot" class="text-yellow-400 font-bold">None</span></p>
+            <p class="text-xs">📊 Mined: <span id="mined-amount" class="text-green-400 font-bold">0.00</span> 💎</p>
+            <p id="mining-status" class="text-[10px] mt-1 text-red-500 italic">🛑 Stopped</p>
+        </div>
+        <div class="flex gap-2 mb-6">
+            <button onclick="handleAction('start_mining')" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold text-[11px] uppercase">🚀 Start (Ad)</button>
+            <button onclick="handleAction('claim')" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-[11px] uppercase">📥 Claim</button>
+        </div>
+        <div class="space-y-3" id="bot-store-list"></div>
+    </div>
 </div>
 
 <div id="leader-tab" class="tab-content">
-
-<div class="glass-card">
-
-<h2 class="text-yellow-500 font-black text-center mb-6 uppercase border-b border-white/10 pb-2">🏆 Top Players</h2>
-
-<div id="leader-list" class="space-y-3"></div>
-
-</div></div>
-
-<div id="refer-tab" class="tab-content text-center">
-
-<div class="glass-card">
-
-<h2 class="text-green-400 font-black mb-2 italic">Refer & Earn</h2>
-
-<p class="text-xs text-gray-300 mb-4">Invite friends and get <span class="text-yellow-400 font-bold">10 💎</span> per refer!</p>
-
-<div class="bg-black/40 p-5 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500 font-mono shadow-inner" id="ref-link-display">Generating...</div>
-
-<button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold uppercase">COPY LINK</button>
-
-</div></div>
-
-<div id="wallet-tab" class="tab-content text-center">
-
-<div class="glass-card">
-
-<h2 class="text-blue-400 font-black mb-1 uppercase italic">Withdrawal</h2>
-
-<p class="text-[10px] text-yellow-500 font-bold mb-4 italic">1000 Diamond = 1 Dollar</p>
-
-<div class="mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
-
-<p class="text-xl font-bold text-yellow-500"><span id="wallet-bal-display">0.00</span> 💎</p>
-
+    <div class="glass-card">
+        <h2 class="text-yellow-500 font-black text-center mb-6 uppercase border-b border-white/10 pb-2">🏆 Top Players</h2>
+        <div id="leader-list" class="space-y-3"></div>
+    </div>
 </div>
 
-<input type="number" id="uid-input" placeholder="Enter Binance UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
+<div id="refer-tab" class="tab-content text-center">
+    <div class="glass-card">
+        <h2 class="text-green-400 font-black mb-2 italic">Refer & Earn</h2>
+        <p class="text-xs text-gray-300 mb-4">Invite friends and get <span class="text-yellow-400 font-bold">10 💎</span> per refer!</p>
+        <div class="bg-black/40 p-5 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500 font-mono shadow-inner" id="ref-link-display">Generating...</div>
+        <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold uppercase">COPY LINK</button>
+    </div>
+</div>
 
-<input type="number" id="amount-input" placeholder="How many Diamonds?" class="w-full p-4 bg-black/40 rounded-xl mb-6 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
-
-<button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl shadow-lg uppercase">SUBMIT WITHDRAW</button>
-
-<p class="mt-4 text-[10px] text-gray-500 italic">Minimum 100 Diamonds</p>
-
-</div></div>
+<div id="wallet-tab" class="tab-content text-center">
+    <div class="glass-card">
+        <h2 class="text-blue-400 font-black mb-1 uppercase italic">Withdrawal</h2>
+        <p class="text-[10px] text-yellow-500 font-bold mb-4 italic">1000 Diamond = 1 Dollar</p>
+        <div class="mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
+            <p class="text-xl font-bold text-yellow-500"><span id="wallet-bal-display">0.00</span> 💎</p>
+        </div>
+        <input type="number" id="uid-input" placeholder="Enter Binance UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
+        <input type="number" id="amount-input" placeholder="How many Diamonds?" class="w-full p-4 bg-black/40 rounded-xl mb-6 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
+        <button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl shadow-lg uppercase">SUBMIT WITHDRAW</button>
+        <p class="mt-4 text-[10px] text-gray-500 italic">Minimum 100 Diamonds</p>
+    </div>
+</div>
 
 <div class="nav-bar">
+    <div onclick="switchTab('spin-tab', this)" class="nav-item active"><div>🌀</div>Spin</div>
+    <div onclick="switchTab('shop-tab', this)" class="nav-item"><div>🤖</div>Shop</div>
+    <div onclick="switchTab('leader-tab', this)" class="nav-item"><div>🏆</div>Board</div>
+    <div onclick="switchTab('refer-tab', this)" class="nav-item"><div>👥</div>Refer</div>
+    <div onclick="switchTab('wallet-tab', this)" class="nav-item"><div>💳</div>Wallet</div>
+</div>
 
-<div onclick="switchTab('spin-tab', this)" class="nav-item active"><div>🌀</div>Spin</div>
-
-<div onclick="switchTab('leader-tab', this)" class="nav-item"><div>🏆</div>Board</div>
-
-<div onclick="switchTab('refer-tab', this)" class="nav-item"><div>👥</div>Refer</div>
-
-<div onclick="switchTab('wallet-tab', this)" class="nav-item"><div>💳</div>Wallet</div>
-
-</div><script>
-
+<script>
 const firebaseConfig = {
-
-apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
-
-authDomain: "royaldiamondbot.firebaseapp.com",
-
-databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com",
-
-projectId: "royaldiamondbot",
-
-storageBucket: "royaldiamondbot.firebasestorage.app",
-
-messagingSenderId: "156914195366",
-
-appId: "1:156914195366:web:e5ab56df62ecbf90550d67"
-
+    apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
+    authDomain: "royaldiamondbot.firebaseapp.com",
+    databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com",
+    projectId: "royaldiamondbot",
+    storageBucket: "royaldiamondbot.firebasestorage.app",
+    messagingSenderId: "156914195366",
+    appId: "1:156914195366:web:e5ab56df62ecbf90550d67"
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const db = firebase.database();
 
 let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.random() * 89999 + 10000);
-
 localStorage.setItem('user_uid', userId);
-
 const link = "https://t.me/Referralincamebd01311_bot?start=" + userId;
-
 document.getElementById('ref-link-display').innerText = link;
 
 const urlParams = new URLSearchParams(window.location.search);
 const referrerId = urlParams.get('start');
 
 let bal = 0;
-
 let dailySpins = 0;
-
+let activeBot = "None";
+let lastStartTime = 0;
 const today = new Date().toLocaleDateString();
 
+// বটের ডেটাবেস
+const BOT_PLANS = {
+    "Bronze": { price: 500, earn_8h: 27, days: 7, icon: "🥉" },
+    "Silver": { price: 1500, earn_8h: 60, days: 10, icon: "🥈" },
+    "Gold": { price: 4000, earn_8h: 100, days: 15, icon: "🥇" },
+    "Platinum": { price: 10000, earn_8h: 205, days: 20, icon: "💎" },
+    "Diamond": { price: 25000, earn_8h: 420, days: 30, icon: "👑" }
+};
+
+// ডাটা লোড করা
 db.ref('users/' + userId).on('value', snap => {
+    const data = snap.val() || { balance: 0, lastDate: today, spinCount: 0, activeBot: "None", lastStartTime: 0 };
+    bal = data.balance;
+    activeBot = data.activeBot || "None";
+    lastStartTime = data.lastStartTime || 0;
 
-const data = snap.val() || { balance: 0, lastDate: today, spinCount: 0 };
+    // রেফার বোনাস
+    if (!snap.exists() && referrerId && referrerId !== userId) {
+        db.ref('users/' + referrerId).once('value', rSnap => {
+            if(rSnap.exists()){
+                let rBal = rSnap.val().balance || 0;
+                db.ref('users/' + referrerId).update({ balance: rBal + 10 });
+            }
+        });
+    }
 
-bal = data.balance;
+    if (data.lastDate !== today) {
+        dailySpins = 0;
+        db.ref('users/' + userId).update({ lastDate: today, spinCount: 0 });
+    } else {
+        dailySpins = data.spinCount || 0;
+    }
 
-if (!snap.exists() && referrerId && referrerId !== userId) {
-    db.ref('users/' + referrerId).once('value', rSnap => {
-        if(rSnap.exists()){
-            let rBal = rSnap.val().balance || 0;
-            db.ref('users/' + referrerId).update({ balance: rBal + 10 });
-        }
-    });
-}
+    // UI আপডেট
+    document.getElementById('balance').innerText = bal.toFixed(2);
+    document.getElementById('wallet-bal-display').innerText = bal.toFixed(2);
+    document.getElementById('spin-left').innerText = (50 - dailySpins);
+    document.getElementById('active-bot').innerText = activeBot;
 
-if (data.lastDate !== today) {
+    if (dailySpins >= 50) {
+        document.getElementById('spin-btn').innerText = "LIMIT REACHED";
+        document.getElementById('spin-btn').disabled = true;
+        document.getElementById('spin-btn').style.background = "#4b5563";
+    }
 
-dailySpins = 0;
-
-db.ref('users/' + userId).update({ lastDate: today, spinCount: 0 });
-
-} else {
-
-dailySpins = data.spinCount || 0;
-
-}
-
-document.getElementById('balance').innerText = bal.toFixed(2);
-
-document.getElementById('wallet-bal-display').innerText = bal.toFixed(2);
-
-document.getElementById('spin-left').innerText = (50 - dailySpins);
-
-if (dailySpins >= 50) {
-
-document.getElementById('spin-btn').innerText = "LIMIT REACHED";
-
-document.getElementById('spin-btn').disabled = true;
-
-document.getElementById('spin-btn').style.background = "#4b5563";
-
-}});
-
-db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
-
-let html = ''; let users = [];
-
-snap.forEach(child => { users.push(child.val()); });
-
-users.reverse().forEach((u, i) => {
-
-html += `<div class="flex justify-between p-3 bg-white/5 rounded-xl border border-white/5"><span class="text-xs">${i+1}. ${u.uid || 'Player'}</span><span class="text-yellow-500 font-bold text-xs">${(u.balance || 0).toFixed(2)} 💎</span></div>`;
-
+    calculateMining();
 });
 
-document.getElementById('leader-list').innerHTML = html;
+// মাইনিং ক্যালকুলেশন
+function calculateMining() {
+    if (activeBot === "None" || lastStartTime === 0) {
+        document.getElementById('mined-amount').innerText = "0.00";
+        document.getElementById('mining-status').innerText = "🛑 Stopped";
+        return;
+    }
+    const now = Math.floor(Date.now() / 1000);
+    const elapsed = now - lastStartTime;
+    const limit = 8 * 3600;
+    const workTime = Math.min(elapsed, limit);
+    const earned = (BOT_PLANS[activeBot].earn_8h / limit) * workTime;
+    
+    document.getElementById('mined-amount').innerText = earned.toFixed(2);
+    if (elapsed < limit) {
+        document.getElementById('mining-status').innerText = "🚀 Mining... (" + Math.floor((limit - elapsed)/60) + "m left)";
+        document.getElementById('mining-status').className = "text-[10px] mt-1 text-green-400 italic";
+    } else {
+        document.getElementById('mining-status').innerText = "🛑 Time up! Restart with Ad.";
+        document.getElementById('mining-status').className = "text-[10px] mt-1 text-red-500 italic";
+    }
+}
 
-});
+// শপে বটের তালিকা তৈরি করা
+function renderStore() {
+    let html = '';
+    for (let name in BOT_PLANS) {
+        let b = BOT_PLANS[name];
+        html += `<div class="bot-card flex justify-between items-center text-left">
+            <div>
+                <p class="text-sm font-bold text-yellow-500">${b.icon} ${name}</p>
+                <p class="text-[9px] text-gray-400">Earn: ${b.earn_8h}💎/8h | ${b.days} Days</p>
+            </div>
+            <button onclick="buyBot('${name}')" class="bg-yellow-500 text-black px-3 py-1 rounded-lg text-[10px] font-black">${b.price} 💎</button>
+        </div>`;
+    }
+    document.getElementById('bot-store-list').innerHTML = html;
+}
+renderStore();
+
+function buyBot(name) {
+    const cost = BOT_PLANS[name].price;
+    if (bal < cost) return alert("❌ Not enough diamonds!");
+    if (confirm("Buy " + name + " for " + cost + " diamonds?")) {
+        db.ref('users/' + userId).update({
+            balance: bal - cost,
+            activeBot: name,
+            lastStartTime: 0
+        });
+        alert("✅ " + name + " Purchased!");
+    }
+}
 
 function handleAction(type) {
-
-if (type === 'spin' && dailySpins >= 50) return alert("❌ Daily Limit Reached!");
-
-if (type === 'withdraw' && bal < 100) return alert("❌ Min 100 Diamonds required!");
-
-document.getElementById('ad-modal').style.display = 'flex';
-
-if (typeof show_10343752 === 'function') {
-
-show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
-
-} else {
-
-setTimeout(() => executeLogic(type), 2500);
-
-}}
-
-function executeLogic(type) {
-
-document.getElementById('ad-modal').style.display = 'none';
-
-if (type === 'spin') spin();
-
-if (type === 'refer') {
-
-const t = document.createElement('textarea'); t.value = link; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
-
-alert("✅ Link Copied!");
-
+    if (type === 'spin' && dailySpins >= 50) return alert("❌ Daily Limit Reached!");
+    if (type === 'withdraw' && bal < 100) return alert("❌ Min 100 Diamonds required!");
+    
+    document.getElementById('ad-modal').style.display = 'flex';
+    if (typeof show_10343752 === 'function') {
+        show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
+    } else {
+        setTimeout(() => executeLogic(type), 2500);
+    }
 }
 
-if (type === 'withdraw') {
+function executeLogic(type) {
+    document.getElementById('ad-modal').style.display = 'none';
+    if (type === 'spin') spin();
+    if (type === 'start_mining') {
+        if (activeBot === "None") return alert("❌ Buy a bot first!");
+        db.ref('users/' + userId).update({ lastStartTime: Math.floor(Date.now() / 1000) });
+        alert("🚀 Mining Started for 8 Hours!");
+    }
+    if (type === 'claim') {
+        const earned = parseFloat(document.getElementById('mined-amount').innerText);
+        if (earned <= 0) return alert("❌ No diamonds to claim!");
+        db.ref('users/' + userId).update({
+            balance: bal + earned,
+            lastStartTime: 0
+        });
+        alert("✅ Claimed " + earned.toFixed(2) + " 💎");
+    }
+    if (type === 'refer') {
+        const t = document.createElement('textarea'); t.value = link; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+        alert("✅ Link Copied!");
+    }
+    if (type === 'withdraw') {
+        let u = document.getElementById('uid-input').value;
+        let a = parseFloat(document.getElementById('amount-input').value);
+        if(!u) return alert("Enter Player UID!");
+        if(isNaN(a) || a < 100) return alert("Min 100 Diamonds!");
+        if(a > bal) return alert("Insufficient balance!");
+        db.ref('withdrawals').push({ user: userId, uid: u, amount: a, status: "pending", time: new Date().toLocaleString() });
+        db.ref('users/' + userId).update({ balance: bal - a });
+        alert("🚀 Request sent!");
+    }
+}
 
-let u = document.getElementById('uid-input').value;
-
-let a = parseFloat(document.getElementById('amount-input').value);
-
-if(!u) return alert("Enter Player UID!");
-
-if(isNaN(a) || a < 100) return alert("Min 100 Diamonds!");
-
-if(a > bal) return alert("Insufficient balance!");
-
-db.ref('withdrawals').push({ user: userId, uid: u, amount: a, status: "pending", time: new Date().toLocaleString() });
-
-db.ref('users/' + userId).update({ balance: bal - a });
-
-alert("🚀 Request sent!");
-
-}}
+// Leaderboard and Wheel Logic (Same as yours)
+db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
+    let html = ''; let users = [];
+    snap.forEach(child => { users.push(child.val()); });
+    users.reverse().forEach((u, i) => {
+        html += `<div class="flex justify-between p-3 bg-white/5 rounded-xl border border-white/5"><span class="text-xs">${i+1}. ${u.uid || 'Player'}</span><span class="text-yellow-500 font-bold text-xs">${(u.balance || 0).toFixed(2)} 💎</span></div>`;
+    });
+    document.getElementById('leader-list').innerHTML = html;
+});
 
 const canv = document.getElementById('wheel');
-
 const ctx = canv.getContext('2d');
-
 const pr = ["0", "0.2", "0.5", "10", "0.3", "5", "15", "0.1", "2", "0.8", "0", "7", "0.4", "4", "0.1", "1", "0", "0.2"];
-
 const cl = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
-
 canv.width = 280; canv.height = 280;
 
 function draw() {
-
-for(let i=0; i<18; i++){
-
-ctx.beginPath(); ctx.fillStyle = cl[i]; ctx.moveTo(140, 140);
-
-ctx.arc(140, 140, 140, (i * 20 - 100) * Math.PI / 180, (i * 20 - 80) * Math.PI / 180); ctx.fill();
-
-ctx.save(); ctx.translate(140, 140); ctx.rotate((i * 20 - 90) * Math.PI / 180);
-
-ctx.fillStyle = cl[i] == "#1e293b" ? "#fbbf24" : "#1e293b"; ctx.font = "bold 11px Poppins";
-
-ctx.textAlign = "right"; ctx.fillText(pr[i], 130, 5); ctx.restore();
-
-}}draw();
+    for(let i=0; i<18; i++){
+        ctx.beginPath(); ctx.fillStyle = cl[i]; ctx.moveTo(140, 140);
+        ctx.arc(140, 140, 140, (i * 20 - 100) * Math.PI / 180, (i * 20 - 80) * Math.PI / 180); ctx.fill();
+        ctx.save(); ctx.translate(140, 140); ctx.rotate((i * 20 - 90) * Math.PI / 180);
+        ctx.fillStyle = cl[i] == "#1e293b" ? "#fbbf24" : "#1e293b"; ctx.font = "bold 11px Poppins";
+        ctx.textAlign = "right"; ctx.fillText(pr[i], 130, 5); ctx.restore();
+    }
+}draw();
 
 let r = 0; let isSpinning = false;
-
 function spin() {
-
-if (isSpinning) return;
-
-isSpinning = true;
-
-let rand = Math.random() * 1000;
-
-let w;if (rand < 950) {
-
-const smallSlots = [0, 1, 2, 4, 7, 9, 10, 12, 14, 16, 17];
-
-w = smallSlots[Math.floor(Math.random() * smallSlots.length)];
-
-} else if (rand < 995) {
-
-const midSlots = [5, 8, 11, 13, 15];
-
-w = midSlots[Math.floor(Math.random() * midSlots.length)];
-
-} else {
-
-const rareSlots = [3, 6];
-
-w = rareSlots[Math.floor(Math.random() * rareSlots.length)];
-
+    if (isSpinning) return;
+    isSpinning = true;
+    let rand = Math.random() * 1000;
+    let w;if (rand < 950) {
+        const smallSlots = [0, 1, 2, 4, 7, 9, 10, 12, 14, 16, 17];
+        w = smallSlots[Math.floor(Math.random() * smallSlots.length)];
+    } else if (rand < 995) {
+        const midSlots = [5, 8, 11, 13, 15];
+        w = midSlots[Math.floor(Math.random() * midSlots.length)];
+    } else {
+        const rareSlots = [3, 6];
+        w = rareSlots[Math.floor(Math.random() * rareSlots.length)];
+    }
+    r += (3600 + (18 - w) * 20 - (r % 360));
+    canv.style.transform = `rotate(${r}deg)`;
+    setTimeout(() => {
+        let v = parseFloat(pr[w]);
+        dailySpins++;
+        db.ref('users/' + userId).update({
+            balance: bal + v,
+            spinCount: dailySpins,
+            lastDate: today,uid: userId});
+        isSpinning = false;
+        if(v > 0) alert("Won " + v + " 💎");
+    }, 6500);
 }
 
-r += (3600 + (18 - w) * 20 - (r % 360));
-
-canv.style.transform = `rotate(${r}deg)`;
-
-setTimeout(() => {
-
-let v = parseFloat(pr[w]);
-
-dailySpins++;
-
-db.ref('users/' + userId).update({
-
-balance: bal + v,
-
-spinCount: dailySpins,
-
-lastDate: today,uid: userId});
-
-isSpinning = false;
-
-if(v > 0) alert("Won " + v + " 💎");
-
-}, 6500);}
-
 function switchTab(id, el) {
-
-document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
-
-document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-document.getElementById(id).classList.add('active-tab'); el.classList.add('active');
-
-}</script></body></html>
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active-tab'); el.classList.add('active');
+}
+setInterval(calculateMining, 10000); // প্রতি ১০ সেকেন্ডে ব্যালেন্স আপডেট করবে
+</script>
+</body>
+    </html>
     
