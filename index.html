@@ -114,7 +114,9 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 
 <div class="glass-card">
 
-<h2 class="text-blue-400 font-black mb-4 uppercase italic">Withdrawal</h2>
+<h2 class="text-blue-400 font-black mb-1 uppercase italic">Withdrawal</h2>
+
+<p class="text-[10px] text-yellow-500 font-bold mb-4 italic">1000 Diamond = 1 Dollar</p>
 
 <div class="mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
 
@@ -122,7 +124,7 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 
 </div>
 
-<input type="number" id="uid-input" placeholder="Enter Player UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
+<input type="number" id="uid-input" placeholder="Enter Binance UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
 
 <input type="number" id="amount-input" placeholder="How many Diamonds?" class="w-full p-4 bg-black/40 rounded-xl mb-6 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
 
@@ -174,7 +176,6 @@ const link = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
 document.getElementById('ref-link-display').innerText = link;
 
-// রেফার বোনাস লজিক যোগ করা হয়েছে
 const urlParams = new URLSearchParams(window.location.search);
 const referrerId = urlParams.get('start');
 
@@ -190,7 +191,6 @@ const data = snap.val() || { balance: 0, lastDate: today, spinCount: 0 };
 
 bal = data.balance;
 
-// নতুন ইউজার রেফার লিঙ্কে আসলে রেফারারকে ১০ ডাইমন্ড দেওয়া
 if (!snap.exists() && referrerId && referrerId !== userId) {
     db.ref('users/' + referrerId).once('value', rSnap => {
         if(rSnap.exists()){
@@ -385,4 +385,4 @@ document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')
 document.getElementById(id).classList.add('active-tab'); el.classList.add('active');
 
 }</script></body></html>
-
+    
