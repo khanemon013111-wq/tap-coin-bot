@@ -2,142 +2,156 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Simple Lite Coin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Lucky Spin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; }
-        .page { display: none; padding: 20px; height: 90vh; }
-        .active { display: block; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
         
-        #main-coin {
-            width: 220px; height: 220px; background: #fbbf24;
-            border-radius: 50%; margin: 50px auto;
-            border: 10px solid #d97706; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 80px; transition: transform 0.1s;
+        body { 
+            background: radial-gradient(circle, #1a1a2e 0%, #0f0f1a 100%); 
+            color: white; font-family: 'Orbitron', sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0;
         }
-        #main-coin:active { transform: scale(0.9); }
 
-        .nav-bar {
-            position: fixed; bottom: 0; width: 100%; background: #1e293b;
-            display: flex; justify-content: space-around; padding: 15px;
+        /* প্রিমিয়াম শ্যাডো ও গ্লো */
+        .wheel-box {
+            position: relative; width: 320px; height: 320px;
+            border-radius: 50%; padding: 10px;
+            background: #16213e;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.2), inset 0 0 20px rgba(0,0,0,0.5);
+            border: 4px solid #0f3460;
         }
-        .nav-item { cursor: pointer; font-weight: bold; color: #94a3b8; }
-        .nav-item.active-nav { color: #fbbf24; }
+
+        #wheel {
+            width: 100%; height: 100%; border-radius: 50%;
+            transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.1));
+        }
+
+        /* গোল্ডেন পয়েন্টার */
+        .pointer {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 40px; background: #e94560;
+            clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 20;
+            filter: drop-shadow(0 5px 15px #e94560);
+        }
+
+        /* সেন্টার ক্যাপ */
+        .center-hub {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 40px; height: 40px; background: #0f3460;
+            border: 4px solid #e94560; border-radius: 50%; z-index: 15;
+            box-shadow: 0 0 15px #e94560;
+        }
+
+        /* প্রিমিয়াম বাটন */
+        .spin-btn {
+            margin-top: 40px; background: linear-gradient(45deg, #e94560, #950740);
+            color: white; padding: 15px 50px; border-radius: 50px;
+            font-weight: 900; letter-spacing: 2px;
+            box-shadow: 0 10px 20px rgba(233, 69, 96, 0.4);
+            transition: 0.3s; border: none; cursor: pointer;
+        }
+        .spin-btn:active { transform: scale(0.9); box-shadow: 0 5px 10px rgba(233, 69, 96, 0.6); }
+        .spin-btn:disabled { background: #444; box-shadow: none; cursor: not-allowed; }
+
+        /* অ্যাড স্ক্রিন */
+        #ad-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
+        }
     </style>
 </head>
 <body>
 
-    <div id="home" class="page active">
-        <p class="text-gray-400 mt-5">Your Balance</p>
-        <h1 id="balance" class="text-5xl font-bold text-yellow-500">0</h1>
-        
-        <div id="main-coin" onclick="tapCoin()">🪙</div>
-        
-        <div class="mt-10">
-            <p class="text-sm">⚡ Energy: <span id="energy">1000</span> / 1000</p>
-            <div class="w-full bg-gray-800 h-3 rounded-full mt-2">
-                <div id="energy-bar" class="bg-yellow-500 h-full rounded-full" style="width: 100%"></div>
-            </div>
-        </div>
-        <p id="bot-alert" class="text-purple-400 text-xs mt-4 hidden">🤖 Bot is mining for you...</p>
+    <div class="text-center mb-8">
+        <h2 class="text-xs text-cyan-400 tracking-[0.3em] font-bold mb-2">MEGA REWARDS</h2>
+        <h1 class="text-4xl font-black text-white italic underline decoration-rose-500">LUCKY SPIN</h1>
     </div>
 
-    <div id="boost" class="page">
-        <h2 class="text-2xl font-bold mb-10">Boosters</h2>
-        <div class="bg-gray-800 p-5 rounded-2xl flex justify-between items-center mb-4">
-            <div class="text-left">
-                <p class="font-bold">Tap Bot 🤖</p>
-                <p class="text-xs text-gray-400">Earn 1 coin/sec automatically</p>
-            </div>
-            <button id="buy-bot" onclick="buyBot()" class="bg-yellow-500 text-black px-5 py-2 rounded-xl font-bold">50,000</button>
-        </div>
-        <p class="text-gray-500 text-sm">More boosters coming soon...</p>
+    <div class="wheel-box">
+        <div class="pointer"></div>
+        <div class="center-hub"></div>
+        <canvas id="wheel"></canvas>
     </div>
 
-    <div id="tasks" class="page">
-        <h2 class="text-2xl font-bold mb-10">Tasks</h2>
-        <div class="bg-gray-800 p-5 rounded-2xl mb-4">
-            <p>Join our Telegram</p>
-            <button class="bg-blue-500 px-4 py-1 rounded mt-2 text-sm font-bold">Claim +5,000</button>
-        </div>
-    </div>
+    <button id="main-btn" onclick="startProcess()" class="spin-btn">SPIN WHEEL</button>
 
-    <div class="nav-bar">
-        <div id="nav-home" class="nav-item active-nav" onclick="showPage('home')">Home</div>
-        <div id="nav-boost" class="nav-item" onclick="showPage('boost')">Boost</div>
-        <div id="nav-tasks" class="nav-item" onclick="showPage('tasks')">Tasks</div>
+    <div id="ad-modal">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-rose-500 mb-4"></div>
+            <p class="text-rose-500 font-bold text-xl mb-2">WATCHING AD...</p>
+            <p class="text-gray-400 text-sm">Reward will unlock in 5 seconds</p>
+        </div>
     </div>
 
     <script>
-        // ডাটা লোড
-        let coins = parseInt(localStorage.getItem('coins')) || 0;
-        let energy = 1000;
-        let hasBot = localStorage.getItem('hasBot') === 'true';
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const items = ["$100", "0", "$500", "0", "$1000", "0", "$50", "0", "$200", "0"];
+        const colors = ["#1a1a2e", "#e94560", "#16213e", "#0f3460", "#1a1a2e", "#e94560", "#16213e", "#0f3460", "#1a1a2e", "#e94560"];
+        
+        canvas.width = 300;
+        canvas.height = 300;
 
-        // স্ক্রিন আপডেট
-        function updateUI() {
-            document.getElementById('balance').innerText = coins.toLocaleString();
-            document.getElementById('energy').innerText = energy;
-            document.getElementById('energy-bar').style.width = (energy / 10) + "%";
-            
-            if(hasBot) {
-                document.getElementById('bot-alert').classList.remove('hidden');
-                document.getElementById('buy-bot').innerText = "Active";
-                document.getElementById('buy-bot').disabled = true;
+        function draw() {
+            const arc = (2 * Math.PI) / items.length;
+            for (let i = 0; i < items.length; i++) {
+                ctx.beginPath();
+                ctx.fillStyle = colors[i];
+                ctx.moveTo(150, 150);
+                ctx.arc(150, 150, 150, i * arc, (i + 1) * arc);
+                ctx.fill();
+                ctx.strokeStyle = "rgba(255,255,255,0.1)";
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(150, 150);
+                ctx.rotate(i * arc + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "white";
+                ctx.font = "bold 18px Orbitron";
+                ctx.fillText(items[i], 130, 8);
+                ctx.restore();
             }
         }
 
-        // টেপ করলে যা হবে
-        function tapCoin() {
-            if(energy > 0) {
-                coins += 1;
-                energy -= 1;
-                updateUI();
-                saveData();
-            }
-        }
-
-        // পেজ পরিবর্তন
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
+        let deg = 0;
+        function startProcess() {
+            const btn = document.getElementById('main-btn');
+            btn.disabled = true;
             
-            document.getElementById(pageId).classList.add('active');
-            document.getElementById('nav-' + pageId).classList.add('active-nav');
+            // ১. অ্যাড দেখানো (৫ সেকেন্ড)
+            document.getElementById('ad-modal').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('ad-modal').style.display = 'none';
+                spin(); // অ্যাড শেষে স্পিন
+            }, 5000);
         }
 
-        // বট কেনা
-        function buyBot() {
-            if(coins >= 50000) {
-                coins -= 50000;
-                hasBot = true;
-                localStorage.setItem('hasBot', 'true');
-                updateUI();
-                alert("Bot Activated!");
-            } else {
-                alert("Not enough coins!");
-            }
+        function spin() {
+            const extra = Math.floor(Math.random() * 360) + 3600; // ১০ বার ঘুরবে
+            deg += extra;
+            canvas.style.transform = `rotate(${deg}deg)`;
+
+            setTimeout(() => {
+                document.getElementById('main-btn').disabled = false;
+                
+                // ক্যালকুলেশন কোন ঘরে থামলো
+                const actualDeg = deg % 360;
+                const index = Math.floor((360 - actualDeg) / 36) % 10;
+                const result = items[index];
+                
+                if(result === "0") {
+                    alert("Opps! Better luck next time.");
+                } else {
+                    alert("BOOM! You won " + result + "!");
+                }
+            }, 5500);
         }
 
-        function saveData() {
-            localStorage.setItem('coins', coins);
-        }
-
-        // মেইন লুপ (প্রতি সেকেন্ডে অটো কাজ করবে)
-        setInterval(() => {
-            // ১. এনার্জি রিফিল
-            if(energy < 1000) energy += 1;
-            
-            // ২. বটের কাজ
-            if(hasBot) coins += 1;
-            
-            updateUI();
-            saveData();
-        }, 1000);
-
-        updateUI(); // শুরুতে একবার লোড হবে
+        draw();
     </script>
 </body>
 </html>
