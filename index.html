@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Simple Tap</title>
+    <title>Lite Coin - Tap Only</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
@@ -15,16 +15,11 @@
             font-family: 'Poppins', sans-serif; 
             overflow: hidden; 
             touch-action: none; 
-        }
-
-        .main-container { 
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            width: 100%; 
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
             align-items: center;
-            text-align: center;
-            padding-top: 40px;
+            justify-content: center;
         }
 
         /* Coin Styling */
@@ -40,8 +35,7 @@
             justify-content: center; 
             cursor: pointer; 
             transition: transform 0.1s; 
-            position: relative; 
-            margin-top: 50px;
+            margin: 40px 0;
         }
         #coin:active { transform: scale(0.92); }
 
@@ -52,42 +46,36 @@
             clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); 
         }
 
-        /* Energy Bar Styling */
         .status-container {
-            position: fixed;
-            bottom: 50px;
             width: 100%;
-            padding: 0 30px;
+            padding: 0 40px;
+            position: fixed;
+            bottom: 60px;
         }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        <p class="text-yellow-500 font-bold tracking-widest text-sm uppercase">Bronze League</p>
-        
-        <h1 class="text-7xl font-black text-white mt-4" id="score">0</h1>
+    <h1 class="text-7xl font-black text-white" id="score">0</h1>
 
-        <div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)">
-            <div class="coin-logo"></div>
+    <div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)">
+        <div class="coin-logo"></div>
+    </div>
+
+    <div class="status-container">
+        <div class="flex justify-between font-bold text-yellow-400 mb-2">
+            <span class="text-xl">⚡ <span id="energy-val">1000</span></span>
+            <span class="text-gray-500">/ 1000</span>
         </div>
-
-        <div class="status-container">
-            <div class="flex justify-between font-bold text-yellow-400 mb-2">
-                <span class="text-lg">⚡ <span id="energy-val">1000</span></span>
-                <span class="text-gray-500">/ 1000</span>
-            </div>
-            <div class="h-4 w-full bg-gray-900 rounded-full overflow-hidden border border-white/10 shadow-inner">
-                <div id="energy-bar" class="h-full bg-yellow-500 transition-all" style="width: 100%"></div>
-            </div>
+        <div class="h-4 w-full bg-gray-900 rounded-full overflow-hidden border border-white/10">
+            <div id="energy-bar" class="h-full bg-yellow-500 transition-all" style="width: 100%"></div>
         </div>
     </div>
 
     <script>
-        // Load Score and Energy from Local Storage
         let score = parseInt(localStorage.getItem('L_Score')) || 0;
         let energy = localStorage.getItem('L_Eng') === null ? 1000 : parseInt(localStorage.getItem('L_Eng'));
-        const tapValue = 1; // প্রতি ট্যাপে কত বাড়বে
+        const tapValue = 1;
         const maxEnergy = 1000;
 
         function updateUI() {
@@ -95,14 +83,12 @@
             document.getElementById('energy-val').innerText = Math.floor(energy);
             document.getElementById('energy-bar').style.width = (energy / maxEnergy) * 100 + "%";
             
-            // Save Progress
             localStorage.setItem('L_Score', score);
             localStorage.setItem('L_Eng', energy);
         }
 
         function handleTap(e) {
             if (e.type === 'touchstart') e.preventDefault();
-            
             if (energy >= tapValue) {
                 score += tapValue;
                 energy -= tapValue;
@@ -110,7 +96,7 @@
             }
         }
 
-        // Energy Recovery System (প্রতি সেকেন্ডে ২ করে বাড়বে)
+        // Energy recovery - 2 points every second
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy = Math.min(maxEnergy, energy + 2);
@@ -118,7 +104,6 @@
             }
         }, 1000);
 
-        // Initial UI Update
         updateUI();
     </script>
 </body>
