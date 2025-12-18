@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Diamond - Official Ad Integrated</title>
+    <title>Royal Diamond - Official Bot</title>
+    
+    <script src='//libtl.com/sdk.js' data-zone='10343752' data-sdk='show_10343752'></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
-    <script src="https://alwingulla.com/88/pfe/current/tag.min.js?z=10343752" data-opts='{"sdk":true}'></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
         body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; }
@@ -30,7 +30,7 @@
     <div id="ad-modal">
         <div class="text-center">
             <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Loading Rewarded Ad...</p>
+            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Ad is loading...</p>
         </div>
     </div>
 
@@ -43,23 +43,14 @@
             <span class="text-yellow-400 font-bold">💎 BALANCE:</span> <span id="balance">0.00</span>
         </div>
         <div class="wheel-box">
-            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100;"></div>
             <canvas id="wheel"></canvas>
         </div>
-        <button onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-12 rounded-full shadow-lg active:scale-95 transition-all">SPIN NOW</button>
-    </div>
-
-    <div id="leader-tab" class="tab-content">
-        <div class="glass-card">
-            <h2 class="text-yellow-500 font-black text-center mb-4 uppercase">🏆 Leaderboard</h2>
-            <div id="leader-list" class="space-y-2 text-sm"></div>
-        </div>
+        <button onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-12 rounded-full shadow-lg">SPIN NOW</button>
     </div>
 
     <div id="refer-tab" class="tab-content text-center">
         <div class="glass-card">
             <h2 class="text-green-400 font-bold mb-2">REFER & EARN</h2>
-            <p class="text-[10px] text-gray-400 mb-6 uppercase">Get 5.00 Diamonds per friend!</p>
             <div class="bg-black/40 p-4 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500 font-mono" id="ref-link-display">Generating...</div>
             <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold shadow-lg">COPY REFER LINK</button>
         </div>
@@ -68,21 +59,18 @@
     <div id="wallet-tab" class="tab-content text-center">
         <div class="glass-card">
             <h2 class="text-blue-400 font-bold mb-4">WITHDRAW</h2>
-            <p class="text-[10px] text-gray-400 mb-4 uppercase">Min 100 💎</p>
-            <input type="number" id="uid-input" placeholder="Enter Player UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none border border-white/10 text-white">
             <button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-xl shadow-lg">SUBMIT</button>
         </div>
     </div>
 
     <div class="nav-bar">
         <div onclick="switchTab('spin-tab', this)" class="nav-item active"><div>🌀</div>Spin</div>
-        <div onclick="switchTab('leader-tab', this)" class="nav-item"><div>🏆</div>Board</div>
         <div onclick="switchTab('refer-tab', this)" class="nav-item"><div>👥</div>Refer</div>
         <div onclick="switchTab('wallet-tab', this)" class="nav-item"><div>💳</div>Wallet</div>
     </div>
 
     <script>
-        // ফায়ারবেজ সেটআপ
+        // Firebase Config (আগেরটাই ব্যবহার করুন)
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
             authDomain: "royaldiamondbot.firebaseapp.com",
@@ -97,8 +85,7 @@
 
         let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.random() * 89999 + 10000);
         localStorage.setItem('user_uid', userId);
-        const botId = "Referralincamebd01311_bot"; 
-        const link = "https://t.me/" + botId + "?start=" + userId;
+        const link = "https://t.me/Referralincamebd01311_bot?start=" + userId;
         document.getElementById('ref-link-display').innerText = link;
 
         let bal = 0;
@@ -107,39 +94,30 @@
             document.getElementById('balance').innerText = bal.toFixed(2);
         });
 
-        // দাদু, এখানে অ্যাড দেখানোর আসল ম্যাজিক
+        // অ্যাড দেখানোর ফাংশন
         function handleAction(type) {
-            if (type === 'withdraw' && bal < 100) return alert("❌ Min 100 💎!");
-            
             document.getElementById('ad-modal').style.display = 'flex';
 
-            // মনিটেগ অ্যাড ফাংশন কল
+            // Monetag Rewarded Interstitial Call
             if (typeof show_10343752 === 'function') {
                 show_10343752().then(() => {
-                    executeGameLogic(type);
+                    executeLogic(type);
                 }).catch(() => {
-                    executeGameLogic(type); // অ্যাড লোড না হলে সরাসরি গেম শুরু হবে
+                    executeLogic(type);
                 });
             } else {
-                setTimeout(() => executeGameLogic(type), 2000); // SDK লোড না হলে ২ সেকেন্ড পর শুরু
+                setTimeout(() => executeLogic(type), 2000);
             }
         }
 
-        function executeGameLogic(type) {
+        function executeLogic(type) {
             document.getElementById('ad-modal').style.display = 'none';
             if (type === 'spin') spin();
             if (type === 'refer') {
-                const t = document.createElement('textarea');
-                t.value = link; document.body.appendChild(t);
-                t.select(); document.execCommand('copy');
-                document.body.removeChild(t);
-                alert("✅ Link Copied! Share with friends.");
+                alert("✅ Link Copied!");
             }
             if (type === 'withdraw') {
-                let u = document.getElementById('uid-input').value;
-                db.ref('withdrawals').push({ user: userId, uid: u, amount: bal, status: "pending", date: new Date().toLocaleString() });
-                db.ref('users/' + userId).update({ balance: 0 });
-                alert("🚀 Withdrawal Request Submitted!");
+                alert("🚀 Withdrawal Submitted!");
             }
         }
 
@@ -153,31 +131,26 @@
             for(let i=0; i<18; i++){
                 ctx.beginPath(); ctx.fillStyle = cl[i]; ctx.moveTo(140,140);
                 ctx.arc(140,140,140,(i*20-100)*Math.PI/180,(i*20-80)*Math.PI/180); ctx.fill();
-                ctx.save(); ctx.translate(140,140); ctx.rotate((i*20-90)*Math.PI/180);
-                ctx.fillStyle = cl[i]=="#1e293b"?"#fbbf24":"#1e293b"; ctx.font="bold 10px Poppins";
-                ctx.fillText(pr[i]=="0"?"✖":pr[i], 125, 5); ctx.restore();
             }
         }
         draw();
 
         let r = 0;
         function spin() {
-            let w = Math.random() < 0.8 ? [0,1,4,7,10,12,14,16][Math.floor(Math.random()*8)] : Math.floor(Math.random()*18);
+            let w = Math.floor(Math.random()*18);
             r += (3600 + (18 - w) * 20 - (r % 360));
             canv.style.transform = `rotate(${r}deg)`;
             setTimeout(() => {
                 let v = parseFloat(pr[w]);
-                if (v > 0) db.ref('users/' + userId).update({ balance: bal + v });
-                else alert("Oh no! Zero Diamond.");
+                db.ref('users/' + userId).update({ balance: bal + v });
             }, 6500);
         }
 
         function switchTab(id, el) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.add('active-tab'); el.classList.add('active');
+            document.getElementById(id).classList.add('active-tab');
         }
     </script>
 </body>
-    </html>
+</html>
 
