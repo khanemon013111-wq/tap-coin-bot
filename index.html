@@ -1,49 +1,90 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diamond Spin & Refer</title>
+    <title>Diamond Royal Spin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
-        body { background: #020617; color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .wheel-box { position: relative; width: 300px; height: 300px; border-radius: 50%; padding: 5px; background: #f59e0b; border: 5px solid #78350f; box-shadow: 0 0 30px rgba(245,158,11,0.2); }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
+        
+        body { 
+            background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); 
+            color: white; 
+            font-family: 'Poppins', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            min-height: 100vh; margin: 0; padding: 20px;
+        }
+
+        /* রাজকীয় চাকার বর্ডার */
+        .wheel-box { 
+            position: relative; width: 320px; height: 320px; border-radius: 50%; 
+            padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); 
+            box-shadow: 0 0 40px rgba(245, 158, 11, 0.4), inset 0 0 20px rgba(0,0,0,0.5);
+            border: 4px solid #78350f;
+        }
+
         #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
-        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 25px; height: 40px; background: #ef4444; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 100; border: 2px solid white; }
-        .center-hub { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 35px; height: 35px; background: #000; border: 3px solid #f59e0b; border-radius: 50%; z-index: 40; }
-        .btn-gold { background: #f59e0b; color: #000; padding: 12px 40px; border-radius: 50px; font-weight: 900; box-shadow: 0 5px 0 #b45309; cursor: pointer; border: none; margin-top: 20px; width: 250px; }
-        .btn-gold:active { transform: translateY(3px); box-shadow: 0 2px 0 #b45309; }
-        #ad-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; padding: 20px; text-align: center; }
+
+        /* নিয়ন গোল্ড বাটন */
+        .btn-action { 
+            width: 260px; margin-top: 15px; padding: 14px; border-radius: 12px; 
+            font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+            transition: 0.3s; border: none; cursor: pointer;
+        }
+        .spin-btn { background: linear-gradient(to right, #f59e0b, #d97706); color: white; box-shadow: 0 5px 0 #92400e; }
+        .refer-btn { background: linear-gradient(to right, #10b981, #059669); color: white; box-shadow: 0 5px 0 #064e3b; }
+        
+        .btn-action:active { transform: translateY(4px); box-shadow: 0 1px 0 #000; }
+
+        /* পপআপ ডিজাইন */
+        #ad-modal { 
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); 
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 1000; padding: 25px; text-align: center;
+        }
+
+        .copy-box {
+            background: #1e293b; border: 2px dashed #f59e0b; padding: 15px;
+            border-radius: 10px; width: 100%; max-width: 300px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="text-center mb-6">
-        <h1 class="text-2xl font-black text-yellow-500 italic">DIAMOND HUB</h1>
-        <div class="bg-blue-900/40 text-blue-300 px-6 py-2 rounded-xl mt-2 border border-blue-500/30">
-            💎 BALANCE: <span id="balance">0.00</span>
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 drop-shadow-lg">
+            ROYAL DIAMOND
+        </h1>
+        <div class="mt-3 bg-white/10 backdrop-blur-md border border-white/20 px-8 py-2 rounded-2xl shadow-xl">
+            <span class="text-yellow-400 font-bold">💎 BALANCE:</span> 
+            <span id="balance" class="text-xl font-black ml-1 text-white">0.00</span>
         </div>
     </div>
 
     <div class="wheel-box">
-        <div class="pointer"></div>
-        <div class="center-hub"></div>
+        <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 35px solid #ef4444; z-index: 100; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));"></div>
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #fff; border: 4px solid #f59e0b; border-radius: 50%; z-index: 40; box-shadow: 0 0 15px rgba(0,0,0,0.5);"></div>
         <canvas id="wheel"></canvas>
     </div>
 
-    <button id="main-btn" onclick="startProcess('spin')" class="btn-gold">SPIN & WIN</button>
-    <button id="refer-btn" onclick="startProcess('refer')" class="btn-gold" style="background: #10b981; box-shadow: 0 5px 0 #065f46;">REFER & EARN (5💎)</button>
+    <button id="main-btn" onclick="startProcess('spin')" class="btn-action spin-btn">🌀 SPIN & WIN</button>
+    <button id="refer-btn" onclick="startProcess('refer')" class="btn-action refer-btn">👥 REFER (5💎)</button>
 
     <div id="ad-modal">
         <div id="ad-content">
-            <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-yellow-500 mb-4 mx-auto"></div>
-            <p id="ad-text" class="text-yellow-500 font-bold uppercase tracking-widest">Loading Video Ad...</p>
+            <div class="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-yellow-500 font-bold animate-pulse">GENERATING REWARDS...</p>
         </div>
-        <div id="refer-link-box" class="hidden">
-            <p class="text-green-400 mb-4">অ্যাড দেখা সফল! আপনার রেফার লিঙ্ক:</p>
-            <input type="text" id="ref-url" readonly class="bg-gray-800 p-2 rounded border border-gray-600 w-full text-center mb-4 text-sm" value="https://t.me/your_bot?start=user123">
-            <button onclick="closeAd()" class="text-white bg-red-600 px-4 py-1 rounded text-sm">CLOSE</button>
+        
+        <div id="refer-link-box" class="hidden w-full flex flex-direction-column items-center flex-col">
+            <h2 class="text-xl font-bold text-green-400 mb-2">Success!</h2>
+            <p class="text-gray-400 text-sm mb-4">নিচের লিঙ্কটি বন্ধুদের পাঠান</p>
+            <div class="copy-box mb-4">
+                <p id="ref-url" class="text-xs text-yellow-500 break-all font-mono mb-3">https://t.me/your_bot?start=user123</p>
+                <button onclick="copyLink()" class="bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold text-sm w-full">COPY LINK</button>
+            </div>
+            <button onclick="closeAd()" class="text-gray-500 underline text-sm">Close</button>
         </div>
     </div>
 
@@ -51,20 +92,21 @@
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
         const items = ["0", "0.2", "1", "3", "0.5", "2", "15", "0.2", "1", "5", "0", "10", "0.5", "2", "0.8", "7", "0", "1"];
-        const colors = ["#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000"];
+        const colors = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
         const slices = items.length;
         const sliceDeg = 360 / slices; 
-        canvas.width = 300; canvas.height = 300;
+        canvas.width = 320; canvas.height = 320;
 
         function draw() {
             for (let i = 0; i < slices; i++) {
-                ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(150, 150);
+                ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(160, 160);
                 let startAngle = (i * sliceDeg - 90 - (sliceDeg / 2)) * (Math.PI / 180);
                 let endAngle = ((i + 1) * sliceDeg - 90 - (sliceDeg / 2)) * (Math.PI / 180);
-                ctx.arc(150, 150, 150, startAngle, endAngle); ctx.fill(); ctx.stroke();
-                ctx.save(); ctx.translate(150, 150); ctx.rotate((i * sliceDeg - 90) * (Math.PI / 180));
-                ctx.textAlign = "right"; ctx.fillStyle = (colors[i] === "#000000") ? "#f59e0b" : "#000000";
-                ctx.font = "bold 11px Orbitron"; ctx.fillText(items[i] === "0" ? "EMPTY" : items[i], 140, 5); ctx.restore();
+                ctx.arc(160, 160, 160, startAngle, endAngle); ctx.fill(); 
+                ctx.strokeStyle = "rgba(255,255,255,0.1)"; ctx.stroke();
+                ctx.save(); ctx.translate(160, 160); ctx.rotate((i * sliceDeg - 90) * (Math.PI / 180));
+                ctx.textAlign = "right"; ctx.fillStyle = (colors[i] === "#1e293b") ? "#fbbf24" : "#1e293b";
+                ctx.font = "bold 13px Poppins"; ctx.fillText(items[i] === "0" ? "✖" : items[i], 150, 5); ctx.restore();
             }
         }
 
@@ -84,39 +126,36 @@
                     document.getElementById('ad-content').classList.add('hidden');
                     document.getElementById('refer-link-box').classList.remove('hidden');
                 }
-            }, 3000); // ৩ সেকেন্ড অ্যাড লোডিং এনিমেশন
+            }, 2500); 
         }
 
         function spin() {
             let winningIndex;
             let rand = Math.random() * 100;
-
-            // দাদুর ৮২%, ১৫%, ৩% লজিক
             if (rand < 82) {
-                const lowRates = [0, 1, 4, 7, 10, 12, 14, 16];
-                winningIndex = lowRates[Math.floor(Math.random() * lowRates.length)];
+                winningIndex = [0, 1, 4, 7, 10, 12, 14, 16][Math.floor(Math.random() * 8)];
             } else if (rand < 97) {
-                const midRates = [2, 3, 5, 8, 9, 13, 15, 17];
-                winningIndex = midRates[Math.floor(Math.random() * midRates.length)];
+                winningIndex = [2, 3, 5, 8, 9, 13, 15, 17][Math.floor(Math.random() * 8)];
             } else {
-                const jackpotRates = [6, 11];
-                winningIndex = jackpotRates[Math.floor(Math.random() * jackpotRates.length)];
+                winningIndex = [6, 11][Math.floor(Math.random() * 2)];
             }
-
             const targetDeg = (slices - winningIndex) * sliceDeg;
             currentRotation += (3600 - (currentRotation % 360)) + targetDeg;
             canvas.style.transform = `rotate(${currentRotation}deg)`;
-
             setTimeout(() => {
                 const win = parseFloat(items[winningIndex]);
                 if(win > 0) {
                     totalDiamonds = (parseFloat(totalDiamonds) + win).toFixed(2);
                     document.getElementById('balance').innerText = totalDiamonds;
-                    alert("দাদু! আপনি জিতেছেন " + win + " 💎");
-                } else {
-                    alert("ওহ! ফাঁকা ঘর। আবার চেষ্টা করুন।");
-                }
+                } else { alert("Better luck next time!"); }
             }, 6500);
+        }
+
+        function copyLink() {
+            const linkText = document.getElementById('ref-url').innerText;
+            navigator.clipboard.writeText(linkText).then(() => {
+                alert("লিঙ্ক কপি হয়েছে! বন্ধুদের পাঠিয়ে ৫💎 করে ইনকাম করুন।");
+            });
         }
 
         function closeAd() { document.getElementById('ad-modal').style.display = 'none'; }
