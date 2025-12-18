@@ -19,15 +19,14 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .wheel-box { position: relative; width: 280px; height: 280px; border-radius: 50%; padding: 8px; background: linear-gradient(45deg, #f59e0b, #fbbf24); margin: auto; border: 6px solid #78350f; box-shadow: 0 0 30px rgba(245, 158, 11, 0.5); }
-        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 100; }
         #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
         
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; backdrop-filter: blur(10px); }
         .nav-item { font-size: 10px; color: #94a3b8; cursor: pointer; text-align: center; flex: 1; transition: 0.3s; }
         .nav-item.active { color: #fbbf24; font-weight: bold; transform: translateY(-5px); }
-        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
         #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
-        input::placeholder { color: rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
@@ -35,24 +34,26 @@
     <div id="ad-modal">
         <div class="text-center">
             <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Ad Loading...</p>
+            <p class="text-yellow-500 font-bold uppercase text-sm">Ad Loading...</p>
         </div>
     </div>
 
     <div class="text-center my-6">
         <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 uppercase italic">Royal Diamond</h1>
-        <p class="text-[10px] text-gray-400">Daily Limit: <span id="spin-left" class="text-yellow-400">50</span>/50</p>
     </div>
 
     <div id="spin-tab" class="tab-content active-tab text-center">
-        <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 border border-white/20 inline-block">
-            <span class="text-yellow-400 font-bold">💎 BALANCE:</span> <span id="balance">0.00</span>
+        <p class="text-[11px] text-gray-400 mb-2">Daily Spin Limit: <span id="spin-left" class="text-yellow-400 font-bold">50</span>/50</p>
+        
+        <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 border border-white/20 inline-block shadow-inner">
+            <span class="text-yellow-400 font-bold uppercase">💎 Balance:</span> <span id="balance">0.00</span>
         </div>
+        
         <div class="wheel-box">
             <div class="pointer"></div>
             <canvas id="wheel"></canvas>
         </div>
-        <button id="spin-btn" onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-14 rounded-full shadow-lg active:scale-95 transition-all">SPIN NOW</button>
+        <button id="spin-btn" onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-14 rounded-full shadow-lg active:scale-95 transition-all uppercase">SPIN NOW</button>
     </div>
 
     <div id="leader-tab" class="tab-content">
@@ -65,7 +66,7 @@
     <div id="refer-tab" class="tab-content text-center">
         <div class="glass-card">
             <h2 class="text-green-400 font-black mb-2 italic">Refer & Earn</h2>
-            <div class="bg-black/40 p-5 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500 font-mono" id="ref-link-display">Generating...</div>
+            <div class="bg-black/40 p-5 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500 font-mono shadow-inner" id="ref-link-display">Generating...</div>
             <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold uppercase">COPY LINK</button>
         </div>
     </div>
@@ -112,7 +113,6 @@
         let dailySpins = 0;
         const today = new Date().toLocaleDateString();
 
-        // ফায়ারবেস ডেটা সিঙ্ক ও ৫০ লিমিট চেক
         db.ref('users/' + userId).on('value', snap => {
             const data = snap.val() || { balance: 0, lastDate: today, spinCount: 0 };
             bal = data.balance;
@@ -130,11 +130,11 @@
             
             if (dailySpins >= 50) {
                 document.getElementById('spin-btn').innerText = "LIMIT REACHED";
-                document.getElementById('spin-btn').classList.replace('bg-yellow-500', 'bg-gray-600');
+                document.getElementById('spin-btn').disabled = true;
+                document.getElementById('spin-btn').style.background = "#4b5563";
             }
         });
 
-        // লিডারবোর্ড লোড
         db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
             let html = ''; let users = [];
             snap.forEach(child => { users.push(child.val()); });
@@ -199,7 +199,6 @@
             let rand = Math.random() * 1000;
             let w;
             
-            // দাদুর প্রোবাবিলিটি লজিক
             if (rand < 950) { 
                 const smallSlots = [0, 1, 2, 4, 7, 9, 10, 12, 14, 16, 17];
                 w = smallSlots[Math.floor(Math.random() * smallSlots.length)];
@@ -234,5 +233,5 @@
         }
     </script>
 </body>
-</html>
-
+    </html>
+    
