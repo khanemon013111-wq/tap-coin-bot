@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Yellow Spin</title>
+    <title>15 Slots Premium Spin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
@@ -12,24 +12,24 @@
             background: #020617; 
             color: white; font-family: 'Orbitron', sans-serif;
             display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0;
+            overflow: hidden;
         }
 
-        /* চাকার মেইন বক্স */
+        /* চাকার মেইন কন্টেইনার */
         .wheel-box {
-            position: relative; width: 330px; height: 330px;
-            border-radius: 50%; padding: 8px;
-            background: #f59e0b; /* গোল্ডেন বর্ডার */
-            box-shadow: 0 0 40px rgba(245, 158, 11, 0.4);
-            border: 4px solid #78350f;
+            position: relative; width: 340px; height: 340px;
+            border-radius: 50%; padding: 10px;
+            background: #f59e0b;
+            box-shadow: 0 0 50px rgba(245, 158, 11, 0.3);
+            border: 5px solid #78350f;
         }
 
         #wheel {
             width: 100%; height: 100%; border-radius: 50%;
-            transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
-            border: 2px solid #000;
+            transition: transform 6s cubic-bezier(0.15, 0, 0.1, 1);
         }
 
-        /* লাল পয়েন্টার */
+        /* সেন্টার পয়েন্টার */
         .pointer {
             position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
             width: 35px; height: 45px; background: #ef4444;
@@ -37,37 +37,33 @@
             filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
         }
 
-        /* মাঝখানের গোল ক্যাপ */
         .center-hub {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 50px; height: 50px; background: #000;
-            border: 4px solid #f59e0b; border-radius: 50%; z-index: 20;
-            box-shadow: 0 0 10px rgba(0,0,0,0.8);
+            width: 45px; height: 45px; background: #000;
+            border: 3px solid #f59e0b; border-radius: 50%; z-index: 20;
         }
 
-        /* হলুদ বাটন */
         .spin-btn {
-            margin-top: 50px; background: #f59e0b;
-            color: #000; padding: 16px 60px; border-radius: 50px;
-            font-weight: 900; letter-spacing: 2px;
-            box-shadow: 0 10px 0 #b45309;
-            transition: 0.1s; border: none; cursor: pointer;
+            margin-top: 40px; background: #f59e0b; color: #000;
+            padding: 15px 60px; border-radius: 50px; font-weight: 900;
+            letter-spacing: 2px; box-shadow: 0 8px 0 #b45309;
+            transition: 0.1s; cursor: pointer;
         }
-        .spin-btn:active { transform: translateY(4px); box-shadow: 0 6px 0 #b45309; }
+        .spin-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #b45309; }
         .spin-btn:disabled { background: #4b5563; box-shadow: none; color: #9ca3af; }
 
-        /* অ্যাড স্ক্রিন */
+        /* অ্যাড মোডাল */
         #ad-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.98);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
         }
     </style>
 </head>
 <body>
 
-    <div class="text-center mb-10">
-        <h1 class="text-4xl font-black text-yellow-500 tracking-tighter">LUCKY <span class="text-white">SPIN</span></h1>
-        <div class="h-1 w-20 bg-yellow-500 mx-auto mt-2"></div>
+    <div class="text-center mb-6">
+        <h1 class="text-3xl font-black text-yellow-500 italic">LUCKY 15 SPIN</h1>
+        <p class="text-gray-400 text-[10px] tracking-[0.2em]">WATCH AD TO WIN DIAMONDS</p>
     </div>
 
     <div class="wheel-box">
@@ -76,58 +72,58 @@
         <canvas id="wheel"></canvas>
     </div>
 
-    <button id="main-btn" onclick="startProcess()" class="spin-btn">SPIN NOW</button>
+    <button id="main-btn" onclick="startProcess()" class="spin-btn">SPIN & WIN</button>
 
     <div id="ad-modal">
         <div class="text-center">
             <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-yellow-500 mb-4 mx-auto"></div>
-            <p class="text-yellow-500 font-bold text-xl mb-1">LOADING AD...</p>
-            <p class="text-gray-400 text-xs">Please wait to claim your spin</p>
+            <p class="text-yellow-500 font-bold">LOADING VIDEO AD...</p>
         </div>
     </div>
 
     <script>
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
-        // ১০টি ঘর
-        const items = ["100", "0", "500", "0", "1000", "0", "50", "0", "200", "0"];
-        // হলুদ এবং কালো কালার কম্বিনেশন
-        const colors = ["#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000"];
         
-        canvas.width = 310;
-        canvas.height = 310;
+        // ১৫টি ঘরের পুরস্কার
+        const items = ["5", "0", "10", "0", "20", "0", "50", "0", "100", "0", "5", "15", "0", "200", "0"];
+        const colors = ["#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b"];
+        
+        const size = 320;
+        canvas.width = size;
+        canvas.height = size;
+        const centerX = size / 2;
+        const centerY = size / 2;
 
         function draw() {
             const arc = (2 * Math.PI) / items.length;
             for (let i = 0; i < items.length; i++) {
                 ctx.beginPath();
                 ctx.fillStyle = colors[i];
-                ctx.moveTo(155, 155);
-                ctx.arc(155, 155, 155, i * arc, (i + 1) * arc);
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, centerX, i * arc, (i + 1) * arc);
                 ctx.fill();
-                ctx.strokeStyle = "#78350f";
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#444";
+                ctx.lineWidth = 1;
                 ctx.stroke();
 
                 ctx.save();
-                ctx.translate(155, 155);
+                ctx.translate(centerX, centerY);
                 ctx.rotate(i * arc + arc / 2);
                 ctx.textAlign = "right";
-                // কালোর ওপর হলুদ লেখা, হলুদের ওপর কালো লেখা
                 ctx.fillStyle = (colors[i] === "#000000") ? "#f59e0b" : "#000000";
-                ctx.font = "bold 18px Orbitron";
-                ctx.fillText(items[i], 140, 8);
+                ctx.font = "bold 12px Orbitron"; // ১৫টি ঘরের জন্য ফন্ট একটু ছোট করা হয়েছে
+                ctx.fillText(items[i], centerX - 20, 5);
                 ctx.restore();
             }
         }
 
         let deg = 0;
         function startProcess() {
-            const btn = document.getElementById('main-btn');
-            btn.disabled = true;
-            
-            // অ্যাড সিস্টেম (৩ সেকেন্ড)
+            document.getElementById('main-btn').disabled = true;
             document.getElementById('ad-modal').style.display = 'flex';
+            
+            // ৩ সেকেন্ডের অ্যাড ইমুলেশন
             setTimeout(() => {
                 document.getElementById('ad-modal').style.display = 'none';
                 spin();
@@ -135,23 +131,23 @@
         }
 
         function spin() {
-            const extra = Math.floor(Math.random() * 360) + 2880; // ৮ বার ঘুরবে
+            const extra = Math.floor(Math.random() * 360) + 3600; 
             deg += extra;
             canvas.style.transform = `rotate(${deg}deg)`;
 
             setTimeout(() => {
                 document.getElementById('main-btn').disabled = false;
-                
                 const actualDeg = deg % 360;
-                const index = Math.floor((360 - actualDeg) / 36) % 10;
+                // ১৫টি ঘরের লজিক (360 / 15 = 24 ডিগ্রি প্রতি ঘর)
+                const index = Math.floor((360 - actualDeg) / 24) % 15;
                 const result = items[index];
                 
                 if(result === "0") {
-                    alert("Hard Luck! Try again.");
+                    alert("Bad Luck! Watch another ad for a spin.");
                 } else {
-                    alert("Congratulations! You earned " + result + " coins!");
+                    alert("Jackpot! You won " + result + " points!");
                 }
-            }, 5500);
+            }, 6500);
         }
 
         draw();
