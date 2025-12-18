@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Tap & Earn</title>
+    <title>Lite Coin - Simple Tap</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
@@ -17,145 +17,108 @@
             touch-action: none; 
         }
 
-        .page { 
+        .main-container { 
             display: flex; 
             flex-direction: column; 
             height: 100vh; 
             width: 100%; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            padding-bottom: 170px; 
-            transition: 0.3s; 
-            overflow-y: auto; 
+            align-items: center;
+            text-align: center;
+            padding-top: 40px;
         }
-
-        .hidden { display: none !important; }
 
         /* Coin Styling */
         #coin { 
-            width: 220px; 
-            height: 220px; 
+            width: 240px; 
+            height: 240px; 
             border-radius: 50%; 
             background: linear-gradient(145deg, #fbbf24, #d97706); 
             border: 8px solid #f59e0b; 
-            box-shadow: 0 0 40px rgba(251, 191, 36, 0.4); 
+            box-shadow: 0 0 50px rgba(251, 191, 36, 0.4); 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             cursor: pointer; 
             transition: transform 0.1s; 
             position: relative; 
+            margin-top: 50px;
         }
-        #coin:active { transform: scale(0.95); }
+        #coin:active { transform: scale(0.92); }
 
         .coin-logo { 
-            width: 80px; 
-            height: 80px; 
+            width: 90px; 
+            height: 90px; 
             background: #000; 
             clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); 
         }
 
-        .footer-nav { 
-            background: rgba(15, 23, 42, 0.98); 
-            width: 100%; 
-            padding: 12px 0; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            z-index: 1000; 
-            display: flex; 
-            justify-content: space-around; 
+        /* Energy Bar Styling */
+        .status-container {
+            position: fixed;
+            bottom: 50px;
+            width: 100%;
+            padding: 0 30px;
         }
-
-        .nav-btn { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            color: #64748b; 
-            font-size: 10px; 
-            font-weight: bold; 
-            cursor: pointer; 
-        }
-        .nav-btn.active { color: #fbbf24; }
     </style>
 </head>
 <body>
 
-    <div id="game-page" class="page items-center text-center pt-8">
-        <button onclick="showPage('league')" id="display-league" class="bg-yellow-500/20 text-yellow-500 px-5 py-1.5 rounded-full text-xs font-bold border border-yellow-500/30 mb-2">Bronze League ❯</button>
+    <div class="main-container">
+        <p class="text-yellow-500 font-bold tracking-widest text-sm uppercase">Bronze League</p>
         
-        <h1 class="text-6xl font-black text-white mt-2" id="score">0</h1>
+        <h1 class="text-7xl font-black text-white mt-4" id="score">0</h1>
 
-        <div class="mt-12 flex justify-center w-full">
-            <div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)">
-                <div class="coin-logo"></div>
-            </div>
+        <div id="coin" onmousedown="handleTap(event)" ontouchstart="handleTap(event)">
+            <div class="coin-logo"></div>
         </div>
 
-        <div class="fixed bottom-[85px] w-full px-6">
-            <div class="flex justify-between font-bold text-yellow-400 mb-1">
-                <span>⚡ <span id="energy-val">1000</span></span>
-                <span class="text-xs text-gray-500" id="energy-max">/ 1000</span>
+        <div class="status-container">
+            <div class="flex justify-between font-bold text-yellow-400 mb-2">
+                <span class="text-lg">⚡ <span id="energy-val">1000</span></span>
+                <span class="text-gray-500">/ 1000</span>
             </div>
-            <div class="h-3 w-full bg-gray-900 rounded-full overflow-hidden border border-white/10">
-                <div id="energy-bar" class="h-full bg-yellow-500 transition-all"></div>
+            <div class="h-4 w-full bg-gray-900 rounded-full overflow-hidden border border-white/10 shadow-inner">
+                <div id="energy-bar" class="h-full bg-yellow-500 transition-all" style="width: 100%"></div>
             </div>
         </div>
-    </div>
-
-    <div class="footer-nav">
-        <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span>🪙</span><span>Earn</span></div>
-        <div onclick="showPage('leaderboard')" id="btn-leaderboard" class="nav-btn"><span>🏆</span><span>Board</span></div>
-        <div onclick="showPage('tasks')" id="btn-tasks" class="nav-btn"><span>📋</span><span>Tasks</span></div>
-        <div onclick="showPage('boost')" id="btn-boost" class="nav-btn"><span>🚀</span><span>Boost</span></div>
-        <div onclick="showPage('friends')" id="btn-friends" class="nav-btn"><span>👥</span><span>Friends</span></div>
     </div>
 
     <script>
+        // Load Score and Energy from Local Storage
         let score = parseInt(localStorage.getItem('L_Score')) || 0;
-        let tapL = parseInt(localStorage.getItem('L_Tap')) || 1;
         let energy = localStorage.getItem('L_Eng') === null ? 1000 : parseInt(localStorage.getItem('L_Eng'));
-        
+        const tapValue = 1; // প্রতি ট্যাপে কত বাড়বে
+        const maxEnergy = 1000;
+
         function updateUI() {
             document.getElementById('score').innerText = score.toLocaleString();
             document.getElementById('energy-val').innerText = Math.floor(energy);
-            let maxE = 1000;
-            document.getElementById('energy-max').innerText = "/ " + maxE;
-            document.getElementById('energy-bar').style.width = (energy / maxE) * 100 + "%";
+            document.getElementById('energy-bar').style.width = (energy / maxEnergy) * 100 + "%";
             
+            // Save Progress
             localStorage.setItem('L_Score', score);
             localStorage.setItem('L_Eng', energy);
         }
 
         function handleTap(e) {
             if (e.type === 'touchstart') e.preventDefault();
-            if (energy >= tapL) {
-                score += tapL;
-                energy -= tapL;
+            
+            if (energy >= tapValue) {
+                score += tapValue;
+                energy -= tapValue;
                 updateUI();
             }
         }
 
-        function showPage(p) {
-            document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
-            const targetPage = document.getElementById(p + '-page');
-            if(targetPage) targetPage.classList.remove('hidden');
-            
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            const navBtn = document.getElementById('btn-' + p);
-            if(navBtn) navBtn.classList.add('active');
-        }
-
+        // Energy Recovery System (প্রতি সেকেন্ডে ২ করে বাড়বে)
         setInterval(() => {
-            let mE = 1000;
-            if (energy < mE) {
-                energy = Math.min(mE, energy + 2);
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + 2);
                 updateUI();
             }
         }, 1000);
 
+        // Initial UI Update
         updateUI();
     </script>
 </body>
