@@ -3,151 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Final Fixed</title>
+    <title>Simple Lite Coin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #020617; color: white; font-family: sans-serif; overflow: hidden; touch-action: none; }
-        .page { height: 100vh; width: 100%; position: absolute; top: 0; left: 0; padding: 20px; display: none; flex-direction: column; align-items: center; }
-        .active-page { display: flex; }
+        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; }
+        .page { display: none; padding: 20px; height: 90vh; }
+        .active { display: block; }
         
-        #coin { width: 200px; height: 200px; background: linear-gradient(145deg, #fbbf24, #d97706); border-radius: 50%; border: 8px solid #f59e0b; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s; }
-        #coin:active { transform: scale(0.95); }
-        
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f172a; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #1e293b; }
-        .nav-btn { color: #64748b; font-size: 12px; cursor: pointer; text-align: center; }
-        .nav-btn.active { color: #fbbf24; }
-        
-        .pop { position: absolute; color: white; font-weight: bold; pointer-events: none; animation: moveUp 0.6s ease-out forwards; }
-        @keyframes moveUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100px); } }
+        #main-coin {
+            width: 220px; height: 220px; background: #fbbf24;
+            border-radius: 50%; margin: 50px auto;
+            border: 10px solid #d97706; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 80px; transition: transform 0.1s;
+        }
+        #main-coin:active { transform: scale(0.9); }
 
-        .card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; width: 100%; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-bar {
+            position: fixed; bottom: 0; width: 100%; background: #1e293b;
+            display: flex; justify-content: space-around; padding: 15px;
+        }
+        .nav-item { cursor: pointer; font-weight: bold; color: #94a3b8; }
+        .nav-item.active-nav { color: #fbbf24; }
     </style>
 </head>
 <body>
 
-    <div id="game-page" class="page active-page">
-        <div id="bot-status" style="color: #c084fc; font-size: 12px; display: none; margin-bottom: 10px;">🤖 BOT ACTIVE</div>
-        <h1 id="score-display" style="font-size: 50px; font-weight: 900; margin-bottom: 20px;">0</h1>
+    <div id="home" class="page active">
+        <p class="text-gray-400 mt-5">Your Balance</p>
+        <h1 id="balance" class="text-5xl font-bold text-yellow-500">0</h1>
         
-        <div id="coin" onclick="handleTap(event)">
-            <div style="width: 70px; height: 70px; background: black; clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%);"></div>
+        <div id="main-coin" onclick="tapCoin()">🪙</div>
+        
+        <div class="mt-10">
+            <p class="text-sm">⚡ Energy: <span id="energy">1000</span> / 1000</p>
+            <div class="w-full bg-gray-800 h-3 rounded-full mt-2">
+                <div id="energy-bar" class="bg-yellow-500 h-full rounded-full" style="width: 100%"></div>
+            </div>
         </div>
+        <p id="bot-alert" class="text-purple-400 text-xs mt-4 hidden">🤖 Bot is mining for you...</p>
+    </div>
 
-        <div style="width: 100%; position: fixed; bottom: 100px; padding: 0 20px;">
-            <div style="display: flex; justify-content: space-between; color: #fbbf24; font-weight: bold;">
-                <span>⚡ <span id="energy-val">1000</span></span>
-                <span>/ 1000</span>
+    <div id="boost" class="page">
+        <h2 class="text-2xl font-bold mb-10">Boosters</h2>
+        <div class="bg-gray-800 p-5 rounded-2xl flex justify-between items-center mb-4">
+            <div class="text-left">
+                <p class="font-bold">Tap Bot 🤖</p>
+                <p class="text-xs text-gray-400">Earn 1 coin/sec automatically</p>
             </div>
-            <div style="width: 100%; height: 10px; background: #1e293b; border-radius: 10px; overflow: hidden; margin-top: 5px;">
-                <div id="energy-bar" style="width: 100%; height: 100%; background: #fbbf24;"></div>
-            </div>
+            <button id="buy-bot" onclick="buyBot()" class="bg-yellow-500 text-black px-5 py-2 rounded-xl font-bold">50,000</button>
+        </div>
+        <p class="text-gray-500 text-sm">More boosters coming soon...</p>
+    </div>
+
+    <div id="tasks" class="page">
+        <h2 class="text-2xl font-bold mb-10">Tasks</h2>
+        <div class="bg-gray-800 p-5 rounded-2xl mb-4">
+            <p>Join our Telegram</p>
+            <button class="bg-blue-500 px-4 py-1 rounded mt-2 text-sm font-bold">Claim +5,000</button>
         </div>
     </div>
 
-    <div id="boost-page" class="page">
-        <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #fbbf24;">BOOSTERS</h2>
-        <div class="card">
-            <div><b>Tap Bot 🤖</b><br><small style="color: #a855f7;">Auto mines 2/sec</small></div>
-            <button id="buy-bot-btn" onclick="buyBot()" style="background: #9333ea; padding: 10px 20px; border-radius: 10px; font-weight: bold;">50,000</button>
-        </div>
-        <div class="card">
-            <div><b>Multitap</b><br><small style="color: #fbbf24;">+1 per tap</small></div>
-            <button onclick="alert('Coming soon!')" style="background: #fbbf24; color: black; padding: 10px 20px; border-radius: 10px; font-weight: bold;">1,000</button>
-        </div>
-    </div>
-
-    <div class="footer">
-        <div class="nav-btn active" id="btn-game" onclick="changePage('game')">🪙<br>Earn</div>
-        <div class="nav-btn" id="btn-boost" onclick="changePage('boost')">🚀<br>Boost</div>
+    <div class="nav-bar">
+        <div id="nav-home" class="nav-item active-nav" onclick="showPage('home')">Home</div>
+        <div id="nav-boost" class="nav-item" onclick="showPage('boost')">Boost</div>
+        <div id="nav-tasks" class="nav-item" onclick="showPage('tasks')">Tasks</div>
     </div>
 
     <script>
-        // ডাটাবেস ভেরিয়েবল
-        let score = parseInt(localStorage.getItem('L_Score')) || 0;
+        // ডাটা লোড
+        let coins = parseInt(localStorage.getItem('coins')) || 0;
         let energy = 1000;
-        let hasBot = localStorage.getItem('L_Bot') === 'true';
+        let hasBot = localStorage.getItem('hasBot') === 'true';
 
-        // স্ক্রিন আপডেট ফাংশন
-        function updateDisplay() {
-            document.getElementById('score-display').innerText = score.toLocaleString();
-            document.getElementById('energy-val').innerText = energy;
-            document.getElementById('energy-bar').style.width = (energy / 1000 * 100) + "%";
+        // স্ক্রিন আপডেট
+        function updateUI() {
+            document.getElementById('balance').innerText = coins.toLocaleString();
+            document.getElementById('energy').innerText = energy;
+            document.getElementById('energy-bar').style.width = (energy / 10) + "%";
             
             if(hasBot) {
-                document.getElementById('bot-status').style.display = 'block';
-                document.getElementById('buy-bot-btn').innerText = "OWNED";
-                document.getElementById('buy-bot-btn').disabled = true;
-                document.getElementById('buy-bot-btn').style.background = "#4b5563";
+                document.getElementById('bot-alert').classList.remove('hidden');
+                document.getElementById('buy-bot').innerText = "Active";
+                document.getElementById('buy-bot').disabled = true;
             }
         }
 
-        // টেপ লজিক
-        function handleTap(event) {
-            if (energy >= 1) {
-                score += 1;
+        // টেপ করলে যা হবে
+        function tapCoin() {
+            if(energy > 0) {
+                coins += 1;
                 energy -= 1;
-                
-                // পপ এনিমেশন
-                let x = event.clientX || event.touches[0].clientX;
-                let y = event.clientY || event.touches[0].clientY;
-                let pop = document.createElement('div');
-                pop.className = 'pop';
-                pop.innerText = '+1';
-                pop.style.left = x + 'px';
-                pop.style.top = y + 'px';
-                document.body.appendChild(pop);
-                setTimeout(() => pop.remove(), 600);
-                
-                updateDisplay();
+                updateUI();
                 saveData();
             }
         }
 
         // পেজ পরিবর্তন
-        function changePage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
             
-            document.getElementById(pageId + '-page').classList.add('active-page');
-            document.getElementById('btn-' + pageId).classList.add('active');
+            document.getElementById(pageId).classList.add('active');
+            document.getElementById('nav-' + pageId).classList.add('active-nav');
         }
 
         // বট কেনা
         function buyBot() {
-            if (score >= 50000) {
-                score -= 50000;
+            if(coins >= 50000) {
+                coins -= 50000;
                 hasBot = true;
-                localStorage.setItem('L_Bot', 'true');
-                updateDisplay();
-                alert("Bot Activated! 🤖");
+                localStorage.setItem('hasBot', 'true');
+                updateUI();
+                alert("Bot Activated!");
             } else {
-                alert("You need 50,000 coins!");
+                alert("Not enough coins!");
             }
         }
 
-        // ডাটা সেভ
         function saveData() {
-            localStorage.setItem('L_Score', score);
+            localStorage.setItem('coins', coins);
         }
 
-        // অটো মাইনিং এবং এনার্জি রিফিল (মাস্টার লুপ)
+        // মেইন লুপ (প্রতি সেকেন্ডে অটো কাজ করবে)
         setInterval(() => {
             // ১. এনার্জি রিফিল
-            if (energy < 1000) {
-                energy += 1;
-            }
-
-            // ২. বট কাজ (বট কেনা থাকলে ২ কয়েন যোগ হবে)
-            if (hasBot) {
-                score += 2;
-            }
-
-            updateDisplay();
+            if(energy < 1000) energy += 1;
+            
+            // ২. বটের কাজ
+            if(hasBot) coins += 1;
+            
+            updateUI();
             saveData();
         }, 1000);
 
-        // শুরুতে একবার লোড হবে
-        updateDisplay();
+        updateUI(); // শুরুতে একবার লোড হবে
     </script>
 </body>
 </html>
