@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fixed 20 Slot Spin</title>
+    <title>18 Slots Perfect Spin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
         body { background: #020617; color: white; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; overflow: hidden; }
         
         .wheel-box { position: relative; width: 340px; height: 340px; border-radius: 50%; padding: 5px; background: #f59e0b; border: 5px solid #78350f; box-shadow: 0 0 50px rgba(245,158,11,0.3); }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.1, 0, 0, 1); }
         
-        /* চাকা ঘোরার এনিমেশন */
-        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.2, 0, 0, 1); }
+        /* লাল পয়েন্টার - একদম উপরে স্থির */
+        .pointer { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 30px; height: 45px; background: #ef4444; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 100; border: 2px solid white; }
         
-        /* লাল কাটার ঠিক পজিশন */
-        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 30px; height: 40px; background: #ef4444; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 50; filter: drop-shadow(0 4px 5px rgba(0,0,0,0.5)); }
-        
-        .center-hub { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #000; border: 3px solid #f59e0b; border-radius: 50%; z-index: 40; }
+        .center-hub { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 45px; height: 45px; background: #000; border: 3px solid #f59e0b; border-radius: 50%; z-index: 40; }
 
         .spin-btn { margin-top: 40px; background: #f59e0b; color: #000; padding: 15px 60px; border-radius: 50px; font-weight: 900; letter-spacing: 2px; box-shadow: 0 8px 0 #b45309; transition: 0.1s; cursor: pointer; }
         .spin-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #b45309; }
@@ -27,7 +25,7 @@
 <body>
 
     <div class="text-center mb-6">
-        <h1 class="text-2xl font-black text-yellow-500 italic">PRECISION SPIN</h1>
+        <h1 class="text-2xl font-black text-yellow-500 italic">PRECISION 18 SPIN</h1>
         <div class="bg-blue-900/50 text-blue-300 px-4 py-1 rounded-full inline-block mt-2 border border-blue-500/30">
             💎 BALANCE: <span id="balance">0</span>
         </div>
@@ -44,7 +42,7 @@
     <div id="ad-modal">
         <div class="text-center">
             <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-yellow-500 mb-4 mx-auto"></div>
-            <p class="text-yellow-500 font-bold">LOADING AD...</p>
+            <p class="text-yellow-500 font-bold uppercase">Showing Video Ad...</p>
         </div>
     </div>
 
@@ -52,34 +50,35 @@
         const canvas = document.getElementById('wheel');
         const ctx = canvas.getContext('2d');
         
-        // ২০টি ঘরের সঠিক ডায়মন্ড লিস্ট
-        const items = ["1", "0", "5", "0", "2", "0", "20", "0", "1", "2", "0", "10", "1", "0", "5", "0", "2", "1", "0", "1"];
-        const colors = ["#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000"];
+        // ১৮টি ঘরের ডাইমোন্ড লিস্ট
+        const items = ["1", "0", "5", "0", "2", "0", "20", "0", "1", "2", "0", "10", "1", "0", "5", "0", "2", "1"];
+        const colors = ["#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000", "#f59e0b", "#000000"];
         
-        const numSlices = items.length;
-        const sliceAngle = (2 * Math.PI) / numSlices;
+        const slices = items.length;
+        const sliceDeg = 360 / slices; // ২০ ডিগ্রি প্রতি ঘর
         
         canvas.width = 330;
         canvas.height = 330;
 
         function draw() {
-            ctx.clearRect(0,0,330,330);
-            for (let i = 0; i < numSlices; i++) {
+            for (let i = 0; i < slices; i++) {
                 ctx.beginPath();
                 ctx.fillStyle = colors[i];
                 ctx.moveTo(165, 165);
-                // -Math.PI/2 দেওয়া হয়েছে যাতে প্রথম ঘরটি ১২টার কাঁটা থেকে শুরু হয়
-                ctx.arc(165, 165, 165, (i * sliceAngle) - Math.PI/2, ((i + 1) * sliceAngle) - Math.PI/2);
+                // প্রথম ঘরটি ঠিক কাটার নিচ থেকে শুরু হবে
+                let startAngle = (i * sliceDeg - 90 - (sliceDeg / 2)) * (Math.PI / 180);
+                let endAngle = ((i + 1) * sliceDeg - 90 - (sliceDeg / 2)) * (Math.PI / 180);
+                ctx.arc(165, 165, 165, startAngle, endAngle);
                 ctx.fill();
                 ctx.stroke();
 
                 ctx.save();
                 ctx.translate(165, 165);
-                ctx.rotate((i * sliceAngle) + sliceAngle / 2 - Math.PI/2);
+                ctx.rotate((i * sliceDeg - 90) * (Math.PI / 180));
                 ctx.textAlign = "right";
                 ctx.fillStyle = (colors[i] === "#000000") ? "#f59e0b" : "#000000";
-                ctx.font = "bold 12px Orbitron";
-                ctx.fillText(items[i], 145, 5);
+                ctx.font = "bold 14px Orbitron";
+                ctx.fillText(items[i], 150, 5);
                 ctx.restore();
             }
         }
@@ -93,34 +92,33 @@
             setTimeout(() => {
                 document.getElementById('ad-modal').style.display = 'none';
                 spin();
-            }, 2000);
+            }, 2500);
         }
 
         function spin() {
-            // রেন্ডমলি কত ডিগ্রি ঘুরবে
-            const randomExtra = Math.floor(Math.random() * 360);
-            const totalSpin = 3600 + randomExtra; // ১০ বার পূর্ণ ঘুরে তারপর এক্সট্রা
-            currentRotation += totalSpin;
+            // রেন্ডম ঘর সিলেক্ট (০ থেকে ১৭)
+            const winningIndex = Math.floor(Math.random() * slices);
+            
+            // টার্গেট ডিগ্রি হিসাব
+            const targetDeg = (slices - winningIndex) * sliceDeg;
+            
+            // চাকা অন্তত ১০ বার ঘুরে টার্গেট ঘরে থামবে
+            currentRotation += (3600 - (currentRotation % 360)) + targetDeg;
             
             canvas.style.transform = `rotate(${currentRotation}deg)`;
 
             setTimeout(() => {
                 document.getElementById('main-btn').disabled = false;
-                
-                // ক্যালকুলেশন লজিক ফিক্সড:
-                const stopAngle = currentRotation % 360;
-                // উল্টো দিকে হিসাব করে কোন ইন্ডেক্সে থামলো তা বের করা
-                const winningIndex = Math.floor(((360 - stopAngle) % 360) / (360 / numSlices));
-                
                 const win = parseInt(items[winningIndex]);
+                
                 if(win > 0) {
                     totalDiamonds += win;
                     document.getElementById('balance').innerText = totalDiamonds;
-                    alert("Congratulations! You won " + win + " 💎");
+                    alert("দাদু! আপনি জিতেছেন " + win + " 💎");
                 } else {
-                    alert("Better luck next time!");
+                    alert("ইসস! ০ ডাইমোন্ড। আবার ট্রাই করেন।");
                 }
-            }, 6000);
+            }, 6500);
         }
 
         draw();
