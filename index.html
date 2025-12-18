@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lite Coin - Pro Leaderboard</title>
+    <title>Lite Coin - Tap & Earn</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
@@ -56,19 +56,6 @@
             clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%); 
         }
 
-        /* UI Elements */
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 20px; 
-            padding: 15px; 
-            margin-bottom: 12px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
-
         .footer-nav { 
             background: rgba(15, 23, 42, 0.98); 
             width: 100%; 
@@ -92,35 +79,9 @@
             cursor: pointer; 
         }
         .nav-btn.active { color: #fbbf24; }
-
-        .floating-spin-btn { 
-            position: fixed; 
-            left: 10px; 
-            top: 40%; 
-            width: 55px; 
-            height: 55px; 
-            background: linear-gradient(145deg, #fbbf24, #d97706); 
-            border-radius: 50%; 
-            border: 3px solid #f59e0b; 
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            z-index: 2000; 
-            cursor: pointer; 
-            animation: bounce 2s infinite; 
-        }
-
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     </style>
 </head>
 <body>
-
-    <div class="floating-spin-btn" onclick="showPage('spin')">
-        <span>🎡</span>
-        <span class="text-[8px] font-black text-black">SPIN</span>
-    </div>
 
     <div id="game-page" class="page items-center text-center pt-8">
         <button onclick="showPage('league')" id="display-league" class="bg-yellow-500/20 text-yellow-500 px-5 py-1.5 rounded-full text-xs font-bold border border-yellow-500/30 mb-2">Bronze League ❯</button>
@@ -144,12 +105,6 @@
         </div>
     </div>
 
-    <div id="spin-page" class="page hidden px-6 pt-12 text-center">
-        <h2 class="text-3xl font-black text-yellow-500 mb-6 uppercase">Spin</h2>
-        <div id="wheel" class="w-64 h-64 border-4 border-yellow-500 rounded-full mx-auto" style="transition: transform 4s; background: conic-gradient(#fbbf24 0deg 90deg, #d97706 90deg 180deg, #fbbf24 180deg 270deg, #d97706 270deg 360deg);"></div>
-        <button onclick="startSpin()" class="mt-10 bg-yellow-500 text-black w-full py-4 rounded-2xl font-black">SPIN NOW</button>
-    </div>
-
     <div class="footer-nav">
         <div onclick="showPage('game')" id="btn-game" class="nav-btn active"><span>🪙</span><span>Earn</span></div>
         <div onclick="showPage('leaderboard')" id="btn-leaderboard" class="nav-btn"><span>🏆</span><span>Board</span></div>
@@ -166,7 +121,7 @@
         function updateUI() {
             document.getElementById('score').innerText = score.toLocaleString();
             document.getElementById('energy-val').innerText = Math.floor(energy);
-            let maxE = 1000 + ((parseInt(localStorage.getItem('L_Lim')) || 1 - 1) * 500);
+            let maxE = 1000;
             document.getElementById('energy-max').innerText = "/ " + maxE;
             document.getElementById('energy-bar').style.width = (energy / maxE) * 100 + "%";
             
@@ -181,15 +136,6 @@
                 energy -= tapL;
                 updateUI();
             }
-        }
-
-        function startSpin() {
-            document.getElementById('wheel').style.transform = `rotate(${Math.floor(Math.random()*360)+3600}deg)`;
-            setTimeout(() => {
-                score += 5000;
-                updateUI();
-                alert("Won 5,000 Coins!");
-            }, 4000);
         }
 
         function showPage(p) {
