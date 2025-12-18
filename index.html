@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Diamond - Fixed Official</title>
+    <title>Royal Diamond - Official Ad Integrated</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <script src="https://alwingulla.com/88/pfe/current/tag.min.js?z=10343752" data-opts='{"sdk":true}'></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
         body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; }
@@ -27,7 +30,7 @@
     <div id="ad-modal">
         <div class="text-center">
             <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Loading Ad...</p>
+            <p class="text-yellow-500 font-bold animate-pulse uppercase text-sm">Loading Rewarded Ad...</p>
         </div>
     </div>
 
@@ -79,7 +82,7 @@
     </div>
 
     <script>
-        // ফায়ারবেজ কানেকশন
+        // ফায়ারবেজ সেটআপ
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
             authDomain: "royaldiamondbot.firebaseapp.com",
@@ -93,68 +96,54 @@
         const db = firebase.database();
 
         let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.random() * 89999 + 10000);
-        let isNew = !localStorage.getItem('user_uid');
         localStorage.setItem('user_uid', userId);
-        
-        // দাদু, স্ক্রিনশট অনুযায়ী ৩টি ১ সহ ইউজারনেম
         const botId = "Referralincamebd01311_bot"; 
         const link = "https://t.me/" + botId + "?start=" + userId;
         document.getElementById('ref-link-display').innerText = link;
 
         let bal = 0;
-
-        // রেফারেল লজিক
-        const urlParams = new URLSearchParams(window.location.search);
-        const rID = urlParams.get('tgWebAppStartParam');
-
         db.ref('users/' + userId).on('value', snap => {
-            const val = snap.val();
-            if (!val && isNew && rID && rID !== userId) {
-                db.ref('users/' + rID).once('value', s => {
-                    if (s.val()) db.ref('users/' + rID).update({ balance: (s.val().balance || 0) + 5.00 });
-                });
-                db.ref('users/' + userId).set({ balance: 0 });
-            }
-            bal = val ? val.balance : 0;
+            bal = snap.val() ? snap.val().balance : 0;
             document.getElementById('balance').innerText = bal.toFixed(2);
         });
 
-        // লিডারবোর্ড
-        db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
-            let h = ""; let a = [];
-            snap.forEach(c => { a.push({i: c.key, b: c.val().balance}); });
-            a.reverse().forEach((p, i) => {
-                h += `<div class="flex justify-between p-3 bg-white/5 rounded-lg mb-1 border border-white/5">
-                            <span>${i+1}. ${p.i}</span>
-                            <span class="text-yellow-400 font-bold">${p.b.toFixed(2)} 💎</span>
-                         </div>`;
-            });
-            document.getElementById('leader-list').innerHTML = h;
-        });
-
+        // দাদু, এখানে অ্যাড দেখানোর আসল ম্যাজিক
         function handleAction(type) {
             if (type === 'withdraw' && bal < 100) return alert("❌ Min 100 💎!");
+            
             document.getElementById('ad-modal').style.display = 'flex';
-            setTimeout(() => {
-                document.getElementById('ad-modal').style.display = 'none';
-                if (type === 'spin') spin();
-                if (type === 'refer') {
-                    const t = document.createElement('textarea');
-                    t.value = link; document.body.appendChild(t);
-                    t.select(); document.execCommand('copy');
-                    document.body.removeChild(t);
-                    alert("✅ Link Copied!");
-                }
-                if (type === 'withdraw') {
-                    let u = document.getElementById('uid-input').value;
-                    if (!u) return alert("Enter UID!");
-                    db.ref('withdrawals').push({ user: userId, uid: u, amount: bal, status: "pending", date: new Date().toLocaleString() });
-                    db.ref('users/' + userId).update({ balance: 0 });
-                    alert("🚀 Done!");
-                }
-            }, 2500);
+
+            // মনিটেগ অ্যাড ফাংশন কল
+            if (typeof show_10343752 === 'function') {
+                show_10343752().then(() => {
+                    executeGameLogic(type);
+                }).catch(() => {
+                    executeGameLogic(type); // অ্যাড লোড না হলে সরাসরি গেম শুরু হবে
+                });
+            } else {
+                setTimeout(() => executeGameLogic(type), 2000); // SDK লোড না হলে ২ সেকেন্ড পর শুরু
+            }
         }
 
+        function executeGameLogic(type) {
+            document.getElementById('ad-modal').style.display = 'none';
+            if (type === 'spin') spin();
+            if (type === 'refer') {
+                const t = document.createElement('textarea');
+                t.value = link; document.body.appendChild(t);
+                t.select(); document.execCommand('copy');
+                document.body.removeChild(t);
+                alert("✅ Link Copied! Share with friends.");
+            }
+            if (type === 'withdraw') {
+                let u = document.getElementById('uid-input').value;
+                db.ref('withdrawals').push({ user: userId, uid: u, amount: bal, status: "pending", date: new Date().toLocaleString() });
+                db.ref('users/' + userId).update({ balance: 0 });
+                alert("🚀 Withdrawal Request Submitted!");
+            }
+        }
+
+        // চাকা ঘোরানোর লজিক আগের মতোই
         const canv = document.getElementById('wheel');
         const ctx = canv.getContext('2d');
         const pr = ["0", "0.2", "1", "3", "0.5", "2", "15", "0.2", "1", "5", "0", "10", "0.5", "2", "0.8", "7", "0", "1"];
@@ -179,7 +168,7 @@
             setTimeout(() => {
                 let v = parseFloat(pr[w]);
                 if (v > 0) db.ref('users/' + userId).update({ balance: bal + v });
-                else alert("Try Again!");
+                else alert("Oh no! Zero Diamond.");
             }, 6500);
         }
 
@@ -190,5 +179,5 @@
         }
     </script>
 </body>
-</html>
+    </html>
 
