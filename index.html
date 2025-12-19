@@ -23,7 +23,6 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
 #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
 
-/* লাকি হুইল বাটনটি একটু নিচে নামানো হয়েছে (top: 60px) */
 .floating-spin-btn {
     position: fixed; top: 60px; right: 15px;
     width: 55px; height: 55px; display: flex;
@@ -70,7 +69,7 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 </div>
 
 <div id="spin-tab" class="tab-content text-center">
-<p class="text-[11px] text-gray-400 mb-2">Daily Spin Limit: <span id="spin-left" class="text-yellow-400 font-bold">50</span>/50</p>
+<p class="text-[11px] text-gray-400 mb-2">Daily Spin Limit: <span id="spin-left" class="text-yellow-400 font-bold">10</span>/10</p>
 <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 border border-white/20 inline-block shadow-inner">
 <span class="text-yellow-400 font-bold uppercase">💎 Current Balance:</span> <span id="balance">0.00</span>
 </div>
@@ -130,7 +129,6 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 </div>
 
 <script>
-// Firebase and logic remain exactly as before
 const firebaseConfig = {
 apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
 authDomain: "royaldiamondbot.firebaseapp.com",
@@ -176,10 +174,12 @@ dailySpins = data.spinCount || 0;
 document.getElementById('balance').innerText = bal.toFixed(2);
 document.getElementById('home-balance').innerText = bal.toFixed(2);
 document.getElementById('wallet-bal-display').innerText = bal.toFixed(2);
-document.getElementById('spin-left').innerText = (50 - dailySpins);
+// ডিসপ্লে লিমিট ১০ করা হয়েছে
+document.getElementById('spin-left').innerText = (10 - dailySpins);
 document.getElementById('active-bot').innerText = activeBot;
 
-if (dailySpins >= 50) {
+// এখানে চেক লজিক ১০ করা হয়েছে
+if (dailySpins >= 10) {
 document.getElementById('spin-btn').innerText = "LIMIT REACHED";
 document.getElementById('spin-btn').disabled = true;
 document.getElementById('spin-btn').style.background = "#4b5563";
@@ -219,7 +219,8 @@ document.getElementById('leader-list').innerHTML = html;
 });
 
 function handleAction(type) {
-if (type === 'spin' && dailySpins >= 50) return alert("❌ Daily Limit Reached!");
+// স্পিন বাটন চেক ১০ করা হয়েছে
+if (type === 'spin' && dailySpins >= 10) return alert("❌ Daily Limit Reached!");
 if (type === 'withdraw' && bal < 100) return alert("❌ Min 100 Diamonds required!");
 document.getElementById('ad-modal').style.display = 'flex';
 if (typeof show_10343752 === 'function') {
@@ -302,4 +303,4 @@ if(el) el.classList.add('active');
 }
 setInterval(calculateMining, 10000);
 </script></body></html>
-    
+
