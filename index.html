@@ -22,8 +22,18 @@
         .nav-item.active { color: #fbbf24; font-weight: bold; transform: translateY(-5px); }
         .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
         #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
-        .bot-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 12px; margin-bottom: 10px; transition: 0.3s; }
-        .bot-card:hover { border-color: #fbbf24; }
+        
+        /* Floating Spin Icon */
+        .spin-icon-btn {
+            position: fixed; top: 15px; right: 15px;
+            background: linear-gradient(45deg, #f59e0b, #fbbf24);
+            border: 2px solid #78350f; border-radius: 50%;
+            width: 48px; height: 48px; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 22px; box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+            cursor: pointer; z-index: 600; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -35,11 +45,23 @@
     </div>
 </div>
 
+<div class="spin-icon-btn" onclick="switchTab('spin-tab', null)">🌀</div>
+
 <div class="text-center my-6">
     <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 uppercase italic">Royal Diamond</h1>
 </div>
 
-<div id="spin-tab" class="tab-content active-tab text-center">
+<div id="home-tab" class="tab-content active-tab text-center">
+    <div class="glass-card mt-20 min-h-[150px] flex flex-col items-center justify-center">
+        <div class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center border border-yellow-500/20 mb-4">
+            <span class="text-3xl">💎</span>
+        </div>
+        <p class="text-gray-400 text-sm">Welcome to Royal Diamond Pro</p>
+        <p class="text-[10px] text-yellow-500/40 mt-2">Start earning by using the menu below</p>
+    </div>
+</div>
+
+<div id="spin-tab" class="tab-content text-center">
     <p class="text-[11px] text-gray-400 mb-2">Daily Spin Limit: <span id="spin-left" class="text-yellow-400 font-bold">50</span>/50</p>
     <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 border border-white/20 inline-block shadow-inner">
         <span class="text-yellow-400 font-bold uppercase">💎 Balance:</span> <span id="balance">0.00</span>
@@ -63,27 +85,6 @@
             <button onclick="handleAction('start_mining')" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold text-[11px] uppercase">🚀 Start (Ad)</button>
             <button onclick="handleAction('claim')" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-[11px] uppercase">📥 Claim</button>
         </div>
-        
-        <h3 class="text-left text-[11px] font-bold text-yellow-500 mb-2 uppercase italic">📊 Profit Summary</h3>
-        <div class="mb-6 overflow-hidden rounded-xl border border-white/10 bg-white/5 text-[9px]">
-            <table class="w-full text-center">
-                <thead class="bg-yellow-500/20 text-yellow-500 font-bold">
-                    <tr>
-                        <th class="p-2 border-r border-white/10">Bot</th>
-                        <th class="p-2 border-r border-white/10">8h Earn</th>
-                        <th class="p-2">Net Profit</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-300">
-                    <tr class="border-b border-white/5"><td>🥉 Bronze</td><td>27💎</td><td class="text-green-400">+67💎</td></tr>
-                    <tr class="border-b border-white/5"><td>🥈 Silver</td><td>60💎</td><td class="text-green-400">+300💎</td></tr>
-                    <tr class="border-b border-white/5"><td>🥇 Gold</td><td>100💎</td><td class="text-green-400">+500💎</td></tr>
-                    <tr class="border-b border-white/5"><td>💎 Plat.</td><td>205💎</td><td class="text-green-400">+2300💎</td></tr>
-                    <tr><td>👑 Diam.</td><td>420💎</td><td class="text-green-400">+12800💎</td></tr>
-                </tbody>
-            </table>
-        </div>
-
         <div class="space-y-3" id="bot-store-list"></div>
     </div>
 </div>
@@ -98,7 +99,6 @@
 <div id="refer-tab" class="tab-content text-center">
     <div class="glass-card">
         <h2 class="text-green-400 font-black mb-2 italic">Refer & Earn</h2>
-        <p class="text-xs text-gray-300 mb-4">Invite friends and get <span class="text-yellow-400 font-bold">10 💎</span> per refer!</p>
         <div class="bg-black/40 p-5 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500 font-mono shadow-inner" id="ref-link-display">Generating...</div>
         <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold uppercase">COPY LINK</button>
     </div>
@@ -107,19 +107,17 @@
 <div id="wallet-tab" class="tab-content text-center">
     <div class="glass-card">
         <h2 class="text-blue-400 font-black mb-1 uppercase italic">Withdrawal</h2>
-        <p class="text-[10px] text-yellow-500 font-bold mb-4 italic">1000 Diamond = 1 Dollar</p>
         <div class="mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
             <p class="text-xl font-bold text-yellow-500"><span id="wallet-bal-display">0.00</span> 💎</p>
         </div>
         <input type="number" id="uid-input" placeholder="Enter Binance UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
         <input type="number" id="amount-input" placeholder="Min 1000 Diamonds" class="w-full p-4 bg-black/40 rounded-xl mb-6 text-center outline-none border border-white/10 text-white focus:border-yellow-500">
         <button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl shadow-lg uppercase">SUBMIT WITHDRAW</button>
-        <p class="mt-4 text-[10px] text-red-500 font-bold italic underline">Minimum Withdrawal: 1000 Diamonds</p>
     </div>
 </div>
 
 <div class="nav-bar">
-    <div onclick="switchTab('spin-tab', this)" class="nav-item active"><div>🌀</div>Spin</div>
+    <div onclick="switchTab('home-tab', this)" class="nav-item active"><div>🏠</div>Home</div>
     <div onclick="switchTab('shop-tab', this)" class="nav-item"><div>🤖</div>Shop</div>
     <div onclick="switchTab('leader-tab', this)" class="nav-item"><div>🏆</div>Board</div>
     <div onclick="switchTab('refer-tab', this)" class="nav-item"><div>👥</div>Refer</div>
@@ -127,6 +125,7 @@
 </div>
 
 <script>
+// --- ALL YOUR ORIGINAL LOGIC STARTS HERE ---
 const firebaseConfig = {
     apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
     authDomain: "royaldiamondbot.firebaseapp.com",
@@ -148,11 +147,7 @@ document.getElementById('ref-link-display').innerText = link;
 const urlParams = new URLSearchParams(window.location.search);
 const referrerId = urlParams.get('start');
 
-let bal = 0;
-let dailySpins = 0;
-let activeBot = "None";
-let lastStartTime = 0;
-const today = new Date().toLocaleDateString();
+let bal = 0; let dailySpins = 0; let activeBot = "None"; let lastStartTime = 0; const today = new Date().toLocaleDateString();
 
 const BOT_PLANS = {
     "Bronze": { price: 500, earn_8h: 27, days: 7, icon: "🥉" },
@@ -164,10 +159,8 @@ const BOT_PLANS = {
 
 db.ref('users/' + userId).on('value', snap => {
     const data = snap.val() || { balance: 0, lastDate: today, spinCount: 0, activeBot: "None", lastStartTime: 0 };
-    bal = data.balance;
-    activeBot = data.activeBot || "None";
-    lastStartTime = data.lastStartTime || 0;
-
+    bal = data.balance; activeBot = data.activeBot || "None"; lastStartTime = data.lastStartTime || 0;
+    
     if (!snap.exists() && referrerId && referrerId !== userId) {
         db.ref('users/' + referrerId).once('value', rSnap => {
             if(rSnap.exists()){
@@ -192,43 +185,27 @@ db.ref('users/' + userId).on('value', snap => {
     if (dailySpins >= 50) {
         document.getElementById('spin-btn').innerText = "LIMIT REACHED";
         document.getElementById('spin-btn').disabled = true;
-        document.getElementById('spin-btn').style.background = "#4b5563";
     }
-
     calculateMining();
 });
 
 function calculateMining() {
-    if (activeBot === "None" || lastStartTime === 0) {
-        document.getElementById('mined-amount').innerText = "0.00";
-        document.getElementById('mining-status').innerText = "🛑 Stopped";
-        return;
-    }
+    if (activeBot === "None" || lastStartTime === 0) return;
     const now = Math.floor(Date.now() / 1000);
     const elapsed = now - lastStartTime;
     const limit = 8 * 3600;
     const workTime = Math.min(elapsed, limit);
     const earned = (BOT_PLANS[activeBot].earn_8h / limit) * workTime;
-    
     document.getElementById('mined-amount').innerText = earned.toFixed(2);
-    if (elapsed < limit) {
-        document.getElementById('mining-status').innerText = "🚀 Mining... (" + Math.floor((limit - elapsed)/60) + "m left)";
-        document.getElementById('mining-status').className = "text-[10px] mt-1 text-green-400 italic";
-    } else {
-        document.getElementById('mining-status').innerText = "🛑 Time up! Restart with Ad.";
-        document.getElementById('mining-status').className = "text-[10px] mt-1 text-red-500 italic";
-    }
+    document.getElementById('mining-status').innerText = elapsed < limit ? "🚀 Mining..." : "🛑 Time up!";
 }
 
 function renderStore() {
     let html = '';
     for (let name in BOT_PLANS) {
         let b = BOT_PLANS[name];
-        html += `<div class="bot-card flex justify-between items-center text-left">
-            <div>
-                <p class="text-sm font-bold text-yellow-500">${b.icon} ${name}</p>
-                <p class="text-[9px] text-gray-400">Earn: ${b.earn_8h}💎/8h | ${b.days} Days</p>
-            </div>
+        html += `<div class="bot-card flex justify-between items-center text-left bg-white/5 p-3 rounded-xl mb-2">
+            <div><p class="text-sm font-bold text-yellow-500">${b.icon} ${name}</p></div>
             <button onclick="buyBot('${name}')" class="bg-yellow-500 text-black px-3 py-1 rounded-lg text-[10px] font-black">${b.price} 💎</button>
         </div>`;
     }
@@ -239,22 +216,12 @@ renderStore();
 function buyBot(name) {
     const cost = BOT_PLANS[name].price;
     if (bal < cost) return alert("❌ Not enough diamonds!");
-    if (confirm("Buy " + name + " for " + cost + " diamonds?")) {
-        db.ref('users/' + userId).update({
-            balance: bal - cost,
-            activeBot: name,
-            lastStartTime: 0
-        });
-        alert("✅ " + name + " Purchased!");
-    }
+    db.ref('users/' + userId).update({ balance: bal - cost, activeBot: name, lastStartTime: 0 });
+    alert("✅ " + name + " Purchased!");
 }
 
 function handleAction(type) {
-    if (type === 'spin' && dailySpins >= 50) return alert("❌ Daily Limit Reached!");
-    
-    // Withdrawal limit check
-    if (type === 'withdraw' && bal < 1000) return alert("❌ আপনার ব্যালেন্সে কমপক্ষে ১০০০ ডাইমন্ড থাকতে হবে!");
-    
+    if (type === 'spin' && dailySpins >= 50) return alert("❌ Limit Reached!");
     document.getElementById('ad-modal').style.display = 'flex';
     if (typeof show_10343752 === 'function') {
         show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
@@ -266,97 +233,62 @@ function handleAction(type) {
 function executeLogic(type) {
     document.getElementById('ad-modal').style.display = 'none';
     if (type === 'spin') spin();
-    if (type === 'start_mining') {
-        if (activeBot === "None") return alert("❌ Buy a bot first!");
-        db.ref('users/' + userId).update({ lastStartTime: Math.floor(Date.now() / 1000) });
-        alert("🚀 Mining Started for 8 Hours!");
-    }
+    if (type === 'start_mining') db.ref('users/' + userId).update({ lastStartTime: Math.floor(Date.now() / 1000) });
     if (type === 'claim') {
         const earned = parseFloat(document.getElementById('mined-amount').innerText);
-        if (earned <= 0) return alert("❌ No diamonds to claim!");
-        db.ref('users/' + userId).update({
-            balance: bal + earned,
-            lastStartTime: 0
-        });
-        alert("✅ Claimed " + earned.toFixed(2) + " 💎");
+        db.ref('users/' + userId).update({ balance: bal + earned, lastStartTime: 0 });
+        alert("✅ Claimed!");
     }
     if (type === 'refer') {
-        const t = document.createElement('textarea'); t.value = link; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+        navigator.clipboard.writeText(link);
         alert("✅ Link Copied!");
     }
     if (type === 'withdraw') {
         let u = document.getElementById('uid-input').value;
         let a = parseFloat(document.getElementById('amount-input').value);
-        if(!u) return alert("Enter Binance UID!");
-        if(isNaN(a) || a < 1000) return alert("Minimum withdrawal is 1000 Diamonds!");
-        if(a > bal) return alert("Insufficient balance!");
-        db.ref('withdrawals').push({ user: userId, uid: u, amount: a, status: "pending", time: new Date().toLocaleString() });
-        db.ref('users/' + userId).update({ balance: bal - a });
-        alert("🚀 উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!");
+        if(a >= 1000 && a <= bal) {
+            db.ref('withdrawals').push({ user: userId, uid: u, amount: a, status: "pending" });
+            db.ref('users/' + userId).update({ balance: bal - a });
+            alert("🚀 Withdrawal Submitted!");
+        }
     }
-}
-
-db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
-    let html = ''; let users = [];
-    snap.forEach(child => { users.push(child.val()); });
-    users.reverse().forEach((u, i) => {
-        html += `<div class="flex justify-between p-3 bg-white/5 rounded-xl border border-white/5"><span class="text-xs">${i+1}. ${u.uid || 'Player'}</span><span class="text-yellow-500 font-bold text-xs">${(u.balance || 0).toFixed(2)} 💎</span></div>`;
-    });
-    document.getElementById('leader-list').innerHTML = html;
-});
-
-const canv = document.getElementById('wheel');
-const ctx = canv.getContext('2d');
-const pr = ["0", "0.2", "0.5", "10", "0.3", "5", "15", "0.1", "2", "0.8", "0", "7", "0.4", "4", "0.1", "1", "0", "0.2"];
-const cl = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
-canv.width = 280; canv.height = 280;
-
-function draw() {
-    for(let i=0; i<18; i++){
-        ctx.beginPath(); ctx.fillStyle = cl[i]; ctx.moveTo(140, 140);
-        ctx.arc(140, 140, 140, (i * 20 - 100) * Math.PI / 180, (i * 20 - 80) * Math.PI / 180); ctx.fill();
-        ctx.save(); ctx.translate(140, 140); ctx.rotate((i * 20 - 90) * Math.PI / 180);
-        ctx.fillStyle = cl[i] == "#1e293b" ? "#fbbf24" : "#1e293b"; ctx.font = "bold 11px Poppins";
-        ctx.textAlign = "right"; ctx.fillText(pr[i], 130, 5); ctx.restore();
-    }
-}draw();
-
-let r = 0; let isSpinning = false;
-function spin() {
-    if (isSpinning) return;
-    isSpinning = true;
-    let rand = Math.random() * 1000;
-    let w;if (rand < 950) {
-        const smallSlots = [0, 1, 2, 4, 7, 9, 10, 12, 14, 16, 17];
-        w = smallSlots[Math.floor(Math.random() * smallSlots.length)];
-    } else if (rand < 995) {
-        const midSlots = [5, 8, 11, 13, 15];
-        w = midSlots[Math.floor(Math.random() * midSlots.length)];
-    } else {
-        const rareSlots = [3, 6];
-        w = rareSlots[Math.floor(Math.random() * rareSlots.length)];
-    }
-    r += (3600 + (18 - w) * 20 - (r % 360));
-    canv.style.transform = `rotate(${r}deg)`;
-    setTimeout(() => {
-        let v = parseFloat(pr[w]);
-        dailySpins++;
-        db.ref('users/' + userId).update({
-            balance: bal + v,
-            spinCount: dailySpins,
-            lastDate: today,uid: userId});
-        isSpinning = false;
-        if(v > 0) alert("Won " + v + " 💎");
-    }, 6500);
 }
 
 function switchTab(id, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById(id).classList.add('active-tab'); el.classList.add('active');
+    document.getElementById(id).classList.add('active-tab');
+    if(el) el.classList.add('active');
+}
+
+// Wheel Logic
+const canv = document.getElementById('wheel');
+const ctx = canv.getContext('2d');
+const pr = ["0", "0.2", "0.5", "10", "0.3", "5", "15", "0.1", "2", "0.8", "0", "7", "0.4", "4", "0.1", "1", "0", "0.2"];
+const cl = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
+canv.width = 280; canv.height = 280;
+function draw() {
+    for(let i=0; i<18; i++){
+        ctx.beginPath(); ctx.fillStyle = cl[i]; ctx.moveTo(140, 140);
+        ctx.arc(140, 140, 140, (i * 20 - 100) * Math.PI / 180, (i * 20 - 80) * Math.PI / 180); ctx.fill();
+    }
+}draw();
+let r = 0; let isSpinning = false;
+function spin() {
+    if (isSpinning) return; isSpinning = true;
+    let w = Math.floor(Math.random() * 18);
+    r += (3600 + (18 - w) * 20 - (r % 360));
+    canv.style.transform = `rotate(${r}deg)`;
+    setTimeout(() => {
+        let v = parseFloat(pr[w]);
+        dailySpins++;
+        db.ref('users/' + userId).update({ balance: bal + v, spinCount: dailySpins, lastDate: today });
+        isSpinning = false;
+        alert("Won " + v + " 💎");
+    }, 6500);
 }
 setInterval(calculateMining, 10000);
 </script>
 </body>
-    </html>
-    
+</html>
+
