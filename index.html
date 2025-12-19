@@ -22,6 +22,18 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 .nav-item.active { color: #fbbf24; font-weight: bold; transform: translateY(-5px); }
 .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
 #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+
+/* ডানদিকের উপরের স্পিন বাটন */
+.floating-spin-btn {
+    position: fixed; top: 15px; right: 15px;
+    background: linear-gradient(45deg, #f59e0b, #fbbf24);
+    border: 2px solid #78350f; border-radius: 50%;
+    width: 50px; height: 50px; display: flex;
+    align-items: center; justify-content: center;
+    font-size: 24px; box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+    cursor: pointer; z-index: 600; animation: pulse 2s infinite;
+}
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 </style></head><body>
 
 <div id="ad-modal">
@@ -30,20 +42,42 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 <p class="text-yellow-500 font-bold uppercase text-sm">Ad Loading...</p>
 </div></div>
 
+<div class="floating-spin-btn" onclick="switchTab('spin-tab', null)">🌀</div>
+
 <div class="text-center my-6">
 <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 uppercase italic">Royal Diamond</h1>
 </div>
 
-<div id="spin-tab" class="tab-content active-tab text-center">
+<div id="home-tab" class="tab-content active-tab text-center">
+    <div class="glass-card mt-10">
+        <p class="text-gray-400 text-sm mb-2">Total Balance</p>
+        <div class="text-4xl font-black text-yellow-500 mb-4">💎 <span id="home-balance">0.00</span></div>
+        <p class="text-[10px] text-gray-500 italic">Welcome to the Royal Empire</p>
+    </div>
+    
+    <div class="mt-8 grid grid-cols-2 gap-4">
+        <div class="bg-white/5 p-4 rounded-2xl border border-white/10" onclick="switchTab('shop-tab', null)">
+            <p class="text-2xl mb-1">🤖</p>
+            <p class="text-[10px] font-bold">MINING SHOP</p>
+        </div>
+        <div class="bg-white/5 p-4 rounded-2xl border border-white/10" onclick="switchTab('wallet-tab', null)">
+            <p class="text-2xl mb-1">💳</p>
+            <p class="text-[10px] font-bold">WITHDRAW</p>
+        </div>
+    </div>
+</div>
+
+<div id="spin-tab" class="tab-content text-center">
 <p class="text-[11px] text-gray-400 mb-2">Daily Spin Limit: <span id="spin-left" class="text-yellow-400 font-bold">50</span>/50</p>
 <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 border border-white/20 inline-block shadow-inner">
-<span class="text-yellow-400 font-bold uppercase">💎 Balance:</span> <span id="balance">0.00</span>
+<span class="text-yellow-400 font-bold uppercase">💎 Current Balance:</span> <span id="balance">0.00</span>
 </div>
 <div class="wheel-box">
 <div class="pointer"></div>
 <canvas id="wheel"></canvas>
 </div>
 <button id="spin-btn" onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-14 rounded-full shadow-lg active:scale-95 transition-all uppercase">SPIN NOW</button>
+<button onclick="switchTab('home-tab', null)" class="block mx-auto mt-6 text-gray-400 text-xs underline">Back to Home</button>
 </div>
 
 <div id="shop-tab" class="tab-content text-center">
@@ -86,7 +120,7 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 </div></div>
 
 <div class="nav-bar">
-<div onclick="switchTab('spin-tab', this)" class="nav-item active"><div>🌀</div>Spin</div>
+<div onclick="switchTab('home-tab', this)" class="nav-item active"><div>🏠</div>Home</div>
 <div onclick="switchTab('shop-tab', this)" class="nav-item"><div>🤖</div>Shop</div>
 <div onclick="switchTab('leader-tab', this)" class="nav-item"><div>🏆</div>Board</div>
 <div onclick="switchTab('refer-tab', this)" class="nav-item"><div>👥</div>Refer</div>
@@ -137,6 +171,7 @@ db.ref('users/' + userId).update({ lastDate: today, spinCount: 0 });
 dailySpins = data.spinCount || 0;
 }
 document.getElementById('balance').innerText = bal.toFixed(2);
+document.getElementById('home-balance').innerText = bal.toFixed(2);
 document.getElementById('wallet-bal-display').innerText = bal.toFixed(2);
 document.getElementById('spin-left').innerText = (50 - dailySpins);
 document.getElementById('active-bot').innerText = activeBot;
@@ -259,8 +294,9 @@ if(v > 0) alert("Won " + v + " 💎");
 function switchTab(id, el) {
 document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-document.getElementById(id).classList.add('active-tab'); el.classList.add('active');
+document.getElementById(id).classList.add('active-tab'); 
+if(el) el.classList.add('active');
 }
 setInterval(calculateMining, 10000);
 </script></body></html>
-    
+
