@@ -23,9 +23,9 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
 #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
 
-/* ডানদিকের উপরে লাকি হুইল বাটন */
+/* লাকি হুইল বাটনটি একটু নিচে নামানো হয়েছে (top: 60px) */
 .floating-spin-btn {
-    position: fixed; top: 15px; right: 15px;
+    position: fixed; top: 60px; right: 15px;
     width: 55px; height: 55px; display: flex;
     align-items: center; justify-content: center;
     cursor: pointer; z-index: 600;
@@ -62,21 +62,10 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 </div>
 
 <div id="home-tab" class="tab-content active-tab text-center">
-    <div class="glass-card mt-10">
+    <div class="glass-card mt-16">
         <p class="text-gray-400 text-sm mb-2">Total Balance</p>
         <div class="text-4xl font-black text-yellow-500 mb-4">💎 <span id="home-balance">0.00</span></div>
-        <p class="text-[10px] text-gray-500 italic">Welcome to the Royal Empire</p>
-    </div>
-    
-    <div class="mt-8 grid grid-cols-2 gap-4">
-        <div class="bg-white/5 p-4 rounded-2xl border border-white/10" onclick="switchTab('shop-tab', null)">
-            <p class="text-2xl mb-1">🤖</p>
-            <p class="text-[10px] font-bold">MINING SHOP</p>
-        </div>
-        <div class="bg-white/5 p-4 rounded-2xl border border-white/10" onclick="switchTab('wallet-tab', null)">
-            <p class="text-2xl mb-1">💳</p>
-            <p class="text-[10px] font-bold">WITHDRAW</p>
-        </div>
+        <p class="text-[10px] text-gray-500 italic">Your Empire, Your Rules</p>
     </div>
 </div>
 
@@ -141,7 +130,7 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 </div>
 
 <script>
-// Logic remains identical to your original provided file to ensure nothing is broken
+// Firebase and logic remain exactly as before
 const firebaseConfig = {
 apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
 authDomain: "royaldiamondbot.firebaseapp.com",
