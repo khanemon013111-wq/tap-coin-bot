@@ -53,56 +53,36 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
     <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 uppercase italic">Royal Diamond</h1>
 </div>
 
-<div id="home-tab" class="tab-content active-tab">
-    <div class="flex items-center gap-4 mb-6 mt-4">
-        <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-2xl border-2 border-white/20">👑</div>
-        <div>
-            <p class="text-[10px] text-gray-400 uppercase tracking-widest">Welcome,</p>
-            <p id="user-id-display" class="text-sm font-bold text-white">Loading...</p>
+<div id="home-tab" class="tab-content active-tab text-center">
+    <div class="glass-card mt-16 relative overflow-hidden py-10 shadow-[0_0_50px_rgba(30,58,138,0.5)]">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl"></div>
+        <p class="text-gray-400 text-sm mb-2 uppercase tracking-widest">Total Balance</p>
+        <div class="flex items-center justify-center gap-2">
+            <span class="text-4xl">💎</span>
+            <span id="home-balance" class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-200">0.00</span>
         </div>
-    </div>
-    <div class="glass-card text-center mb-6 py-8 relative overflow-hidden">
-        <p class="text-gray-400 text-xs mb-1 uppercase">Current Balance</p>
-        <div class="text-5xl font-black text-yellow-500">💎 <span id="home-balance">0.00</span></div>
-    </div>
-    <div class="grid grid-cols-2 gap-3">
-        <div class="bg-white/5 border border-white/10 p-3 rounded-2xl flex items-center gap-2">
-            <span>🎡</span>
-            <div class="text-left">
-                <p class="text-[9px] text-gray-400 uppercase">Spin Left</p>
-                <p id="home-spin-stat" class="text-xs font-bold text-yellow-400">0/10</p>
-            </div>
-        </div>
-        <div class="bg-white/5 border border-white/10 p-3 rounded-2xl flex items-center gap-2">
-            <span>🤖</span>
-            <div class="text-left">
-                <p class="text-[9px] text-gray-400 uppercase">Bot Status</p>
-                <p id="home-bot-stat" class="text-xs font-bold text-green-400">None</p>
-            </div>
-        </div>
+        <p class="text-[10px] text-yellow-500/60 mt-6 tracking-[0.3em] font-bold italic uppercase">Your Empire • Your Rules</p>
     </div>
 </div>
 
 <div id="spin-tab" class="tab-content text-center">
     <p class="text-[11px] text-gray-400 mb-2">Daily Spin Limit: <span id="spin-left" class="text-yellow-400 font-bold">10</span>/10</p>
-    <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 border border-white/20 inline-block shadow-inner">
+    <div class="bg-white/10 px-6 py-2 rounded-2xl mb-8 border border-white/20 inline-block">
         <span class="text-yellow-400 font-bold uppercase">💎 Balance:</span> <span id="balance">0.00</span>
     </div>
     <div class="wheel-box">
         <div class="pointer"></div>
         <canvas id="wheel"></canvas>
     </div>
-    <button id="spin-btn" onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-14 rounded-full shadow-lg active:scale-95 transition-all uppercase">SPIN NOW</button>
+    <button id="spin-btn" onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-14 rounded-full shadow-lg uppercase">SPIN NOW</button>
 </div>
 
 <div id="tasks-tab" class="tab-content">
     <div class="glass-card">
         <h2 class="text-yellow-500 font-black text-center mb-6 uppercase italic">Daily Tasks</h2>
-        <div class="space-y-4">
-            <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex justify-between items-center">
-                <div><p class="text-sm font-bold">Watch Video Ad</p><p class="text-[10px] text-green-400">+5.00 💎</p></div>
-                <button onclick="handleAction('task_ad')" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-[10px] font-bold">GO</button>
-            </div>
+        <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex justify-between items-center mb-4">
+            <div><p class="text-sm font-bold">Watch Video Ad</p><p class="text-[10px] text-green-400">+5.00 💎</p></div>
+            <button onclick="handleAction('task_ad')" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-[10px] font-bold">GO</button>
         </div>
     </div>
 </div>
@@ -112,43 +92,21 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
         <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Mining Station</h2>
         <div class="mb-4 p-4 bg-black/40 rounded-xl border border-white/10 text-left relative">
             <div class="absolute top-2 right-2 animate-pulse text-[8px] bg-red-600 px-2 py-0.5 rounded text-white font-bold">8H SESSION</div>
-            <p class="text-xs">🤖 Active Bot: <span id="active-bot" class="text-yellow-400 font-bold uppercase">None</span></p>
+            <p class="text-xs">🤖 Bot: <span id="active-bot" class="text-yellow-400 font-bold uppercase">None</span></p>
             <p class="text-xs mt-1">📊 Mined: <span id="mined-amount" class="text-green-400 font-bold">0.00</span> 💎</p>
-            <p class="text-[8px] text-gray-500 mt-2 italic font-bold text-red-300">৮ ঘণ্টা মাইনিং শেষে Claim করতে হবে এবং পুনরায় Start করতে হবে।</p>
+            <p class="text-[8px] text-gray-500 mt-2 italic font-bold text-red-300">Claim and restart after 8 hours.</p>
         </div>
         <div class="flex gap-2">
-            <button onclick="handleAction('start_mining')" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold text-[11px] shadow-lg">🚀 START</button>
-            <button onclick="handleAction('claim')" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-[11px] shadow-lg">📥 CLAIM</button>
+            <button onclick="handleAction('start_mining')" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold text-[11px]">🚀 START</button>
+            <button onclick="handleAction('claim')" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-[11px]">📥 CLAIM</button>
         </div>
     </div>
-    <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Bot Store</h2>
     <div id="bot-store-list" class="space-y-3"></div>
 </div>
 
-<div id="leader-tab" class="tab-content">
-    <div class="glass-card">
-        <h2 class="text-yellow-500 font-black text-center mb-6 uppercase border-b border-white/10 pb-2">🏆 Top Players</h2>
-        <div id="leader-list" class="space-y-3"></div>
-    </div>
-</div>
-
-<div id="refer-tab" class="tab-content text-center">
-    <div class="glass-card">
-        <h2 class="text-green-400 font-black mb-2 italic">Refer & Earn</h2>
-        <div class="bg-black/40 p-5 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500" id="ref-link-display">Generating...</div>
-        <button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold uppercase">COPY LINK</button>
-    </div>
-</div>
-
-<div id="wallet-tab" class="tab-content text-center">
-    <div class="glass-card">
-        <h2 class="text-blue-400 font-black mb-4 uppercase italic">Withdrawal</h2>
-        <div class="mb-6 p-4 bg-white/5 rounded-xl border border-white/10 text-xl font-bold text-yellow-500"><span id="wallet-bal-display">0.00</span> 💎</div>
-        <input type="number" id="uid-input" placeholder="Enter Player UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center outline-none border border-white/10 text-white">
-        <input type="number" id="amount-input" placeholder="How many Diamonds?" class="w-full p-4 bg-black/40 rounded-xl mb-6 text-center outline-none border border-white/10 text-white">
-        <button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl shadow-lg uppercase">SUBMIT WITHDRAW</button>
-    </div>
-</div>
+<div id="leader-tab" class="tab-content"><div class="glass-card"><h2 class="text-yellow-500 font-black text-center mb-6 uppercase border-b border-white/10 pb-2">🏆 Top Players</h2><div id="leader-list" class="space-y-3"></div></div></div>
+<div id="refer-tab" class="tab-content text-center"><div class="glass-card"><h2 class="text-green-400 font-black mb-2 italic">Refer & Earn</h2><div class="bg-black/40 p-5 rounded-xl mb-4 text-[11px] break-all border border-white/10 text-yellow-500" id="ref-link-display">Generating...</div><button onclick="handleAction('refer')" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold uppercase">COPY LINK</button></div></div>
+<div id="wallet-tab" class="tab-content text-center"><div class="glass-card"><h2 class="text-blue-400 font-black mb-4 uppercase italic">Withdrawal</h2><div class="mb-6 p-4 bg-white/5 rounded-xl text-xl font-bold text-yellow-500"><span id="wallet-bal-display">0.00</span> 💎</div><input type="number" id="uid-input" placeholder="Player UID" class="w-full p-4 bg-black/40 rounded-xl mb-4 text-center border border-white/10 text-white"><input type="number" id="amount-input" placeholder="Amount" class="w-full p-4 bg-black/40 rounded-xl mb-6 text-center border border-white/10 text-white"><button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl shadow-lg uppercase">SUBMIT</button></div></div>
 
 <div class="nav-bar">
     <div onclick="switchTab('home-tab', this)" class="nav-item active"><div>🏠</div>Home</div>
@@ -159,81 +117,41 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 </div>
 
 <script>
-// --- কনফিগারেশন ও ডাটাবেস ---
-const firebaseConfig = {
-    apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
-    authDomain: "royaldiamondbot.firebaseapp.com",
-    databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com",
-    projectId: "royaldiamondbot",
-    storageBucket: "royaldiamondbot.firebasestorage.app",
-    messagingSenderId: "156914195366",
-    appId: "1:156914195366:web:e5ab56df62ecbf90550d67"
-};
+const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.random() * 89999 + 10000);
 localStorage.setItem('user_uid', userId);
 const link = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
-const BOT_PLANS = {
-    "Bronze": { price: 500, earn_8h: 27, days: 30 },
-    "Silver": { price: 1500, earn_8h: 60, days: 30 },
-    "Gold": { price: 4000, earn_8h: 100, days: 45 },
-    "Platinum": { price: 10000, earn_8h: 205, days: 45 },
-    "Diamond": { price: 25000, earn_8h: 420, days: 60 }
-};
-
+const BOT_PLANS = { "Bronze": { price: 500, earn_8h: 27, days: 30 }, "Silver": { price: 1500, earn_8h: 60, days: 30 }, "Gold": { price: 4000, earn_8h: 100, days: 45 }, "Platinum": { price: 10000, earn_8h: 205, days: 45 }, "Diamond": { price: 25000, earn_8h: 420, days: 60 } };
 let bal = 0; let dailySpins = 0; let activeBot = "None"; let lastStartTime = 0; const today = new Date().toLocaleDateString();
 
-// --- রিয়েলটাইম লিসেনার ---
 db.ref('users/' + userId).on('value', snap => {
     const data = snap.val() || { balance: 0, lastDate: today, spinCount: 0, activeBot: "None", lastStartTime: 0 };
-    bal = data.balance; 
-    activeBot = data.activeBot || "None"; 
-    lastStartTime = data.lastStartTime || 0;
-    
-    if (data.lastDate !== today) {
-        dailySpins = 0;
-        db.ref('users/' + userId).update({ lastDate: today, spinCount: 0 });
-    } else {
-        dailySpins = data.spinCount || 0;
-    }
-
-    // UI আপডেট
-    document.getElementById('user-id-display').innerText = userId;
+    bal = data.balance; activeBot = data.activeBot || "None"; lastStartTime = data.lastStartTime || 0;
+    if (data.lastDate !== today) { dailySpins = 0; db.ref('users/' + userId).update({ lastDate: today, spinCount: 0 }); } else { dailySpins = data.spinCount || 0; }
     document.getElementById('balance').innerText = bal.toFixed(2);
     document.getElementById('home-balance').innerText = bal.toFixed(2);
     document.getElementById('wallet-bal-display').innerText = bal.toFixed(2);
     document.getElementById('spin-left').innerText = (10 - dailySpins);
-    document.getElementById('home-spin-stat').innerText = (10 - dailySpins) + "/10";
     document.getElementById('active-bot').innerText = activeBot;
-    document.getElementById('home-bot-stat').innerText = activeBot;
     document.getElementById('ref-link-display').innerText = link;
-
-    if (dailySpins >= 10) {
-        document.getElementById('spin-btn').innerText = "LIMIT REACHED";
-        document.getElementById('spin-btn').disabled = true;
-        document.getElementById('spin-btn').style.background = "#4b5563";
-    }
+    if (dailySpins >= 10) { document.getElementById('spin-btn').innerText = "LIMIT REACHED"; document.getElementById('spin-btn').disabled = true; document.getElementById('spin-btn').style.background = "#4b5563"; }
     calculateMining();
 });
 
-// --- ট্যাব সুইচিং ---
 function switchTab(id, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active-tab'); 
     if(el) el.classList.add('active');
-
-    const floatBtns = document.getElementById('home-floating-btns');
-    floatBtns.style.display = (id === 'home-tab') ? 'block' : 'none';
+    document.getElementById('home-floating-btns').style.display = (id === 'home-tab') ? 'block' : 'none';
 }
 
-// --- অ্যাড এবং অ্যাকশন লজিক ---
 function handleAction(type) {
     if (type === 'spin' && dailySpins >= 10) return alert("❌ Daily Limit Reached!");
-    if (type === 'start_mining' && activeBot === "None") return alert("❌ দাদু, আগে দোকান থেকে একটা বট কিনুন!");
-    
+    if (type === 'start_mining' && activeBot === "None") return alert("❌ দাদু, আগে বট কিনুন!");
     document.getElementById('ad-modal').style.display = 'flex';
     setTimeout(() => executeLogic(type), 2500);
 }
@@ -241,35 +159,22 @@ function handleAction(type) {
 function executeLogic(type) {
     document.getElementById('ad-modal').style.display = 'none';
     if (type === 'spin') spin();
-    if (type === 'start_mining') {
-        db.ref('users/' + userId).update({ lastStartTime: Math.floor(Date.now() / 1000) });
-        alert("🚀 মাইনিং শুরু হয়েছে! ৮ ঘণ্টা পর এসে ক্লেইম করুন।");
-    }
-    if (type === 'task_ad') {
-        db.ref('users/' + userId).update({ balance: bal + 5 });
-        alert("✅ Reward: +5.00 💎");
-    }
+    if (type === 'start_mining') { db.ref('users/' + userId).update({ lastStartTime: Math.floor(Date.now() / 1000) }); alert("🚀 শুরু হয়েছে!"); }
+    if (type === 'task_ad') { db.ref('users/' + userId).update({ balance: bal + 5 }); alert("✅ +5.00 💎"); }
     if (type === 'claim') {
         const e = parseFloat(document.getElementById('mined-amount').innerText);
-        if(e <= 0) return alert("❌ ক্লেইম করার মতো কিছু নেই!");
-        db.ref('users/' + userId).update({ balance: bal + e, lastStartTime: 0 });
-        alert("✅ ক্লেইম করা হয়েছে! আবার মাইনিং চালু করতে START চাপুন।");
+        if(e <= 0) return alert("❌ কিছুই নেই!");
+        db.ref('users/' + userId).update({ balance: bal + e, lastStartTime: 0 }); alert("✅ ক্লেইম সফল!");
     }
-    if (type === 'refer') {
-        const t = document.createElement('textarea'); t.value = link; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
-        alert("✅ Link Copied!");
-    }
+    if (type === 'refer') { const t = document.createElement('textarea'); t.value = link; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); alert("✅ Copied!"); }
     if (type === 'withdraw') {
-        let u = document.getElementById('uid-input').value;
-        let a = parseFloat(document.getElementById('amount-input').value);
-        if(!u || isNaN(a) || a < 100 || a > bal) return alert("Invalid Amount or UID!");
+        let u = document.getElementById('uid-input').value, a = parseFloat(document.getElementById('amount-input').value);
+        if(!u || isNaN(a) || a < 100 || a > bal) return alert("Error!");
         db.ref('withdrawals').push({ user: userId, uid: u, amount: a, status: "pending", time: new Date().toLocaleString() });
-        db.ref('users/' + userId).update({ balance: bal - a });
-        alert("🚀 Request sent!");
+        db.ref('users/' + userId).update({ balance: bal - a }); alert("🚀 Sent!");
     }
 }
 
-// --- মাইনিং লজিক ---
 function calculateMining() {
     if (activeBot === "None" || lastStartTime === 0) return;
     const elapsed = Math.floor(Date.now() / 1000) - lastStartTime;
@@ -278,24 +183,14 @@ function calculateMining() {
 }
 setInterval(calculateMining, 5000);
 
-// --- শপ রেন্ডারিং ---
 function renderStore() {
-    let h = '';
+    let h = '<div class="bg-blue-600/20 p-2 rounded-xl mb-4 text-[10px] italic">ℹ️ ৮ ঘণ্টা পর রিস্টার্ট করতে হবে।</div>';
     for(let n in BOT_PLANS){
-        let p = BOT_PLANS[n];
-        let d = (p.earn_8h * 3).toFixed(0);
-        let t = (d * p.days).toFixed(0);
-        h += `
-        <div class="bg-white/5 p-4 rounded-2xl border border-white/10 mb-3 text-left">
-            <div class="flex justify-between items-start">
-                <div><h3 class="text-yellow-500 font-black">${n} Bot</h3><p class="text-[9px] text-gray-400">Validity: ${p.days} Days</p></div>
-                <div class="text-right"><p class="text-[10px] text-gray-400">Price</p><p class="text-sm font-bold text-yellow-500">${p.price} 💎</p></div>
-            </div>
-            <div class="grid grid-cols-2 gap-2 mt-3 bg-black/20 p-2 rounded-lg">
-                <div><p class="text-[8px] text-gray-400 uppercase">Daily Profit</p><p class="text-xs font-bold text-green-400">${d} 💎</p></div>
-                <div><p class="text-[8px] text-gray-400 uppercase">Total Profit</p><p class="text-xs font-bold text-blue-400">${t} 💎</p></div>
-            </div>
-            <button onclick="buyBot('${n}')" class="w-full mt-3 bg-yellow-500 text-black py-2 rounded-xl font-black text-[10px] uppercase">Buy Bot</button>
+        let p = BOT_PLANS[n], d = (p.earn_8h * 3).toFixed(0), t = (d * p.days).toFixed(0);
+        h += `<div class="bg-white/5 p-4 rounded-2xl border border-white/10 mb-3 text-left">
+            <div class="flex justify-between"><div><h3 class="text-yellow-500 font-black">${n} Bot</h3><p class="text-[9px] text-gray-400">${p.days} Days</p></div><p class="text-sm font-bold text-yellow-500">${p.price} 💎</p></div>
+            <div class="grid grid-cols-2 gap-2 mt-2 bg-black/20 p-2 rounded-lg"><div><p class="text-[8px] uppercase">Daily</p><p class="text-xs text-green-400">${d} 💎</p></div><div><p class="text-[8px] uppercase">Total</p><p class="text-xs text-blue-400">${t} 💎</p></div></div>
+            <button onclick="buyBot('${n}')" class="w-full mt-3 bg-yellow-500 text-black py-2 rounded-xl font-black text-[10px] uppercase tracking-wider">Purchase</button>
         </div>`;
     }
     document.getElementById('bot-store-list').innerHTML = h;
@@ -303,12 +198,10 @@ function renderStore() {
 renderStore();
 
 function buyBot(name) {
-    if (bal < BOT_PLANS[name].price) return alert("❌ ব্যালেন্স নেই দাদু!");
-    db.ref('users/' + userId).update({ balance: bal - BOT_PLANS[name].price, activeBot: name, lastStartTime: 0 });
-    alert("✅ বট কেনা হয়েছে!");
+    if (bal < BOT_PLANS[name].price) return alert("❌ ব্যালেন্স নেই!");
+    db.ref('users/' + userId).update({ balance: bal - BOT_PLANS[name].price, activeBot: name, lastStartTime: 0 }); alert("✅ সফল!");
 }
 
-// --- স্পিন হুইল ডিজাইন ও লজিক ---
 const canv = document.getElementById('wheel'); const ctx = canv.getContext('2d');
 const pr = ["0", "0.2", "0.5", "10", "0.3", "5", "15", "0.1", "2", "0.8", "0", "7", "0.4", "4", "0.1", "1", "0", "0.2"];
 const cl = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
@@ -336,16 +229,13 @@ function spin() {
     }, 6500);
 }
 
-// --- লিডারবোর্ড ---
 db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
     let html = ''; let users = [];
     snap.forEach(child => { users.push(child.val()); });
-    users.reverse().forEach((u, i) => { 
-        html += `<div class="flex justify-between p-3 bg-white/5 rounded-xl"><span class="text-xs text-gray-400">${i+1}. ${u.lastDate === today ? 'Active' : 'Player'}</span><span class="text-yellow-500 font-bold text-xs">${(u.balance || 0).toFixed(2)} 💎</span></div>`; 
-    });
+    users.reverse().forEach((u, i) => { html += `<div class="flex justify-between p-3 bg-white/5 rounded-xl"><span class="text-xs">${i+1}. Player</span><span class="text-yellow-500 font-bold text-xs">${(u.balance || 0).toFixed(2)} 💎</span></div>`; });
     document.getElementById('leader-list').innerHTML = html;
 });
 </script>
 </body>
-            </html>
-                                                                        
+    </html>
+                
