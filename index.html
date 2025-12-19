@@ -69,6 +69,27 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 <button id="spin-btn" onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-14 rounded-full shadow-lg active:scale-95 transition-all uppercase">SPIN NOW</button>
 </div>
 
+<div id="tasks-tab" class="tab-content">
+<div class="glass-card">
+<h2 class="text-yellow-500 font-black text-center mb-6 uppercase italic">Daily Tasks</h2>
+<div class="space-y-4">
+    <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex justify-between items-center">
+        <div>
+            <p class="text-sm font-bold">Watch Video Ad</p>
+            <p class="text-[10px] text-green-400">+5.00 💎</p>
+        </div>
+        <button onclick="handleAction('task_ad')" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-[10px] font-bold">GO</button>
+    </div>
+    <div class="bg-white/5 p-4 rounded-xl border border-white/10 flex justify-between items-center">
+        <div>
+            <p class="text-sm font-bold">Join Telegram</p>
+            <p class="text-[10px] text-green-400">+10.00 💎</p>
+        </div>
+        <button onclick="window.open('https://t.me/yourchannel')" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-[10px] font-bold">JOIN</button>
+    </div>
+</div>
+</div></div>
+
 <div id="shop-tab" class="tab-content text-center">
 <div class="glass-card">
 <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Mining Bot Shop</h2>
@@ -109,6 +130,7 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 
 <div class="nav-bar">
 <div onclick="switchTab('home-tab', this)" class="nav-item active"><div>🏠</div>Home</div>
+<div onclick="switchTab('tasks-tab', this)" class="nav-item"><div>📝</div>Tasks</div>
 <div onclick="switchTab('leader-tab', this)" class="nav-item"><div>🏆</div>Board</div>
 <div onclick="switchTab('refer-tab', this)" class="nav-item"><div>👥</div>Refer</div>
 <div onclick="switchTab('wallet-tab', this)" class="nav-item"><div>💳</div>Wallet</div>
@@ -148,10 +170,8 @@ if (data.lastDate !== today) { dailySpins = 0; db.ref('users/' + userId).update(
 document.getElementById('balance').innerText = bal.toFixed(2);
 document.getElementById('home-balance').innerText = bal.toFixed(2);
 document.getElementById('wallet-bal-display').innerText = bal.toFixed(2);
-// ডিসপ্লে লিমিট ১০ করা হয়েছে
 document.getElementById('spin-left').innerText = (10 - dailySpins);
 document.getElementById('active-bot').innerText = activeBot;
-// কন্ডিশন ১০ করা হয়েছে
 if (dailySpins >= 10) { document.getElementById('spin-btn').innerText = "LIMIT REACHED"; document.getElementById('spin-btn').disabled = true; document.getElementById('spin-btn').style.background = "#4b5563"; }
 calculateMining();
 });
@@ -184,7 +204,6 @@ document.getElementById('leader-list').innerHTML = html;
 });
 
 function handleAction(type) {
-// লিমিট চেক ১০ করা হয়েছে
 if (type === 'spin' && dailySpins >= 10) return alert("❌ Daily Limit Reached!");
 document.getElementById('ad-modal').style.display = 'flex';
 setTimeout(() => executeLogic(type), 2500);
@@ -193,6 +212,10 @@ setTimeout(() => executeLogic(type), 2500);
 function executeLogic(type) {
 document.getElementById('ad-modal').style.display = 'none';
 if (type === 'spin') spin();
+if (type === 'task_ad') {
+    db.ref('users/' + userId).update({ balance: bal + 5 });
+    alert("✅ Task Completed! +5.00 💎");
+}
 if (type === 'start_mining') db.ref('users/' + userId).update({ lastStartTime: Math.floor(Date.now() / 1000) });
 if (type === 'claim') {
 const e = parseFloat(document.getElementById('mined-amount').innerText);
