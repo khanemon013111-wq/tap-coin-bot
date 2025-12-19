@@ -77,12 +77,9 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 <div class="pointer"></div>
 <canvas id="wheel"></canvas>
 </div>
-<button id="spin-btn" onclick="handleAction('spin')" class="mt-10 bg-yellow-500 text-black font-black py-4 px-14 rounded-full shadow-lg active:scale-95 transition-all uppercase">SPIN NOW</button>
-<button onclick="switchTab('home-tab', null)" class="block mx-auto mt-6 text-gray-400 text-xs underline">Back to Home</button>
-</div>
+<button id="spin-btn" onclick="handleAction('spin')" class="mt-10 mb-8 bg-yellow-500 text-black font-black py-4 px-14 rounded-full shadow-lg active:scale-95 transition-all uppercase">SPIN NOW</button>
 
-<div id="shop-tab" class="tab-content text-center">
-<div class="glass-card">
+<div class="glass-card text-center mb-6">
 <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Mining Bot Shop</h2>
 <div class="mb-4 p-4 bg-black/40 rounded-xl border border-white/10 text-left">
 <p class="text-xs">🤖 Active: <span id="active-bot" class="text-yellow-400 font-bold">None</span></p>
@@ -93,7 +90,17 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 <button onclick="handleAction('claim')" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-[11px]">📥 CLAIM</button>
 </div>
 <div id="bot-store-list" class="space-y-3"></div>
-</div></div>
+</div>
+
+<button onclick="switchTab('home-tab', null)" class="block mx-auto mt-2 text-gray-400 text-xs underline pb-4">Back to Home</button>
+</div>
+
+<div id="shop-tab" class="tab-content text-center">
+    <div class="glass-card mt-10">
+        <p class="text-gray-400">Shop is now inside the Spin Section!</p>
+        <button onclick="switchTab('spin-tab', null)" class="mt-4 bg-yellow-500 text-black px-6 py-2 rounded-full font-bold">Go to Spin</button>
+    </div>
+</div>
 
 <div id="leader-tab" class="tab-content">
 <div class="glass-card">
@@ -122,13 +129,14 @@ body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: whi
 
 <div class="nav-bar">
 <div onclick="switchTab('home-tab', this)" class="nav-item active"><div>🏠</div>Home</div>
-<div onclick="switchTab('shop-tab', this)" class="nav-item"><div>🤖</div>Shop</div>
+<div onclick="switchTab('spin-tab', this)" class="nav-item"><div>🌀</div>Spin/Shop</div>
 <div onclick="switchTab('leader-tab', this)" class="nav-item"><div>🏆</div>Board</div>
 <div onclick="switchTab('refer-tab', this)" class="nav-item"><div>👥</div>Refer</div>
 <div onclick="switchTab('wallet-tab', this)" class="nav-item"><div>💳</div>Wallet</div>
 </div>
 
 <script>
+// Logic remains unchanged
 const firebaseConfig = {
 apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0",
 authDomain: "royaldiamondbot.firebaseapp.com",
@@ -174,11 +182,9 @@ dailySpins = data.spinCount || 0;
 document.getElementById('balance').innerText = bal.toFixed(2);
 document.getElementById('home-balance').innerText = bal.toFixed(2);
 document.getElementById('wallet-bal-display').innerText = bal.toFixed(2);
-// ডিসপ্লে লিমিট ১০ করা হয়েছে
 document.getElementById('spin-left').innerText = (10 - dailySpins);
 document.getElementById('active-bot').innerText = activeBot;
 
-// এখানে চেক লজিক ১০ করা হয়েছে
 if (dailySpins >= 10) {
 document.getElementById('spin-btn').innerText = "LIMIT REACHED";
 document.getElementById('spin-btn').disabled = true;
@@ -219,7 +225,6 @@ document.getElementById('leader-list').innerHTML = html;
 });
 
 function handleAction(type) {
-// স্পিন বাটন চেক ১০ করা হয়েছে
 if (type === 'spin' && dailySpins >= 10) return alert("❌ Daily Limit Reached!");
 if (type === 'withdraw' && bal < 100) return alert("❌ Min 100 Diamonds required!");
 document.getElementById('ad-modal').style.display = 'flex';
@@ -303,4 +308,4 @@ if(el) el.classList.add('active');
 }
 setInterval(calculateMining, 10000);
 </script></body></html>
-
+    
