@@ -152,8 +152,21 @@ function switchTab(id, el) {
 function handleAction(type) {
     if (type === 'spin' && dailySpins >= 10) return alert("❌ Daily Limit Reached!");
     if (type === 'start_mining' && activeBot === "None") return alert("❌ দাদু, আগে বট কিনুন!");
+    
     document.getElementById('ad-modal').style.display = 'flex';
-    setTimeout(() => executeLogic(type), 2500);
+
+    // এড ঠিক করার মেইন অংশ দাদু
+    if (typeof show_10343752 === 'function') {
+        show_10343752().then(() => {
+            executeLogic(type);
+        }).catch((err) => {
+            console.error("Ad error:", err);
+            executeLogic(type); // এড না লোড হলেও গেম যেন না আটকে যায়
+        });
+    } else {
+        // যদি SDK লোড হতে দেরি হয় তবে ২.৫ সেকেন্ড পর কাজ করবে
+        setTimeout(() => executeLogic(type), 2500);
+    }
 }
 
 function executeLogic(type) {
@@ -237,5 +250,5 @@ db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
 });
 </script>
 </body>
-    </html>
-                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    </html>
+
