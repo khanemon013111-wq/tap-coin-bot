@@ -3,238 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Diamond Pro - Max Level</title>
+    <title>Royal Diamond - Super Edition</title>
     <script src='//libtl.com/sdk.js' data-zone='10343752' data-sdk='show_10343752'></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
-        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; overflow-x: hidden; }
-        .tab-content { display: none; width: 100%; max-width: 400px; margin: auto; padding: 15px; animation: fadeIn 0.4s; }
+        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; }
+        .tab-content { display: none; width: 100%; max-width: 420px; margin: auto; padding: 15px; animation: fadeIn 0.4s; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; backdrop-filter: blur(10px); }
+        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; }
         .nav-item { font-size: 10px; color: #94a3b8; cursor: pointer; text-align: center; flex: 1; transition: 0.3s; }
         .nav-item.active { color: #fbbf24; font-weight: bold; transform: translateY(-3px); }
         #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
-        .mining-glow { box-shadow: 0 0 20px rgba(234, 179, 8, 0.2); }
     </style>
 </head>
 <body>
 
 <div id="ad-modal">
     <div class="text-center">
-        <div class="w-14 h-14 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p class="text-yellow-500 font-black uppercase text-xs tracking-widest">Ad Loading...</p>
+        <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+        <p class="text-yellow-500 font-bold uppercase text-[10px]">Processing Reward...</p>
     </div>
 </div>
 
-<div class="text-center my-8">
-    <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 uppercase italic tracking-tighter">Royal Diamond</h1>
+<div class="text-center mt-6">
+    <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 italic">ROYAL DIAMOND</h1>
 </div>
 
 <div id="home-tab" class="tab-content active-tab">
-    <div class="glass-card text-center mb-6">
-        <p class="text-gray-400 text-[10px] uppercase tracking-widest mb-1">Current Balance</p>
-        <div class="flex items-center justify-center gap-2">
-            <span class="text-3xl">💎</span>
-            <span id="home-balance" class="text-4xl font-black text-yellow-500 tracking-tight">0.00</span>
-        </div>
+    <div class="glass-card text-center mb-4">
+        <p class="text-gray-400 text-[10px] uppercase">Balance</p>
+        <p class="text-3xl font-black text-yellow-500">💎 <span id="home-balance">0</span></p>
     </div>
-
-    <div class="glass-card border-t-4 border-yellow-500 mining-glow">
-        <div class="flex justify-between items-start mb-6">
-            <div>
-                <h3 class="text-yellow-500 font-black italic text-lg leading-none">BOT MINER</h3>
-                <p class="text-[10px] text-blue-400 font-bold uppercase mt-1">Level: <span id="display-level" class="text-white">1</span> / 25</p>
-            </div>
-            <span id="bot-status-tag" class="text-[9px] bg-red-600 px-3 py-1 rounded-full text-white font-black uppercase shadow-lg">Offline</span>
+    <div class="glass-card border-t-4 border-yellow-500">
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-yellow-500 font-black text-xs uppercase italic">LVL <span id="display-level">1</span> BOT</span>
+            <span id="bot-status" class="text-[9px] bg-red-600 px-2 py-0.5 rounded text-white font-bold">OFFLINE</span>
         </div>
-
-        <div class="bg-black/40 p-5 rounded-2xl mb-6 border border-white/5">
-            <div class="flex justify-between mb-2">
-                <span class="text-[10px] text-gray-400 uppercase font-bold">Time Left: <span id="mine-timer" class="text-white font-mono">02:30:00</span></span>
-                <span id="mine-percent" class="text-[10px] text-yellow-500 font-black">0%</span>
+        <div class="bg-black/40 p-4 rounded-xl mb-4">
+            <div class="flex justify-between text-[10px] mb-2 text-gray-400">
+                <span>Time: <span id="mine-timer" class="text-white">02:30:00</span></span>
+                <span id="mine-percent" class="text-yellow-500">0%</span>
             </div>
-            <div class="w-full bg-gray-700 h-2 rounded-full overflow-hidden mb-4">
-                <div id="mine-progress-bar" class="bg-gradient-to-r from-yellow-600 to-yellow-400 h-full w-0 transition-all duration-1000"></div>
+            <div class="w-full bg-gray-700 h-1.5 rounded-full overflow-hidden">
+                <div id="mine-progress-bar" class="bg-yellow-500 h-full w-0"></div>
             </div>
-            <div class="text-center">
-                <p class="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Mining Value</p>
-                <p class="text-3xl font-black text-green-400 tracking-tighter"><span id="auto-mined-val">0.00</span> <span class="text-sm font-normal">💎</span></p>
-                <p class="text-[9px] text-yellow-500/50 mt-1 italic">Target Reward: <span id="level-reward-text">2,000</span> 💎</p>
-            </div>
+            <p class="text-center mt-3 text-2xl font-black text-green-400"><span id="auto-mined-val">0.00</span> 💎</p>
         </div>
-
-        <div class="grid grid-cols-2 gap-3 mb-4">
-            <button onclick="handleAction('start_auto_mine')" class="bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg transition-all active:scale-95">Start Bot</button>
-            <button onclick="handleAction('claim_auto_mine')" class="bg-green-600 hover:bg-green-700 text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg transition-all active:scale-95">Claim 💎</button>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+            <button onclick="handleAction('start_auto_mine')" class="bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase">Start</button>
+            <button onclick="handleAction('claim_auto_mine')" class="bg-green-600 py-3 rounded-xl font-bold text-xs uppercase">Claim</button>
         </div>
-
-        <button onclick="handleAction('upgrade_bot')" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black py-4 rounded-2xl font-black text-[11px] uppercase flex justify-between px-6 shadow-xl transition-all active:scale-95">
-            <span>Upgrade to Level <span id="next-level">2</span></span>
-            <span id="upgrade-cost-text" class="bg-black/20 px-2 py-0.5 rounded">100 💎</span>
+        <button onclick="handleAction('upgrade_bot')" class="w-full bg-yellow-500 text-black py-3 rounded-xl font-black text-[10px] uppercase flex justify-between px-4">
+            <span>Upgrade Level</span>
+            <span id="upgrade-cost-text">100 💎</span>
         </button>
     </div>
 </div>
 
-<div id="wallet-tab" class="tab-content">
-    <div class="glass-card text-center">
-        <h2 class="text-yellow-500 font-black mb-6 uppercase italic tracking-wider">Withdrawal</h2>
-        <div class="mb-6 p-4 bg-white/5 rounded-2xl border border-white/10">
-            <p class="text-[10px] text-gray-400 uppercase">Current Balance</p>
-            <p class="text-2xl font-black text-yellow-500"><span id="wallet-bal">0.00</span> 💎</p>
+<div id="tasks-tab" class="tab-content">
+    <h2 class="text-yellow-500 font-black mb-4 uppercase text-center italic">Daily Tasks</h2>
+    <div class="space-y-3">
+        <div class="glass-card flex justify-between items-center">
+            <div><p class="text-sm font-bold">Watch Video Ad</p><p class="text-[10px] text-green-400">+50 💎</p></div>
+            <button onclick="handleAction('task_ad')" class="bg-blue-600 px-4 py-2 rounded-lg text-[10px] font-bold">GO</button>
         </div>
-        <input type="number" id="uid-input" placeholder="Player UID" class="w-full p-4 bg-black/40 rounded-xl mb-3 text-center border border-white/10 text-white outline-none focus:border-yellow-500">
-        <input type="number" id="amount-input" placeholder="Amount (Min 10,000)" class="w-full p-4 bg-black/40 rounded-xl mb-6 text-center border border-white/10 text-white outline-none focus:border-yellow-500">
-        <button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-black py-4 rounded-2xl shadow-lg uppercase transition-all active:scale-95">Submit Request</button>
+        <div class="glass-card flex justify-between items-center">
+            <div><p class="text-sm font-bold">Daily Check-in</p><p class="text-[10px] text-green-400">+100 💎</p></div>
+            <button onclick="handleAction('daily_checkin')" class="bg-green-600 px-4 py-2 rounded-lg text-[10px] font-bold">CLAIM</button>
+        </div>
+    </div>
+</div>
+
+<div id="leader-tab" class="tab-content">
+    <h2 class="text-yellow-500 font-black mb-4 uppercase text-center italic">Top Players</h2>
+    <div id="leader-list" class="space-y-2">
+        <p class="text-center text-xs text-gray-500">Loading Ranking...</p>
+    </div>
+</div>
+
+<div id="refer-tab" class="tab-content text-center">
+    <div class="glass-card">
+        <h2 class="text-yellow-500 font-black mb-2 uppercase italic">Refer & Earn</h2>
+        <p class="text-[10px] text-gray-400 mb-6">Invite friends and get 200 💎 each!</p>
+        <div class="bg-black/40 p-4 rounded-xl mb-4 border border-dashed border-yellow-500/50">
+            <p id="ref-link" class="text-[10px] text-yellow-500 truncate mb-2">Loading link...</p>
+            <button onclick="copyRef()" class="bg-yellow-500 text-black px-6 py-2 rounded-lg font-bold text-xs">COPY LINK</button>
+        </div>
     </div>
 </div>
 
 <nav class="nav-bar">
     <div onclick="switchTab('home-tab', this)" class="nav-item active">🏠<br>Home</div>
-    <div onclick="switchTab('wallet-tab', this)" class="nav-item">💳<br>Wallet</div>
+    <div onclick="switchTab('tasks-tab', this)" class="nav-item">📝<br>Tasks</div>
+    <div onclick="switchTab('leader-tab', this)" class="nav-item">🏆<br>Board</div>
+    <div onclick="switchTab('refer-tab', this)" class="nav-item">👥<br>Refer</div>
 </nav>
 
 <script>
-// --- Firebase Config ---
 const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.random() * 89999 + 10000);
 localStorage.setItem('user_uid', userId);
+const referralLink = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
-let bal = 0; 
-let botLevel = 1; 
-let autoMineStart = 0;
+let bal = 0; let botLevel = 1; let autoMineStart = 0;
 
-// --- Data Sync ---
+// Sync Data
 db.ref('users/' + userId).on('value', snap => {
     const data = snap.val() || { balance: 0, botLevel: 1, autoMineStart: 0 };
-    bal = data.balance || 0;
-    botLevel = data.botLevel || 1;
-    autoMineStart = data.autoMineStart || 0;
-
+    bal = data.balance; botLevel = data.botLevel || 1; autoMineStart = data.autoMineStart || 0;
     document.getElementById('home-balance').innerText = bal.toLocaleString();
-    document.getElementById('wallet-bal').innerText = bal.toLocaleString();
     document.getElementById('display-level').innerText = botLevel;
-    document.getElementById('next-level').innerText = botLevel + 1;
-    
-    // Reward Logic: Level * 2000
-    document.getElementById('level-reward-text').innerText = (botLevel * 2000).toLocaleString();
-    
-    // Cost Logic: Double every level (Base 100)
-    let currentUpgradeCost = 100 * Math.pow(2, botLevel - 1);
-    document.getElementById('upgrade-cost-text').innerText = currentUpgradeCost.toLocaleString() + " 💎";
+    document.getElementById('upgrade-cost-text').innerText = (100 * Math.pow(2, botLevel - 1)).toLocaleString() + " 💎";
+    document.getElementById('ref-link').innerText = referralLink;
 });
 
-// --- Tab System ---
+// Leaderboard Logic
+db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
+    let listHtml = '';
+    let rank = 1;
+    let users = [];
+    snap.forEach(u => { users.push(u.val()); });
+    users.reverse().forEach(u => {
+        listHtml += `<div class="glass-card flex justify-between items-center py-3 px-4">
+            <div class="flex items-center gap-3">
+                <span class="text-yellow-500 font-black">#${rank++}</span>
+                <span class="text-xs font-bold">Player_${Math.floor(Math.random()*999)}</span>
+            </div>
+            <span class="text-xs text-green-400 font-bold">${(u.balance || 0).toLocaleString()} 💎</span>
+        </div>`;
+    });
+    document.getElementById('leader-list').innerHTML = listHtml;
+});
+
 function switchTab(id, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active-tab');
-    if(el) el.classList.add('active');
+    el.classList.add('active');
 }
 
-// --- Ad Handling ---
 function handleAction(type) {
     document.getElementById('ad-modal').style.display = 'flex';
     if (typeof show_10343752 === 'function') {
         show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
     } else {
-        setTimeout(() => executeLogic(type), 2500);
+        setTimeout(() => executeLogic(type), 2000);
     }
 }
 
-// --- Logic Execution ---
 function executeLogic(type) {
     document.getElementById('ad-modal').style.display = 'none';
-    const reward = botLevel * 2000;
-    const upgradeCost = 100 * Math.pow(2, botLevel - 1);
-
-    if (type === 'start_auto_mine') {
-        if(autoMineStart > 0) return alert("দাদু, অলরেডি মাইনিং চলছে!");
-        db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
-    }
-
-    if (type === 'claim_auto_mine') {
+    if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
+    if(type === 'claim_auto_mine') {
         const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
-        if(autoMineStart === 0) return alert("দাদু, আগে বট স্টার্ট করুন!");
-        if(elapsed < 9000) return alert("দাদু, এখনো সময় হয়নি!"); // 2h 30m = 9000s
-        
-        db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 });
-        alert(`✅ অভিনন্দন দাদু! ${reward.toLocaleString()} 💎 ক্লেইম সফল হয়েছে।`);
+        if(autoMineStart > 0 && elapsed >= 9000) {
+            db.ref('users/' + userId).update({ balance: bal + (botLevel * 2000), autoMineStart: 0 });
+            alert("Claimed!");
+        } else alert("Time not finished!");
     }
-
-    if (type === 'upgrade_bot') {
-        if(botLevel >= 25) return alert("দাদু, আপনি ম্যাক্স লেভেলে আছেন!");
-        if(bal < upgradeCost) return alert("দাদু, পর্যাপ্ত ডাইমন্ড নেই!");
-        
-        db.ref('users/' + userId).update({ 
-            balance: bal - upgradeCost, 
-            botLevel: botLevel + 1,
-            autoMineStart: 0 // Reset mining on upgrade for safety
-        });
-        alert(`🚀 লেভেল ${botLevel + 1} আপগ্রেড সফল!`);
+    if(type === 'upgrade_bot') {
+        let cost = 100 * Math.pow(2, botLevel - 1);
+        if(bal >= cost && botLevel < 25) db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
+        else alert("Need more 💎");
     }
-
-    if (type === 'withdraw') {
-        let uid = document.getElementById('uid-input').value;
-        let amt = parseFloat(document.getElementById('amount-input').value);
-        if(!uid || amt < 10000 || amt > bal) return alert("তথ্য সঠিক নয় দাদু!");
-        db.ref('withdrawals').push({ user: userId, uid: uid, amount: amt, status: 'pending', date: new Date().toLocaleString() });
-        db.ref('users/' + userId).update({ balance: bal - amt });
-        alert("✅ উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!");
-    }
+    if(type === 'task_ad') { db.ref('users/' + userId).update({ balance: bal + 50 }); alert("+50 💎 Added!"); }
+    if(type === 'daily_checkin') { db.ref('users/' + userId).update({ balance: bal + 100 }); alert("Daily Bonus +100 💎"); }
 }
 
-// --- Mining Real-time Update ---
-function updateMiningUI() {
-    if (autoMineStart === 0) {
-        document.getElementById('bot-status-tag').innerText = "Offline";
-        document.getElementById('bot-status-tag').className = "text-[9px] bg-red-600 px-3 py-1 rounded-full text-white font-black uppercase shadow-lg";
-        document.getElementById('mine-timer').innerText = "02:30:00";
-        document.getElementById('mine-progress-bar').style.width = "0%";
-        document.getElementById('auto-mined-val').innerText = "0.00";
-        document.getElementById('mine-percent').innerText = "0%";
-        return;
-    }
+function copyRef() {
+    navigator.clipboard.writeText(referralLink);
+    alert("Refer Link Copied!");
+}
 
-    const now = Math.floor(Date.now() / 1000);
-    const elapsed = now - autoMineStart;
-    const duration = 9000; // 2h 30m
-    const reward = botLevel * 2000;
-
-    if (elapsed >= duration) {
-        document.getElementById('bot-status-tag').innerText = "Ready to Claim";
-        document.getElementById('bot-status-tag').className = "text-[9px] bg-green-500 px-3 py-1 rounded-full text-white font-black uppercase shadow-lg animate-bounce";
-        document.getElementById('mine-timer').innerText = "00:00:00";
-        document.getElementById('mine-progress-bar').style.width = "100%";
-        document.getElementById('auto-mined-val').innerText = reward.toFixed(2);
-        document.getElementById('mine-percent').innerText = "100%";
-    } else {
+setInterval(() => {
+    if (autoMineStart === 0) return;
+    const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
+    const duration = 9000;
+    if (elapsed < duration) {
         const timeLeft = duration - elapsed;
-        const h = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
         const m = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
         const s = (timeLeft % 60).toString().padStart(2, '0');
-        
-        document.getElementById('bot-status-tag').innerText = "Mining...";
-        document.getElementById('bot-status-tag').className = "text-[9px] bg-yellow-500 px-3 py-1 rounded-full text-black font-black uppercase shadow-lg animate-pulse";
-        document.getElementById('mine-timer').innerText = `${h}:${m}:${s}`;
-        
-        const progress = (elapsed / duration) * 100;
-        document.getElementById('mine-progress-bar').style.width = progress + "%";
-        document.getElementById('mine-percent').innerText = Math.floor(progress) + "%";
-        document.getElementById('auto-mined-val').innerText = ((elapsed / duration) * reward).toFixed(2);
+        document.getElementById('mine-timer').innerText = `00:${m}:${s}`;
+        document.getElementById('mine-progress-bar').style.width = (elapsed/duration*100) + "%";
+        document.getElementById('mine-percent').innerText = Math.floor(elapsed/duration*100) + "%";
+        document.getElementById('auto-mined-val').innerText = ((elapsed/duration)*(botLevel*2000)).toFixed(2);
+        document.getElementById('bot-status').innerText = "MINING";
+        document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
+    } else {
+        document.getElementById('bot-status').innerText = "READY";
+        document.getElementById('bot-status').className = "text-[9px] bg-green-500 px-2 py-0.5 rounded text-white font-bold animate-bounce";
     }
-}
-
-setInterval(updateMiningUI, 1000);
+}, 1000);
 </script>
-
 </body>
-            </html>
-                                                                                    
+</html>
+
