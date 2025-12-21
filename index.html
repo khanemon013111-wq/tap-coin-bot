@@ -19,21 +19,22 @@
         .float-btn { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; cursor: pointer; }
         .spin-float { background: linear-gradient(45deg, #fbbf24, #d97706); }
         .shop-float { background: linear-gradient(45deg, #3b82f6, #1d4ed8); }
-        .level-row { display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 10px; }
-        .level-row.current { background: rgba(251, 191, 36, 0.2); border-radius: 8px; border: 1px solid #fbbf24; color: #fbbf24; font-weight: bold; }
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; }
         .nav-item { font-size: 10px; color: #94a3b8; text-align: center; flex: 1; cursor: pointer; }
         .nav-item.active { color: #fbbf24; font-weight: bold; }
         #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
-        .leader-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .rank-badge { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; margin-right: 10px; }
-        .my-sticky-rank { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: linear-gradient(90deg, #fbbf24, #d97706); color: black; border-radius: 12px; padding: 10px 20px; font-weight: 900; display: flex; justify-content: space-between; box-shadow: 0 -4px 15px rgba(0,0,0,0.4); z-index: 400; }
         
-        /* Spin Wheel Style - শুধুমাত্র এটি যোগ করা হয়েছে */
+        /* Level Chart */
+        .level-row { display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 10px; }
+        .level-row.current { background: rgba(251, 191, 36, 0.2); border-radius: 8px; border: 1px solid #fbbf24; color: #fbbf24; font-weight: bold; }
+
+        /* Wheel */
         .wheel-container { position: relative; width: 280px; height: 280px; margin: 20px auto; border-radius: 50%; border: 8px solid #b45309; box-shadow: 0 0 30px rgba(251, 191, 36, 0.4); }
         #spinCanvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 7s cubic-bezier(0.15, 0, 0.1, 1); }
         .wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 100; }
+        
+        /* Input Style */
+        .royal-input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; width: 100%; color: white; outline: none; margin-bottom: 10px; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -56,13 +57,14 @@
 
 <div id="home-tab" class="tab-content active-tab">
     <div class="glass-card text-center mb-4">
-        <p class="text-gray-400 text-[10px] uppercase">Main Balance</p>
-        <p class="text-3xl font-black text-yellow-500">💎 <span id="home-balance">0</span></p>
+        <p class="text-gray-400 text-[10px] uppercase">Total Wealth</p>
+        <p class="text-3xl font-black text-yellow-500 mb-1">💎 <span id="home-balance">0</span></p>
+        <p class="text-lg font-bold text-green-400">💵 $<span id="usd-balance">0.00</span></p>
     </div>
     
     <div class="glass-card border-t-4 border-yellow-500 mb-4">
         <div class="flex justify-between items-center mb-4">
-            <span class="text-yellow-500 font-black text-xs italic">ACTIVE BOT LVL: <span id="display-level">1</span></span>
+            <span class="text-yellow-500 font-black text-xs italic uppercase">Bot Lvl: <span id="display-level">1</span></span>
             <span id="bot-status" class="text-[9px] bg-red-600 px-2 py-0.5 rounded text-white font-bold">OFFLINE</span>
         </div>
         <div class="bg-black/40 p-5 rounded-xl mb-4">
@@ -79,7 +81,7 @@
             <button id="btn-start" onclick="handleAction('start_auto_mine')" class="bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Start</button>
             <button id="btn-claim" onclick="handleAction('claim_auto_mine')" class="bg-green-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Claim</button>
         </div>
-        <button id="upgrade-btn" onclick="handleAction('upgrade_bot')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 transition-all duration-300">
+        <button id="upgrade-btn" onclick="handleAction('upgrade_bot')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6">
             <span>Upgrade Bot</span>
             <span id="upgrade-cost-text">100 💎</span>
         </button>
@@ -87,13 +89,35 @@
 
     <div class="glass-card">
         <h3 class="text-yellow-500 font-black text-xs mb-4 uppercase italic">Bot Level History Chart</h3>
-        <div id="level-list-container" class="max-height-[300px] overflow-y-auto pr-2" style="max-height: 400px;"></div>
+        <div id="level-list-container" class="max-h-[300px] overflow-y-auto"></div>
+    </div>
+</div>
+
+<div id="wallet-tab" class="tab-content">
+    <div class="text-center mb-4"><h2 class="text-yellow-500 font-black text-xl italic uppercase">Withdraw Wallet</h2></div>
+    
+    <div class="glass-card mb-4 border-l-4 border-green-500">
+        <div class="flex justify-between items-center mb-4">
+            <p class="text-[10px] text-gray-400 uppercase">Withdrawal Balance</p>
+            <p class="text-green-400 font-black text-xl">$ <span id="wallet-usd-bal">0.00</span></p>
+        </div>
+        <p class="text-[9px] text-red-400 mb-4 font-bold uppercase">* Minimum Withdrawal: $20.00</p>
+        
+        <input type="number" id="withdraw-amount" placeholder="Enter Amount ($)" class="royal-input">
+        <input type="text" id="binance-uid" placeholder="Enter Binance UID" class="royal-input">
+        
+        <button id="btn-withdraw" onclick="submitWithdraw()" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg mt-2 opacity-50 cursor-not-allowed">Request Withdrawal</button>
+    </div>
+
+    <div class="glass-card border-l-4 border-blue-500">
+        <p class="text-blue-400 font-black text-sm uppercase italic">Diamond Withdrawal</p>
+        <p class="text-gray-500 font-bold text-[10px] mt-2 animate-pulse uppercase tracking-widest">⚠️ Coming Soon...</p>
     </div>
 </div>
 
 <div id="leader-tab" class="tab-content">
-    <div class="text-center mb-4"><h2 class="text-yellow-500 font-black text-xl italic uppercase tracking-widest">Global Board</h2><p class="text-[9px] text-gray-400 uppercase">Top 500 Miners</p></div>
-    <div class="glass-card p-0 overflow-hidden"><div id="leader-list-container" class="max-h-[55vh] overflow-y-auto"><p class="text-center p-10 text-xs text-gray-500">Loading Rankings...</p></div></div>
+    <div class="text-center mb-4"><h2 class="text-yellow-500 font-black text-xl italic uppercase tracking-widest">Global Board</h2></div>
+    <div class="glass-card p-0 overflow-hidden"><div id="leader-list-container" class="max-h-[55vh] overflow-y-auto"></div></div>
     <div id="my-sticky-rank" class="my-sticky-rank" style="display:none;"><span class="text-[10px]">YOU: #<span id="my-rank-pos">--</span></span><span class="text-[10px]">💎 <span id="my-rank-bal">0</span></span></div>
 </div>
 
@@ -105,14 +129,12 @@
             <canvas id="spinCanvas"></canvas>
         </div>
         <button id="spinBtn" onclick="startTheSpin()" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black uppercase shadow-lg mt-4">SPIN (100K 💎)</button>
-        <button onclick="switchTab('home-tab')" class="mt-4 text-[10px] text-gray-400 uppercase font-bold">← Back to Home</button>
     </div>
 </div>
 
-<div id="shop-tab" class="tab-content text-center"><div class="glass-card py-20"><div class="text-6xl mb-6">🛒</div><h2 class="text-blue-500 font-black text-2xl mb-2 italic uppercase">Diamond Shop</h2><p class="text-gray-400 font-bold animate-pulse uppercase tracking-widest text-xs">Coming Soon...</p></div></div>
-<div id="tasks-tab" class="tab-content text-center"><div class="glass-card py-20"><div class="text-6xl mb-6">📝</div><h2 class="text-green-500 font-black text-2xl mb-2 italic uppercase">Daily Tasks</h2><p class="text-gray-400 font-bold animate-pulse uppercase tracking-widest text-xs">Coming Soon...</p></div></div>
-<div id="refer-tab" class="tab-content text-center"><div class="glass-card"><h2 class="text-yellow-500 font-bold mb-2">Refer Friends</h2><p class="text-[10px] text-green-400 mb-4 font-bold">Get 50,000 💎 per refer!</p><p id="ref-link" class="text-[9px] mb-4 text-gray-500 truncate bg-black/30 p-2 rounded">Loading...</p><button onclick="copyRef()" class="bg-yellow-500 text-black px-8 py-2 rounded-lg font-bold text-xs uppercase">Copy Link</button></div></div>
-<div id="wallet-tab" class="tab-content text-center"><div class="glass-card py-20"><div class="text-5xl mb-4">💳</div><h2 class="text-yellow-500 font-black text-xl mb-2 italic">WITHDRAW</h2><p class="text-gray-400 text-sm font-bold animate-pulse uppercase tracking-widest">COMING SOON...</p></div></div>
+<div id="tasks-tab" class="tab-content text-center"><div class="glass-card py-20 uppercase font-black">Coming Soon</div></div>
+<div id="refer-tab" class="tab-content text-center"><div class="glass-card"><h2 class="text-yellow-500 font-bold mb-2">Refer</h2><p id="ref-link" class="text-[9px] mb-4 text-gray-500 truncate bg-black/30 p-2 rounded"></p><button onclick="copyRef()" class="bg-yellow-500 text-black px-8 py-2 rounded-lg font-bold text-xs uppercase">Copy Link</button></div></div>
+<div id="shop-tab" class="tab-content text-center"><div class="glass-card py-20 uppercase font-black">Shop Soon</div></div>
 
 <nav class="nav-bar">
     <div onclick="switchTab('home-tab', this)" class="nav-item active">🏠<br>Home</div>
@@ -131,15 +153,28 @@ let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.rando
 localStorage.setItem('user_uid', userId);
 const referralLink = window.location.origin + window.location.pathname + "?start=" + userId;
 
-let bal = 0; let botLevel = 1; let autoMineStart = 0;
+let bal = 0; let botLevel = 1; let autoMineStart = 0; let usdBal = 0;
 
 db.ref('users/' + userId).on('value', snap => {
-    const data = snap.val() || { balance: 0, botLevel: 1, autoMineStart: 0 };
+    const data = snap.val() || { balance: 0, botLevel: 1, autoMineStart: 0, usdBalance: 0 };
     bal = data.balance; botLevel = data.botLevel || 1; autoMineStart = data.autoMineStart || 0;
+    usdBal = data.usdBalance || 0;
     document.getElementById('home-balance').innerText = Math.floor(bal).toLocaleString();
+    document.getElementById('usd-balance').innerText = usdBal.toFixed(2);
+    document.getElementById('wallet-usd-bal').innerText = usdBal.toFixed(2);
     document.getElementById('display-level').innerText = botLevel;
     document.getElementById('upgrade-cost-text').innerText = (100 * Math.pow(2, botLevel - 1)).toLocaleString() + " 💎";
     document.getElementById('ref-link').innerText = referralLink;
+    
+    // Withdrawal Button Control
+    const wBtn = document.getElementById('btn-withdraw');
+    if(usdBal >= 20) {
+        wBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        wBtn.disabled = false;
+    } else {
+        wBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        wBtn.disabled = true;
+    }
     generateLevelChart(botLevel);
 });
 
@@ -148,13 +183,12 @@ function generateLevelChart(currentLvl) {
     for(let i=1; i<=25; i++) {
         let income = i * 2000;
         let cost = 100 * Math.pow(2, i-1);
-        let activeClass = (i === currentLvl) ? 'current' : '';
-        html += `<div class="level-row ${activeClass}"><span>LVL ${i}</span><span>${income.toLocaleString()} 💎</span><span>${(i === 25 ? 'MAX' : cost.toLocaleString())}</span></div>`;
+        html += `<div class="level-row ${i === currentLvl ? 'current' : ''}"><span>LVL ${i}</span><span>${income.toLocaleString()} 💎</span><span>${(i === 25 ? 'MAX' : cost.toLocaleString())}</span></div>`;
     }
     document.getElementById('level-list-container').innerHTML = html;
 }
 
-// Spin Logic Start
+// Spin Logic
 const canvas = document.getElementById('spinCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = 500; canvas.height = 500;
@@ -173,7 +207,7 @@ drawWheel();
 
 let isSpinning = false;
 function startTheSpin() {
-    if (isSpinning || bal < 100000) return alert("দাদু, আপনার ব্যালেন্সে ১ লক্ষ ডায়মন্ড নেই!");
+    if (isSpinning || bal < 100000) return alert("Need 100K Diamonds!");
     isSpinning = true; db.ref('users/' + userId).update({ balance: bal - 100000 });
     const winIdx = [0,1,2,3,4,6,7,8,9,10,12,13,14,16,17][Math.floor(Math.random()*15)];
     const deg = 3600 + (360 - (winIdx * 20));
@@ -181,13 +215,35 @@ function startTheSpin() {
     setTimeout(() => {
         isSpinning = false; const reward = prizes[winIdx];
         if (reward.type === "d") db.ref('users/' + userId).update({ balance: (bal - 100000) + reward.v });
-        else db.ref('users/' + userId).update({ usdBalance: (usdBal || 0) + reward.v });
-        alert("🎉 অভিনন্দন! আপনি জিতেছেন " + reward.t);
+        else db.ref('users/' + userId).update({ usdBalance: usdBal + reward.v });
+        alert("Won: " + reward.t);
         canvas.style.transition = "none"; canvas.style.transform = `rotate(${deg % 360}deg)`;
         setTimeout(() => canvas.style.transition = "transform 7s cubic-bezier(0.15, 0, 0.1, 1)", 100);
     }, 7200);
 }
-// Spin Logic End
+
+// Withdraw Logic
+function submitWithdraw() {
+    const amount = parseFloat(document.getElementById('withdraw-amount').value);
+    const uid = document.getElementById('binance-uid').value;
+    
+    if(!amount || amount < 20) return alert("Minimum $20 needed!");
+    if(amount > usdBal) return alert("Insufficient dollar balance!");
+    if(!uid || uid.length < 5) return alert("Enter valid Binance UID!");
+    
+    db.ref('withdrawals').push({
+        userId: userId,
+        amount: amount,
+        binanceUID: uid,
+        timestamp: Date.now(),
+        status: "Pending"
+    }).then(() => {
+        db.ref('users/' + userId).update({ usdBalance: usdBal - amount });
+        alert("Withdrawal Request Sent Successfully!");
+        document.getElementById('withdraw-amount').value = "";
+        document.getElementById('binance-uid').value = "";
+    });
+}
 
 function handleAction(type) {
     if(type === 'claim_auto_mine') {
@@ -195,21 +251,14 @@ function handleAction(type) {
         if(autoMineStart === 0 || elapsed < 9000) return;
     }
     document.getElementById('ad-modal').style.display = 'flex';
-    if (typeof show_10343752 === 'function') {
-        show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
-    } else { setTimeout(() => executeLogic(type), 1500); }
-}
-
-function executeLogic(type) {
-    document.getElementById('ad-modal').style.display = 'none';
-    const reward = botLevel * 2000;
-    const upgradeCost = 100 * Math.pow(2, botLevel - 1);
-    if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
-    if(type === 'claim_auto_mine') { db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 }); alert("Claimed!"); }
-    if(type === 'upgrade_bot') {
-        if(bal >= upgradeCost && botLevel < 25) db.ref('users/' + userId).update({ balance: bal - upgradeCost, botLevel: botLevel + 1 });
-        else alert("Need more 💎!");
-    }
+    setTimeout(() => {
+        document.getElementById('ad-modal').style.display = 'none';
+        const reward = botLevel * 2000;
+        const cost = 100 * Math.pow(2, botLevel - 1);
+        if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
+        if(type === 'claim_auto_mine') db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 });
+        if(type === 'upgrade_bot' && bal >= cost && botLevel < 25) db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
+    }, 1500);
 }
 
 function switchTab(id, el) {
@@ -222,37 +271,28 @@ function switchTab(id, el) {
 }
 
 function loadLeaderboard() {
-    db.ref('users').orderByChild('balance').limitToLast(500).once('value', snapshot => {
-        let users = [];
-        snapshot.forEach(child => { users.push({ id: child.key, ...child.val() }); });
+    db.ref('users').orderByChild('balance').limitToLast(100).once('value', snapshot => {
+        let users = []; snapshot.forEach(child => { users.push({ id: child.key, ...child.val() }); });
         users.reverse();
-        let html = ''; let myRank = "500+";
+        let html = '';
         users.forEach((user, index) => {
-            let rank = index + 1; let isMe = user.id === userId; if(isMe) myRank = rank;
-            let badgeColor = rank === 1 ? 'bg-yellow-500 text-black' : rank === 2 ? 'bg-gray-300 text-black' : rank === 3 ? 'bg-orange-600' : 'bg-white/10';
-            html += `<div class="leader-item ${isMe ? 'bg-yellow-500/20' : ''}"><div class="flex items-center"><div class="rank-badge ${badgeColor}">${rank}</div><div><p class="text-[10px] font-bold ${isMe ? 'text-yellow-400' : 'text-white'}">${user.id.substring(0, 12)}${isMe ? ' (YOU)' : ''}</p><p class="text-[7px] text-gray-500 uppercase">Bot Level ${user.botLevel || 1}</p></div></div><p class="text-xs font-black text-yellow-500">💎 ${Math.floor(user.balance).toLocaleString()}</p></div>`;
+            html += `<div class="leader-item ${user.id === userId ? 'bg-yellow-500/10' : ''}"><div class="flex items-center"><div class="rank-badge bg-white/10 p-2 rounded-full mr-3 text-[9px]">${index+1}</div><p class="text-[10px] font-bold">${user.id.substring(0,10)}</p></div><p class="text-xs font-black text-yellow-500">💎 ${Math.floor(user.balance).toLocaleString()}</p></div>`;
         });
         document.getElementById('leader-list-container').innerHTML = html;
-        document.getElementById('my-rank-pos').innerText = myRank;
-        document.getElementById('my-rank-bal').innerText = Math.floor(bal).toLocaleString();
     });
 }
 
-function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-link').innerText).then(() => alert("Link Copied!")); }
+function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-link').innerText).then(() => alert("Copied!")); }
 
 setInterval(() => {
     const startBtn = document.getElementById('btn-start');
     const claimBtn = document.getElementById('btn-claim');
     const upBtn = document.getElementById('upgrade-btn');
-    const upgradeCost = 100 * Math.pow(2, botLevel - 1);
+    const cost = 100 * Math.pow(2, botLevel - 1);
 
-    if (bal < upgradeCost) {
-        upBtn.style.opacity = "0.5"; upBtn.style.filter = "grayscale(1)"; upBtn.style.cursor = "not-allowed"; upBtn.disabled = true;
-    } else {
-        upBtn.style.opacity = "1"; upBtn.style.filter = "grayscale(0)"; upBtn.style.cursor = "pointer"; upBtn.disabled = false;
-    }
+    if (bal < cost) { upBtn.style.opacity = "0.5"; upBtn.disabled = true; } 
+    else { upBtn.style.opacity = "1"; upBtn.disabled = false; }
 
-    if (!startBtn || !claimBtn) return;
     if (autoMineStart === 0) {
         startBtn.disabled = false; claimBtn.disabled = true;
         document.getElementById('mine-timer').innerText = "02:30:00";
@@ -280,5 +320,5 @@ setInterval(() => {
 }, 1000);
 </script>
 </body>
-    </html>
-                                                                                                                                                                                              
+</html>
+
