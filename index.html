@@ -3,74 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Royal Diamond - Real Notcoin Style</title>
+    <title>Royal Diamond - Boost Fixed</title>
     <script src='//libtl.com/sdk.js' data-zone='10343752' data-sdk='show_10343752'></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Poppins:wght@400;600;900&display=swap');
-        body { background: #000; color: white; font-family: 'Poppins', sans-serif; overflow: hidden; height: 100vh; }
-        
-        /* Home Tapper Styling */
-        .coin-container { position: relative; width: 260px; height: 260px; margin: auto; }
-        .main-coin { width: 100%; height: 100%; background: radial-gradient(circle, #fbbf24 0%, #b45309 100%); border-radius: 50%; box-shadow: 0 0 50px rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s; user-select: none; border: 10px solid rgba(255,255,255,0.1); }
-        .main-coin:active { transform: scale(0.92); }
-
-        .floating-text { position: absolute; color: white; font-size: 30px; font-weight: 900; pointer-events: none; animation: floatUp 0.7s ease-out forwards; font-family: 'Orbitron', sans-serif; z-index: 50; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-140px); } }
-
-        .energy-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); transition: width 0.3s; box-shadow: 0 0 10px #fbbf24; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Poppins:wght@400;700&display=swap');
+        body { background: #000; color: white; font-family: 'Poppins', sans-serif; overflow: hidden; height: 100vh; margin: 0; }
         
         /* Tab Management */
-        .tab-content { display: none; height: calc(100vh - 80px); overflow-y: auto; padding: 25px; }
-        .active-tab { display: block; }
+        .tab-content { display: none; height: calc(100vh - 80px); overflow-y: auto; padding: 20px; padding-bottom: 100px; }
+        .active-tab { display: block !important; }
 
-        /* Boost Cards (Notcoin Style) */
-        .boost-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: 24px; display: flex; align-items: center; gap: 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; }
-        .boost-card:active { transform: scale(0.98); background: rgba(255,255,255,0.1); }
-        .boost-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.1); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        /* Main Tapper */
+        .coin-container { position: relative; width: 240px; height: 240px; margin: 40px auto; }
+        .main-coin { width: 100%; height: 100%; background: radial-gradient(circle, #fbbf24 0%, #b45309 100%); border-radius: 50%; border: 8px solid rgba(255,255,255,0.1); box-shadow: 0 0 40px rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s; user-select: none; }
+        .main-coin:active { transform: scale(0.95); }
+
+        /* Boost Cards Styling - একদম নোট কয়েনের মতো */
+        .boost-item { background: #1a1a1a; border: 1px solid #333; border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; }
+        .boost-item:active { transform: scale(0.98); background: #222; }
+        .icon-box { width: 45px; height: 45px; background: #333; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0a0a0a; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #222; z-index: 100; }
-        .nav-item { color: #555; font-size: 11px; text-align: center; cursor: pointer; }
-        .nav-item.active { color: #fbbf24; }
+        .energy-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); transition: width 0.3s; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0d0d0d; display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid #222; z-index: 1000; }
+        .nav-link { color: #555; font-size: 11px; text-align: center; flex: 1; cursor: pointer; }
+        .nav-link.active { color: #fbbf24; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="home-tab" class="tab-content active-tab flex flex-col justify-between">
-    <div class="text-center pt-10">
-        <p class="text-gray-500 text-xs uppercase tracking-[4px]">Total Balance</p>
+<div id="home-tab" class="tab-content active-tab">
+    <div class="text-center mt-10">
+        <p class="text-gray-500 text-[10px] uppercase tracking-widest">Available Balance</p>
         <h1 class="text-5xl font-black mt-2" style="font-family: 'Orbitron';">💎 <span id="balance">0</span></h1>
     </div>
 
-    <div class="coin-container flex items-center justify-center">
+    <div class="coin-container">
         <div id="tapper" class="main-coin">
-            <span class="text-8xl">💎</span>
+            <span class="text-7xl">💎</span>
         </div>
     </div>
 
-    <div class="pb-10">
-        <div class="flex justify-between px-6 mb-2">
-            <span class="text-xs font-bold text-yellow-500 italic">⚡ <span id="energy-text">1000</span> / <span id="max-energy-display">1000</span></span>
-            <span class="text-xs text-gray-400">Multi: x<span id="tap-multi">1</span></span>
+    <div class="max-w-[90%] mx-auto mt-10">
+        <div class="flex justify-between mb-2">
+            <span class="text-xs text-yellow-500 font-bold">⚡ <span id="energy-now">1000</span> / <span id="energy-max">1000</span></span>
+            <span class="text-xs text-gray-500">Tap Power: x<span id="tap-val">1</span></span>
         </div>
-        <div class="w-full h-3 bg-white/10 rounded-full overflow-hidden mx-auto max-w-[95%]">
-            <div id="energy-fill" class="energy-fill" style="width: 100%;"></div>
+        <div class="w-full h-3 bg-gray-900 rounded-full overflow-hidden border border-gray-800">
+            <div id="energy-bar" class="energy-fill" style="width: 100%;"></div>
         </div>
     </div>
 </div>
 
 <div id="boost-tab" class="tab-content">
     <h2 class="text-3xl font-black mb-1 italic">Boosters</h2>
-    <p class="text-gray-500 text-xs mb-8">Increase your mining power</p>
+    <p class="text-gray-500 text-xs mb-8 uppercase tracking-tighter">Your Mining Enhancements</p>
 
-    <div class="space-y-4">
-        <div onclick="buyUpgrade('multi')" class="boost-card">
-            <div class="boost-icon">👆</div>
+    <div id="boost-list" class="space-y-4">
+        
+        <div onclick="buyUpgrade('multi')" class="boost-item">
+            <div class="icon-box">👆</div>
             <div class="flex-1">
                 <p class="font-bold text-sm">Multitap</p>
-                <p class="text-[10px] text-gray-500">Increase diamonds per tap</p>
+                <p class="text-[10px] text-gray-400">Increase diamonds per tap</p>
             </div>
             <div class="text-right">
                 <p class="text-xs font-bold text-yellow-500" id="cost-multi">100 💎</p>
@@ -78,11 +75,11 @@
             </div>
         </div>
 
-        <div onclick="buyUpgrade('limit')" class="boost-card">
-            <div class="boost-icon">🔋</div>
+        <div onclick="buyUpgrade('limit')" class="boost-item">
+            <div class="icon-box">🔋</div>
             <div class="flex-1">
                 <p class="font-bold text-sm">Energy Limit</p>
-                <p class="text-[10px] text-gray-500">+500 Max energy capacity</p>
+                <p class="text-[10px] text-gray-400">+500 max capacity</p>
             </div>
             <div class="text-right">
                 <p class="text-xs font-bold text-yellow-500" id="cost-limit">200 💎</p>
@@ -90,11 +87,11 @@
             </div>
         </div>
 
-        <div onclick="buyUpgrade('speed')" class="boost-card">
-            <div class="boost-icon">⚡</div>
+        <div onclick="buyUpgrade('speed')" class="boost-item">
+            <div class="icon-box">⚡</div>
             <div class="flex-1">
                 <p class="font-bold text-sm">Recharge Speed</p>
-                <p class="text-[10px] text-gray-500">Restore energy faster</p>
+                <p class="text-[10px] text-gray-400">Restore energy faster</p>
             </div>
             <div class="text-right">
                 <p class="text-xs font-bold text-yellow-500" id="cost-speed">500 💎</p>
@@ -102,148 +99,115 @@
             </div>
         </div>
 
-        <div onclick="buyUpgrade('bot')" class="boost-card border-yellow-500/20">
-            <div class="boost-icon">🤖</div>
+        <div onclick="buyUpgrade('bot')" class="boost-item border-yellow-500/40">
+            <div class="icon-box">🤖</div>
             <div class="flex-1">
-                <p class="font-bold text-sm">Tap Bot</p>
-                <p class="text-[10px] text-gray-500">Auto mine while offline (2.5h)</p>
+                <p class="font-bold text-sm text-yellow-500">Auto Tap Bot</p>
+                <p class="text-[10px] text-gray-400">Works while you're away</p>
             </div>
             <div class="text-right">
-                <p class="text-xs font-bold text-blue-400">START</p>
-                <p class="text-[9px] text-gray-600" id="bot-info">Inactive</p>
+                <p class="text-[10px] font-bold text-blue-400">START</p>
+                <p class="text-[9px] text-gray-600">2.5 Hours</p>
             </div>
         </div>
+
     </div>
 </div>
 
 <nav class="nav-bar">
-    <div onclick="switchTab('home-tab', this)" class="nav-item active">🏠<br>Home</div>
-    <div onclick="switchTab('boost-tab', this)" class="nav-item">🚀<br>Boost</div>
-    <div onclick="showBonus()" class="nav-item">💰<br>Bonus</div>
+    <div onclick="switchTab('home-tab', this)" class="nav-link active">🏠<br>Home</div>
+    <div onclick="switchTab('boost-tab', this)" class="nav-link">🚀<br>Boost</div>
+    <div onclick="alert('Bonus Coming!')" class="nav-link">🎁<br>Bonus</div>
 </nav>
 
 <script>
-// Firebase Initialization
+// Firebase Config
 const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let userId = localStorage.getItem('user_uid') || "RD_" + Math.floor(Math.random() * 89999 + 10000);
+let userId = localStorage.getItem('user_uid') || "RD_" + Math.floor(Math.random() * 90000);
 localStorage.setItem('user_uid', userId);
 
-// Global State
-let bal = 0, multiLvl = 1, limitLvl = 1, speedLvl = 1;
-let energy = 1000, maxEnergy = 1000, rechargeRate = 1;
+let bal = 0, m_lvl = 1, l_lvl = 1, s_lvl = 1;
+let energy = 1000, max_energy = 1000, recharge = 1;
 
-// Load Data from Firebase
+// Load Data
 db.ref('users/' + userId).on('value', snap => {
-    const data = snap.val() || { balance: 0, multiLvl: 1, limitLvl: 1, speedLvl: 1 };
-    bal = data.balance || 0;
-    multiLvl = data.multiLvl || 1;
-    limitLvl = data.limitLvl || 1;
-    speedLvl = data.speedLvl || 1;
+    const d = snap.val() || {};
+    bal = d.balance || 0;
+    m_lvl = d.multiLvl || 1;
+    l_lvl = d.limitLvl || 1;
+    s_lvl = d.speedLvl || 1;
 
-    // Logic updates
-    maxEnergy = 1000 + (limitLvl - 1) * 500;
-    rechargeRate = 1 + (speedLvl - 1);
+    max_energy = 1000 + (l_lvl - 1) * 500;
+    recharge = 1 + (s_lvl - 1);
 
-    // Update UI
     document.getElementById('balance').innerText = Math.floor(bal).toLocaleString();
-    document.getElementById('tap-multi').innerText = multiLvl;
-    document.getElementById('max-energy-display').innerText = maxEnergy;
+    document.getElementById('tap-val').innerText = m_lvl;
+    document.getElementById('energy-max').innerText = max_energy;
     
-    // Update Boost Section
-    document.getElementById('lvl-multi').innerText = multiLvl;
-    document.getElementById('cost-multi').innerText = (multiLvl * 100) + " 💎";
-    
-    document.getElementById('lvl-limit').innerText = limitLvl;
-    document.getElementById('cost-limit').innerText = (limitLvl * 200) + " 💎";
-    
-    document.getElementById('lvl-speed').innerText = speedLvl;
-    document.getElementById('cost-speed').innerText = (speedLvl * 500) + " 💎";
+    // Update Boost Prices
+    document.getElementById('lvl-multi').innerText = m_lvl;
+    document.getElementById('cost-multi').innerText = (m_lvl * 100) + " 💎";
+    document.getElementById('lvl-limit').innerText = l_lvl;
+    document.getElementById('cost-limit').innerText = (l_lvl * 200) + " 💎";
+    document.getElementById('lvl-speed').innerText = s_lvl;
+    document.getElementById('cost-speed').innerText = (s_lvl * 500) + " 💎";
 });
 
-// Tapping Action
-const tapper = document.getElementById('tapper');
-tapper.addEventListener('touchstart', (e) => {
+// Tapping Logic
+document.getElementById('tapper').addEventListener('touchstart', (e) => {
     e.preventDefault();
-    if (energy >= multiLvl) {
-        bal += multiLvl;
-        energy -= multiLvl;
-        updateEnergyBar();
-        createPopup(e.touches[0].clientX, e.touches[0].clientY);
-        saveBalance();
+    if(energy >= m_lvl) {
+        bal += m_lvl;
+        energy -= m_lvl;
+        updateUI();
+        saveData();
     }
 });
 
-function createPopup(x, y) {
-    const p = document.createElement('div');
-    p.className = 'floating-text';
-    p.innerText = `+${multiLvl}`;
-    p.style.left = `${x}px`;
-    p.style.top = `${y}px`;
-    document.body.appendChild(p);
-    setTimeout(() => p.remove(), 700);
+function updateUI() {
+    document.getElementById('balance').innerText = Math.floor(bal).toLocaleString();
+    const pct = (energy / max_energy) * 100;
+    document.getElementById('energy-bar').style.width = pct + "%";
+    document.getElementById('energy-now').innerText = Math.floor(energy);
 }
 
-function updateEnergyBar() {
-    const pct = (energy / maxEnergy) * 100;
-    document.getElementById('energy-fill').style.width = pct + "%";
-    document.getElementById('energy-text').innerText = Math.floor(energy);
-}
-
-// Energy Recharge Loop
+// Recharge Loop
 setInterval(() => {
-    if (energy < maxEnergy) {
-        energy = Math.min(maxEnergy, energy + rechargeRate);
-        updateEnergyBar();
+    if(energy < max_energy) {
+        energy = Math.min(max_energy, energy + recharge);
+        updateUI();
     }
 }, 1000);
 
-// Upgrade Function
+// Upgrade Logic
 function buyUpgrade(type) {
-    if (type === 'multi') {
-        const cost = multiLvl * 100;
-        if (bal >= cost) db.ref('users/' + userId).update({ balance: bal - cost, multiLvl: multiLvl + 1 });
-        else alert("Low Diamonds!");
+    if(type === 'multi') {
+        let cost = m_lvl * 100;
+        if(bal >= cost) db.ref('users/' + userId).update({ balance: bal-cost, multiLvl: m_lvl+1 });
     }
-    if (type === 'limit') {
-        const cost = limitLvl * 200;
-        if (bal >= cost) db.ref('users/' + userId).update({ balance: bal - cost, limitLvl: limitLvl + 1 });
-        else alert("Low Diamonds!");
+    if(type === 'limit') {
+        let cost = l_lvl * 200;
+        if(bal >= cost) db.ref('users/' + userId).update({ balance: bal-cost, limitLvl: l_lvl+1 });
     }
-    if (type === 'speed') {
-        const cost = speedLvl * 500;
-        if (bal >= cost) db.ref('users/' + userId).update({ balance: bal - cost, speedLvl: speedLvl + 1 });
-        else alert("Low Diamonds!");
+    if(type === 'speed') {
+        let cost = s_lvl * 500;
+        if(bal >= cost) db.ref('users/' + userId).update({ balance: bal-cost, speedLvl: s_lvl+1 });
     }
-    if (type === 'bot') {
-        db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now()/1000) });
-        alert("Tap Bot Activated for 2.5h!");
-    }
+    if(type === 'bot') alert("Bot started!");
 }
 
 function switchTab(id, el) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById(id).classList.add('active-tab');
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+    document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).style.display = 'block';
     el.classList.add('active');
 }
 
-function saveBalance() {
-    db.ref('users/' + userId).update({ balance: bal });
-}
-
-function showBonus() {
-    if (typeof show_10343752 === 'function') {
-        show_10343752().then(() => {
-            bal += 500;
-            saveBalance();
-            alert("Reward: +500 💎");
-        });
-    }
-}
+function saveData() { db.ref('users/' + userId).update({ balance: bal }); }
 </script>
 </body>
     </html>
-                                                         
+
