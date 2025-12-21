@@ -36,7 +36,7 @@
 <div id="ad-modal">
     <div class="text-center">
         <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-        <p class="text-yellow-500 font-bold uppercase text-[10px]">Processing Ad...</p>
+        <p class="text-yellow-500 font-bold uppercase text-[10px]">Processing...</p>
     </div>
 </div>
 
@@ -75,7 +75,7 @@
             <button id="btn-start" onclick="handleAction('start_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Start</button>
             <button id="btn-claim" onclick="handleAction('claim_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Claim</button>
         </div>
-        <button id="upgrade-btn" onclick="handleAction('upgrade_bot')" class="w-full bg-gray-600 text-white py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 transition-all duration-300 opacity-50 cursor-not-allowed">
+        <button id="upgrade-btn" onclick="handleAction('upgrade_bot')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 transition-all duration-300">
             <span>Upgrade Bot</span>
             <span id="upgrade-cost-text">100 💎</span>
         </button>
@@ -98,6 +98,10 @@
         <input type="number" id="withdraw-amount" placeholder="Enter Amount ($)" class="royal-input">
         <input type="text" id="binance-uid" placeholder="Enter Binance UID" class="royal-input">
         <button id="btn-withdraw" onclick="submitWithdraw()" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg mt-2 opacity-50 cursor-not-allowed">Request Withdrawal</button>
+    </div>
+    <div class="glass-card border-l-4 border-blue-500">
+        <p class="text-blue-400 font-black text-sm uppercase italic">Diamond Withdrawal</p>
+        <p class="text-gray-500 font-bold text-[10px] mt-2 animate-pulse uppercase tracking-widest">⚠️ Coming Soon...</p>
     </div>
 </div>
 
@@ -167,30 +171,6 @@ function generateLevelChart(currentLvl) {
     document.getElementById('level-list-container').innerHTML = html;
 }
 
-function handleAction(type) {
-    // Show Ad Modal first
-    document.getElementById('ad-modal').style.display = 'flex';
-    
-    setTimeout(() => {
-        document.getElementById('ad-modal').style.display = 'none';
-        const cost = 100 * Math.pow(2, botLevel - 1);
-        const reward = botLevel * 2000;
-
-        if(type === 'start_auto_mine') {
-            db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
-        }
-        if(type === 'claim_auto_mine') {
-            db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 });
-        }
-        if(type === 'upgrade_bot') {
-            if(bal >= cost && botLevel < 25) {
-                db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
-            }
-        }
-    }, 1500);
-}
-
-// Lucky Wheel logic...
 const canvas = document.getElementById('spinCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = 500; canvas.height = 500;
@@ -207,14 +187,15 @@ function drawWheel() {
 }
 drawWheel();
 
+let isSpinning = false;
 function startTheSpin() {
-    if (bal < 100000) return alert("Need 100K Diamonds!");
-    db.ref('users/' + userId).update({ balance: bal - 100000 });
+    if (isSpinning || bal < 100000) return alert("Need 100K Diamonds!");
+    isSpinning = true; db.ref('users/' + userId).update({ balance: bal - 100000 });
     const winIdx = [0,1,2,3,4,6,7,8,9,10,12,13,14,16,17][Math.floor(Math.random()*15)];
     const deg = 3600 + (360 - (winIdx * 20));
     canvas.style.transform = `rotate(${deg}deg)`;
     setTimeout(() => {
-        const reward = prizes[winIdx];
+        isSpinning = false; const reward = prizes[winIdx];
         if (reward.type === "d") db.ref('users/' + userId).update({ balance: (bal - 100000) + reward.v });
         else db.ref('users/' + userId).update({ usdBalance: usdBal + reward.v });
         alert("Won: " + reward.t);
@@ -226,11 +207,29 @@ function startTheSpin() {
 function submitWithdraw() {
     const amount = parseFloat(document.getElementById('withdraw-amount').value);
     const uid = document.getElementById('binance-uid').value;
-    if(!amount || amount < 20 || amount > usdBal) return alert("Invalid Amount!");
+    if(!amount || amount < 20) return alert("Minimum $20!");
+    if(amount > usdBal) return alert("Low balance!");
+    if(!uid) return alert("Binance UID required!");
     db.ref('withdrawals').push({ userId, amount, binanceUID: uid, timestamp: Date.now(), status: "Pending" }).then(() => {
         db.ref('users/' + userId).update({ usdBalance: usdBal - amount });
-        alert("Request Sent!");
+        alert("Withdrawal Requested!");
     });
+}
+
+function handleAction(type) {
+    if(type === 'claim_auto_mine') {
+        const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
+        if(autoMineStart === 0 || elapsed < 9000) return;
+    }
+    document.getElementById('ad-modal').style.display = 'flex';
+    setTimeout(() => {
+        document.getElementById('ad-modal').style.display = 'none';
+        const reward = botLevel * 2000;
+        const cost = 100 * Math.pow(2, botLevel - 1);
+        if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
+        if(type === 'claim_auto_mine') db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 });
+        if(type === 'upgrade_bot' && bal >= cost && botLevel < 25) db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
+    }, 1500);
 }
 
 function switchTab(id, el) {
@@ -261,14 +260,8 @@ setInterval(() => {
     const upBtn = document.getElementById('upgrade-btn');
     const cost = 100 * Math.pow(2, botLevel - 1);
 
-    // Dynamic Upgrade Button Styling
-    if (bal < cost || botLevel >= 25) {
-        upBtn.className = "w-full bg-gray-700 text-gray-400 py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 transition-all opacity-50 cursor-not-allowed";
-        upBtn.disabled = true;
-    } else {
-        upBtn.className = "w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 transition-all hover:scale-[1.02] cursor-pointer";
-        upBtn.disabled = false;
-    }
+    if (bal < cost) { upBtn.style.opacity = "0.5"; upBtn.disabled = true; } 
+    else { upBtn.style.opacity = "1"; upBtn.disabled = false; }
 
     if (autoMineStart === 0) {
         startBtn.disabled = false; claimBtn.disabled = true;
@@ -303,5 +296,5 @@ setInterval(() => {
 }, 1000);
 </script>
 </body>
-    </html>
-    
+</html>
+ 
