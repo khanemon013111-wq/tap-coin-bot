@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,12 +109,18 @@
 
 <div id="spin-tab" class="tab-content text-center">
     <div class="glass-card">
-        <h2 class="text-yellow-500 font-black text-xl italic uppercase">Royal Spin</h2>
+        <h2 class="text-yellow-500 font-black text-xl italic uppercase mb-2">Royal Spin</h2>
         <div class="wheel-container">
-            <div class="wheel-pointer"><svg width="30" height="40" viewBox="0 0 40 50"><path d="M20 50 L40 10 A20 20 0 0 0 0 10 Z" fill="#ef4444" stroke="#fff" stroke-width="2"/></svg></div>
+            <div class="wheel-pointer">
+                <svg width="30" height="40" viewBox="0 0 40 50">
+                    <path d="M20 50 L40 10 A20 20 0 0 0 0 10 Z" fill="#ef4444" stroke="#fff" stroke-width="2"/>
+                </svg>
+            </div>
             <canvas id="spinCanvas"></canvas>
         </div>
-        <button id="spinBtn" onclick="startTheSpin()" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black uppercase shadow-lg mt-4">SPIN (100K 💎)</button>
+        <button id="spinBtn" onclick="startTheSpin()" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-4 rounded-xl font-black uppercase shadow-lg mt-6">
+            SPIN (100K 💎)
+        </button>
     </div>
 </div>
 
@@ -123,7 +130,7 @@
 
 <nav class="nav-bar">
     <div onclick="switchTab('home-tab', this)" class="nav-item active">🏠<br>Home</div>
-    <div onclick="switchTab('tasks-tab', this)" class="nav-item">📝<br>Tasks</div>
+    <div onclick="switchTab('spin-tab', this)" class="nav-item">🎡<br>Spin</div>
     <div onclick="switchTab('leader-tab', this)" class="nav-item">🏆<br>Board</div>
     <div onclick="switchTab('refer-tab', this)" class="nav-item">👥<br>Refer</div>
     <div onclick="switchTab('wallet-tab', this)" class="nav-item">💳<br>Wallet</div>
@@ -164,9 +171,6 @@ function generateLevelChart(currentLvl) {
         </div>`;
     }
     document.getElementById('level-list-container').innerHTML = html;
-    // Auto scroll to current level
-    const currentElem = document.querySelector('.level-row.current');
-    if(currentElem) currentElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function loadLeaderboard() {
@@ -174,7 +178,6 @@ function loadLeaderboard() {
         let users = [];
         snapshot.forEach(child => { users.push({ id: child.key, ...child.val() }); });
         users.sort((a, b) => b.balance - a.balance);
-        
         let html = ''; let myRank = "500+";
         users.forEach((user, index) => {
             let rank = index + 1;
@@ -184,10 +187,7 @@ function loadLeaderboard() {
             html += `<div class="leader-item ${isMe ? 'bg-yellow-500/10' : ''}">
                 <div class="flex items-center">
                     <div class="rank-badge ${badgeColor} ${rank <= 3 ? 'text-black' : 'text-white'}">${rank}</div>
-                    <div>
-                        <p class="text-[10px] font-bold ${isMe ? 'text-yellow-400' : 'text-white'}">${user.id.substring(0, 12)}${isMe ? ' (YOU)' : ''}</p>
-                        <p class="text-[7px] text-gray-500 uppercase">Level ${user.botLevel || 1}</p>
-                    </div>
+                    <div><p class="text-[10px] font-bold ${isMe ? 'text-yellow-400' : 'text-white'}">${user.id.substring(0, 12)}${isMe ? ' (YOU)' : ''}</p><p class="text-[7px] text-gray-500 uppercase">Level ${user.botLevel || 1}</p></div>
                 </div>
                 <p class="text-xs font-black text-yellow-500">💎 ${Math.floor(user.balance).toLocaleString()}</p>
             </div>`;
@@ -198,7 +198,7 @@ function loadLeaderboard() {
     });
 }
 
-// Spin Wheel Logic
+// Spin Wheel Logic (এই অংশটি স্পিন চালানোর জন্য দায়ী)
 const canvas = document.getElementById('spinCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = 500; canvas.height = 500;
@@ -226,7 +226,7 @@ function drawWheel() {
         ctx.translate(250, 250);
         ctx.rotate(i * slice + slice / 2);
         ctx.fillStyle = prizes[i].type === 'd' ? "#fbbf24" : "#4ade80";
-        ctx.font = "bold 14px Arial";
+        ctx.font = "bold 15px Arial";
         ctx.fillText(prizes[i].t, 170, 5);
         ctx.restore();
     }
@@ -235,10 +235,12 @@ drawWheel();
 
 let isSpinning = false;
 function startTheSpin() {
-    if (isSpinning || bal < 100000) return alert("Need 100,000 Diamonds!");
+    if (isSpinning) return;
+    if (bal < 100000) return alert("দাদু, আপনার ব্যালেন্সে ১ লক্ষ ডায়মন্ড নেই!");
     isSpinning = true;
     db.ref('users/' + userId).update({ balance: bal - 100000 });
-    const winIdx = [0,1,2,3,4,6,7,8,9,10,12,13,14,16,17][Math.floor(Math.random()*15)]; // Safe pool
+    const safePool = [0,1,2,3,4,6,7,8,9,10,12,13,14,16,17];
+    const winIdx = safePool[Math.floor(Math.random() * safePool.length)];
     const deg = 3600 + (360 - (winIdx * 20));
     canvas.style.transform = `rotate(${deg}deg)`;
     setTimeout(() => {
@@ -246,8 +248,9 @@ function startTheSpin() {
         const reward = prizes[winIdx];
         if (reward.type === "d") db.ref('users/' + userId).update({ balance: (bal - 100000) + reward.v });
         else db.ref('users/' + userId).update({ usdBalance: usdBal + reward.v });
-        alert("Won: " + reward.t);
-        canvas.style.transition = "none"; canvas.style.transform = `rotate(${deg % 360}deg)`;
+        alert("🎉 অভিনন্দন! আপনি জিতেছেন " + reward.t);
+        canvas.style.transition = "none";
+        canvas.style.transform = `rotate(${deg % 360}deg)`;
         setTimeout(() => canvas.style.transition = "transform 7s cubic-bezier(0.15, 0, 0.1, 1)", 100);
     }, 7200);
 }
@@ -298,5 +301,5 @@ setInterval(() => {
 }, 1000);
 </script>
 </body>
-</html>
-
+        </html>
+    
