@@ -2,147 +2,252 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Royal Diamond - Classic Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Diamond - Bot Master</title>
     <script src='//libtl.com/sdk.js' data-zone='10343752' data-sdk='show_10343752'></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&family=Orbitron:wght@900&display=swap');
-        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; overflow: hidden; margin: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
+        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; }
+        .tab-content { display: none; width: 100%; max-width: 420px; margin: auto; padding: 15px; animation: fadeIn 0.4s; }
+        .active-tab { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
         
-        /* Floating Spin Icon (আগের মতো) */
+        /* Floating Icons */
         .top-icons { position: fixed; top: 20px; right: 15px; display: flex; flex-direction: column; gap: 12px; z-index: 1000; }
-        .float-btn { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); cursor: pointer; background: linear-gradient(45deg, #fbbf24, #d97706); animation: iconSpin 10s linear infinite; }
+        .float-btn { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; cursor: pointer; }
+        .spin-float { background: linear-gradient(45deg, #fbbf24, #d97706); animation: iconSpin 12s linear infinite; }
+        .shop-float { background: linear-gradient(45deg, #3b82f6, #1d4ed8); }
         @keyframes iconSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* ব্যালেন্স কার্ড (আগের স্টাইল) */
-        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; margin: 15px; text-align: center; }
-
-        /* নট কয়েন স্টাইল ট্যাপার (মাইনিং কার্ডের জায়গায়) */
-        .coin-container { position: relative; width: 250px; height: 250px; margin: 40px auto; display: flex; align-items: center; justify-content: center; }
-        .main-coin { width: 100%; height: 100%; background: radial-gradient(circle, #fbbf24 0%, #b45309 100%); border-radius: 50%; border: 10px solid rgba(255,255,255,0.15); box-shadow: 0 0 40px rgba(251, 191, 36, 0.5); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.05s; user-select: none; }
-        .main-coin:active { transform: scale(0.92); }
-
-        /* Floating +1 Text */
-        .floating-text { position: absolute; color: white; font-size: 32px; font-weight: 900; pointer-events: none; animation: floatUp 0.7s ease-out forwards; font-family: 'Orbitron'; z-index: 100; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-130px); } }
-
-        /* Navigation (আগের মতো) */
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .nav-item { font-size: 11px; color: #94a3b8; text-align: center; flex: 1; cursor: pointer; }
+        /* Level Table Styling */
+        .level-row { display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 10px; }
+        .level-row.current { background: rgba(251, 191, 36, 0.2); border-radius: 8px; border: 1px solid #fbbf24; color: #fbbf24; font-weight: bold; }
+        
+        /* Navigation */
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; }
+        .nav-item { font-size: 10px; color: #94a3b8; text-align: center; flex: 1; cursor: pointer; }
         .nav-item.active { color: #fbbf24; font-weight: bold; }
-
-        .tab-content { display: none; height: 100vh; padding-top: 40px; }
-        .active-tab { display: block; }
+        #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
     </style>
 </head>
 <body>
 
+<div id="ad-modal">
+    <div class="text-center">
+        <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+        <p class="text-yellow-500 font-bold uppercase text-[10px]">Processing...</p>
+    </div>
+</div>
+
 <div class="top-icons">
-    <div onclick="switchTab('spin-tab')" class="float-btn">🎡</div>
+    <div onclick="switchTab('spin-tab')" class="float-btn spin-float">🎡</div>
+    <div onclick="switchTab('shop-tab')" class="float-btn shop-float">🛒</div>
+</div>
+
+<div class="text-center mt-10">
+    <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 italic">ROYAL DIAMOND</h1>
 </div>
 
 <div id="home-tab" class="tab-content active-tab">
-    <div class="text-center mt-4">
-        <h1 class="text-2xl font-black text-yellow-500 italic tracking-widest">ROYAL DIAMOND</h1>
+    <div class="glass-card text-center mb-4">
+        <p class="text-gray-400 text-[10px] uppercase">Main Balance</p>
+        <p class="text-3xl font-black text-yellow-500">💎 <span id="home-balance">0</span></p>
+    </div>
+    
+    <div class="glass-card border-t-4 border-yellow-500 mb-4">
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-yellow-500 font-black text-xs italic">ACTIVE BOT LVL: <span id="display-level">1</span></span>
+            <span id="bot-status" class="text-[9px] bg-red-600 px-2 py-0.5 rounded text-white font-bold">OFFLINE</span>
+        </div>
+        <div class="bg-black/40 p-5 rounded-xl mb-4">
+            <div class="flex justify-between text-[10px] mb-2 text-gray-400">
+                <span>Timer: <span id="mine-timer">02:30:00</span></span>
+                <span id="mine-percent">0%</span>
+            </div>
+            <div class="w-full bg-gray-700 h-2 rounded-full overflow-hidden">
+                <div id="mine-progress-bar" class="bg-yellow-500 h-full w-0"></div>
+            </div>
+            <p class="text-center mt-3 text-2xl font-black text-green-400"><span id="auto-mined-val">0.00</span> 💎</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mb-4">
+            <button onclick="handleAction('start_auto_mine')" class="bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Start</button>
+            <button onclick="handleAction('claim_auto_mine')" class="bg-green-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Claim</button>
+        </div>
+        <button onclick="handleAction('upgrade_bot')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6">
+            <span>Upgrade Bot</span>
+            <span id="upgrade-cost-text">100 💎</span>
+        </button>
     </div>
 
     <div class="glass-card">
-        <p class="text-gray-400 text-[10px] uppercase">Main Balance</p>
-        <p class="text-4xl font-black text-white" style="font-family: 'Orbitron';">💎 <span id="balance">0</span></p>
-    </div>
-
-    <div class="coin-container">
-        <div id="tapper-btn" class="main-coin">
-            <span class="text-8xl">💎</span>
+        <h3 class="text-yellow-500 font-black text-xs mb-4 uppercase italic">Bot Level History Chart</h3>
+        <div class="level-row font-bold text-gray-400 border-b border-gray-700 mb-2">
+            <span>LVL</span>
+            <span>INCOME</span>
+            <span>COST</span>
         </div>
-    </div>
-
-    <p class="text-center text-gray-500 text-xs mt-4">Tap on diamond to earn points</p>
-</div>
-
-<div id="spin-tab" class="tab-content">
-    <div class="glass-card mt-10">
-        <h2 class="text-yellow-500 font-black mb-6 italic uppercase">Lucky Wheel</h2>
-        <canvas id="wheel-canvas" class="mx-auto rounded-full border-4 border-yellow-500" width="260" height="260"></canvas>
-        <button onclick="handleSpin()" class="mt-8 bg-yellow-500 text-black font-black py-4 px-12 rounded-full uppercase shadow-xl w-full">SPIN NOW</button>
-        <button onclick="switchTab('home-tab')" class="mt-4 text-gray-400 text-xs">Back to Home</button>
+        <div id="level-list-container" class="max-height-[300px] overflow-y-auto pr-2" style="max-height: 400px;">
+            </div>
     </div>
 </div>
+
+<div id="spin-tab" class="tab-content text-center">
+    <div class="glass-card">
+        <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Lucky Wheel</h2>
+        <div style="position: relative; width: 260px; height: 260px; margin: auto;">
+            <div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 25px;">🔻</div>
+            <canvas id="wheel-canvas" style="width: 100%; height: 100%; border-radius: 50%; border: 8px solid #fbbf24; transition: transform 5s cubic-bezier(0.1, 0, 0, 1);"></canvas>
+        </div>
+        <button onclick="handleAction('spin')" id="spin-btn" class="mt-8 bg-yellow-500 text-black font-black py-4 px-12 rounded-full uppercase shadow-xl">SPIN NOW</button>
+    </div>
+</div>
+
+<div id="shop-tab" class="tab-content"><h2 class="text-center py-10">Shop Coming Soon</h2></div>
+<div id="tasks-tab" class="tab-content"><h2 class="text-center py-10">Tasks Coming Soon</h2></div>
+<div id="leader-tab" class="tab-content text-xs"><h2 class="text-center py-10 uppercase italic font-bold">Top 10 Board</h2><div id="leader-list"></div></div>
+<div id="refer-tab" class="tab-content text-center"><div class="glass-card"><h2 class="text-yellow-500 font-bold mb-4">Refer Friends</h2><p id="ref-link" class="text-[9px] mb-4 text-gray-500 truncate">Loading...</p><button onclick="copyRef()" class="bg-yellow-500 text-black px-8 py-2 rounded-lg font-bold text-xs uppercase">Copy</button></div></div>
+<div id="wallet-tab" class="tab-content"><div class="glass-card"><h2 class="text-center font-bold mb-4">WITHDRAW</h2><input type="number" id="uid-input" placeholder="FF UID" class="w-full p-4 bg-black/40 rounded-xl mb-3 text-center outline-none"><button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-xl uppercase">Submit</button></div></div>
 
 <nav class="nav-bar">
     <div onclick="switchTab('home-tab', this)" class="nav-item active">🏠<br>Home</div>
-    <div onclick="alert('Bonus Added!')" class="nav-item">🎁<br>Bonus</div>
-    <div onclick="alert('Coming Soon')" class="nav-item">💳<br>Wallet</div>
+    <div onclick="switchTab('tasks-tab', this)" class="nav-item">📝<br>Tasks</div>
+    <div onclick="switchTab('leader-tab', this)" class="nav-item">🏆<br>Board</div>
+    <div onclick="switchTab('refer-tab', this)" class="nav-item">👥<br>Refer</div>
+    <div onclick="switchTab('wallet-tab', this)" class="nav-item">💳<br>Wallet</div>
 </nav>
 
 <script>
-// Firebase Setup
 const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let userId = localStorage.getItem('user_uid') || "RD_" + Math.floor(Math.random() * 90000);
+let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.random() * 89999 + 10000);
 localStorage.setItem('user_uid', userId);
+const referralLink = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
-let bal = 0;
+let bal = 0; let botLevel = 1; let autoMineStart = 0;
 
-// Data Sync
-db.ref('users/' + userId).on('value', snap => {
-    const data = snap.val() || { balance: 0 };
-    bal = data.balance || 0;
-    document.getElementById('balance').innerText = Math.floor(bal).toLocaleString();
-});
-
-// Tapper Logic (নট কয়েন স্টাইল)
-const tapper = document.getElementById('tapper-btn');
-tapper.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    bal += 1; // এক ট্যাপে ১ পয়েন্ট
-    document.getElementById('balance').innerText = Math.floor(bal).toLocaleString();
-    createPopup(e.touches[0].clientX, e.touches[0].clientY);
-    db.ref('users/' + userId).update({ balance: bal });
-});
-
-function createPopup(x, y) {
-    const el = document.createElement('div');
-    el.className = 'floating-text';
-    el.innerText = "+1";
-    el.style.left = `${x}px`;
-    el.style.top = `${y}px`;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 700);
+// Generate Level History Chart
+function generateLevelChart(currentLvl) {
+    let html = '';
+    for(let i=1; i<=25; i++) {
+        let income = i * 2000;
+        let cost = 100 * Math.pow(2, i-1);
+        let activeClass = (i === currentLvl) ? 'current' : '';
+        html += `<div class="level-row ${activeClass}">
+            <span>LVL ${i}</span>
+            <span>${income.toLocaleString()} 💎</span>
+            <span>${(i === 25 ? 'MAX' : cost.toLocaleString() + ' 💎')}</span>
+        </div>`;
+    }
+    document.getElementById('level-list-container').innerHTML = html;
 }
+
+db.ref('users/' + userId).on('value', snap => {
+    const data = snap.val() || { balance: 0, botLevel: 1, autoMineStart: 0 };
+    bal = data.balance; botLevel = data.botLevel || 1; autoMineStart = data.autoMineStart || 0;
+    document.getElementById('home-balance').innerText = Math.floor(bal).toLocaleString();
+    document.getElementById('display-level').innerText = botLevel;
+    document.getElementById('upgrade-cost-text').innerText = (100 * Math.pow(2, botLevel - 1)).toLocaleString() + " 💎";
+    document.getElementById('ref-link').innerText = referralLink;
+    generateLevelChart(botLevel);
+});
+
+// Leaders
+db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
+    let listHtml = ''; let rank = 1; let users = [];
+    snap.forEach(u => { users.push(u.val()); });
+    users.reverse().forEach(u => {
+        listHtml += `<div class="glass-card flex justify-between items-center py-2 px-4 mb-2"><span>#${rank++} Player</span><span class="text-green-400 font-bold">${Math.floor(u.balance || 0).toLocaleString()} 💎</span></div>`;
+    });
+    document.getElementById('leader-list').innerHTML = listHtml;
+});
 
 function switchTab(id, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active-tab');
-    if(el) {
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
-    }
+    if(el) el.classList.add('active');
 }
 
-// Wheel Setup (আগের মতো)
+function handleAction(type) {
+    document.getElementById('ad-modal').style.display = 'flex';
+    if (typeof show_10343752 === 'function') {
+        show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
+    } else { setTimeout(() => executeLogic(type), 2000); }
+}
+
+function executeLogic(type) {
+    document.getElementById('ad-modal').style.display = 'none';
+    const reward = botLevel * 2000;
+    const upgradeCost = 100 * Math.pow(2, botLevel - 1);
+
+    if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
+    if(type === 'claim_auto_mine') {
+        const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
+        if(autoMineStart > 0 && elapsed >= 9000) {
+            db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 });
+            alert("Reward Claimed!");
+        } else alert("Wait for timer!");
+    }
+    if(type === 'upgrade_bot') {
+        if(bal >= upgradeCost && botLevel < 25) db.ref('users/' + userId).update({ balance: bal - upgradeCost, botLevel: botLevel + 1 });
+        else alert("Need more diamonds!");
+    }
+    if(type === 'spin') startSpin();
+}
+
+// Spin Logic
 const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
+canvas.width = 260; canvas.height = 260;
 const prizes = [500, 10, 50, 0, 100, 20, 200, 5];
 const colors = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
 function drawWheel() {
     const arc = (2 * Math.PI) / 8;
     for (let i = 0; i < 8; i++) {
         ctx.fillStyle = colors[i]; ctx.beginPath(); ctx.moveTo(130, 130); ctx.arc(130, 130, 130, i * arc, (i + 1) * arc); ctx.fill();
-        ctx.save(); ctx.fillStyle = "white"; ctx.font = "bold 12px Poppins"; ctx.translate(130 + Math.cos(i * arc + arc/2) * 85, 130 + Math.sin(i * arc + arc/2) * 85);
+        ctx.save(); ctx.fillStyle = "white"; ctx.font = "bold 12px Arial"; ctx.translate(130 + Math.cos(i * arc + arc/2) * 85, 130 + Math.sin(i * arc + arc/2) * 85);
         ctx.rotate(i * arc + arc/2 + Math.PI/2); ctx.fillText(prizes[i], -10, 0); ctx.restore();
     }
 } drawWheel();
-let rotation = 0;
-function handleSpin() {
-    rotation += Math.floor(Math.random() * 360) + 3600;
-    canvas.style.transform = `rotate(${rotation}deg)`;
+let currRot = 0;
+function startSpin() {
+    const extra = Math.floor(Math.random() * 360) + 3600; currRot += extra;
+    canvas.style.transform = `rotate(${currRot}deg)`;
+    setTimeout(() => {
+        const actualDeg = currRot % 360;
+        const pIdx = Math.floor((360 - actualDeg) / 45) % 8;
+        const won = prizes[pIdx]; db.ref('users/' + userId).update({ balance: bal + won });
+        alert(`You won ${won} 💎!`);
+    }, 5000);
 }
+
+// Timer
+setInterval(() => {
+    if (autoMineStart === 0) return;
+    const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
+    const duration = 9000;
+    if (elapsed < duration) {
+        const timeLeft = duration - elapsed;
+        const h = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
+        const m = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
+        const s = (timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('mine-timer').innerText = `${h}:${m}:${s}`;
+        document.getElementById('mine-progress-bar').style.width = (elapsed/duration*100) + "%";
+        document.getElementById('mine-percent').innerText = Math.floor(elapsed/duration*100) + "%";
+        document.getElementById('auto-mined-val').innerText = ((elapsed/duration)*(botLevel*2000)).toFixed(2);
+        document.getElementById('bot-status').innerText = "MINING";
+        document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
+    } else {
+        document.getElementById('bot-status').innerText = "READY";
+        document.getElementById('bot-status').className = "text-[9px] bg-green-500 px-2 py-0.5 rounded text-white font-bold animate-bounce";
+    }
+}, 1000);
 </script>
 </body>
-</html>
+    </html>
 
