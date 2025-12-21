@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -121,15 +123,7 @@
     </div>
 </div>
 
-<div id="refer-tab" class="tab-content text-center">
-    <div class="glass-card">
-        <h2 class="text-yellow-500 font-bold mb-2 uppercase">Refer & Earn</h2>
-        <p class="text-xs text-gray-300 mb-4 italic">Invite a friend and get <span class="text-yellow-400 font-bold">50,000 💎</span> instantly!</p>
-        <p id="ref-link" class="text-[9px] mb-4 text-gray-500 truncate bg-black/30 p-2 rounded"></p>
-        <button onclick="copyRef()" class="bg-yellow-500 text-black px-8 py-2 rounded-lg font-bold text-xs uppercase shadow-md">Copy Link</button>
-    </div>
-</div>
-
+<div id="refer-tab" class="tab-content text-center"><div class="glass-card"><h2 class="text-yellow-500 font-bold mb-2">Refer</h2><p id="ref-link" class="text-[9px] mb-4 text-gray-500 truncate bg-black/30 p-2 rounded"></p><button onclick="copyRef()" class="bg-yellow-500 text-black px-8 py-2 rounded-lg font-bold text-xs uppercase">Copy Link</button></div></div>
 <div id="tasks-tab" class="tab-content text-center"><div class="glass-card py-20 uppercase font-black">Coming Soon</div></div>
 <div id="shop-tab" class="tab-content text-center"><div class="glass-card py-20 uppercase font-black">Shop Soon</div></div>
 
@@ -149,28 +143,6 @@ const db = firebase.database();
 let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.random() * 89999 + 10000);
 localStorage.setItem('user_uid', userId);
 const referralLink = window.location.origin + window.location.pathname + "?start=" + userId;
-
-// Bonus Referral Script
-const urlParams = new URLSearchParams(window.location.search);
-const referrerId = urlParams.get('start');
-
-db.ref('users/' + userId).once('value', snap => {
-    if (!snap.exists()) {
-        // Initial user data
-        const userData = { balance: 0, botLevel: 1, autoMineStart: 0, usdBalance: 0 };
-        db.ref('users/' + userId).set(userData);
-
-        // If joined via referral, reward the referrer
-        if (referrerId && referrerId !== userId) {
-            db.ref('users/' + referrerId).once('value', rSnap => {
-                if (rSnap.exists()) {
-                    let oldBal = rSnap.val().balance || 0;
-                    db.ref('users/' + referrerId).update({ balance: oldBal + 50000 });
-                }
-            });
-        }
-    }
-});
 
 let bal = 0; let botLevel = 1; let autoMineStart = 0; let usdBal = 0;
 
@@ -317,4 +289,14 @@ setInterval(() => {
         document.getElementById('bot-status').innerText = "MINING";
         document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
     } else {
-        startBtn.disabled = true; clai
+        startBtn.disabled = true; claimBtn.disabled = false;
+        startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
+        claimBtn.className = "bg-green-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white animate-pulse";
+        document.getElementById('bot-status').innerText = "READY";
+        document.getElementById('bot-status').className = "text-[9px] bg-green-500 px-2 py-0.5 rounded text-white font-bold animate-bounce";
+    }
+}, 1000);
+</script>
+</body>
+    </html>
+            
