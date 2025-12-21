@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Diamond - Super Edition</title>
+    <title>Royal Diamond - All-in-One Master</title>
     <script src='//libtl.com/sdk.js' data-zone='10343752' data-sdk='show_10343752'></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
-        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; }
+        body { background: radial-gradient(circle, #1e3a8a 0%, #0f172a 100%); color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-bottom: 90px; overflow-x: hidden; }
         .tab-content { display: none; width: 100%; max-width: 420px; margin: auto; padding: 15px; animation: fadeIn 0.4s; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -18,7 +18,18 @@
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; }
         .nav-item { font-size: 10px; color: #94a3b8; cursor: pointer; text-align: center; flex: 1; transition: 0.3s; }
         .nav-item.active { color: #fbbf24; font-weight: bold; transform: translateY(-3px); }
-        #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        
+        /* Floating Icons */
+        .top-icons { position: fixed; top: 20px; right: 15px; display: flex; flex-direction: column; gap: 15px; z-index: 1000; }
+        .float-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
+        .spin-float { background: linear-gradient(45deg, #fbbf24, #d97706); animation: spinRotate 10s linear infinite; }
+        .shop-float { background: linear-gradient(45deg, #3b82f6, #1d4ed8); }
+        @keyframes spinRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Wheel */
+        .wheel-container { position: relative; width: 260px; height: 260px; margin: 20px auto; border: 8px solid #fbbf24; border-radius: 50%; }
+        #wheel-canvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 5s cubic-bezier(0.1, 0, 0, 1); }
+        #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
     </style>
 </head>
 <body>
@@ -26,11 +37,16 @@
 <div id="ad-modal">
     <div class="text-center">
         <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-        <p class="text-yellow-500 font-bold uppercase text-[10px]">Processing Reward...</p>
+        <p class="text-yellow-500 font-bold uppercase text-[10px]">Ad Loading...</p>
     </div>
 </div>
 
-<div class="text-center mt-6">
+<div class="top-icons">
+    <div onclick="switchTab('spin-tab')" class="float-btn spin-float">🎡</div>
+    <div onclick="switchTab('shop-tab')" class="float-btn shop-float">🛒</div>
+</div>
+
+<div class="text-center mt-10">
     <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 italic">ROYAL DIAMOND</h1>
 </div>
 
@@ -41,24 +57,24 @@
     </div>
     <div class="glass-card border-t-4 border-yellow-500">
         <div class="flex justify-between items-center mb-4">
-            <span class="text-yellow-500 font-black text-xs uppercase italic">LVL <span id="display-level">1</span> BOT</span>
+            <span class="text-yellow-500 font-black text-xs italic">LVL <span id="display-level">1</span> BOT</span>
             <span id="bot-status" class="text-[9px] bg-red-600 px-2 py-0.5 rounded text-white font-bold">OFFLINE</span>
         </div>
-        <div class="bg-black/40 p-4 rounded-xl mb-4">
-            <div class="flex justify-between text-[10px] mb-2 text-gray-400">
-                <span>Time: <span id="mine-timer" class="text-white">02:30:00</span></span>
+        <div class="bg-black/40 p-5 rounded-xl mb-4">
+            <div class="flex justify-between text-[10px] mb-2 text-gray-400 font-bold">
+                <span>Timer: <span id="mine-timer" class="text-white">02:30:00</span></span>
                 <span id="mine-percent" class="text-yellow-500">0%</span>
             </div>
-            <div class="w-full bg-gray-700 h-1.5 rounded-full overflow-hidden">
+            <div class="w-full bg-gray-700 h-2 rounded-full overflow-hidden">
                 <div id="mine-progress-bar" class="bg-yellow-500 h-full w-0"></div>
             </div>
             <p class="text-center mt-3 text-2xl font-black text-green-400"><span id="auto-mined-val">0.00</span> 💎</p>
         </div>
-        <div class="grid grid-cols-2 gap-2 mb-3">
-            <button onclick="handleAction('start_auto_mine')" class="bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase">Start</button>
-            <button onclick="handleAction('claim_auto_mine')" class="bg-green-600 py-3 rounded-xl font-bold text-xs uppercase">Claim</button>
+        <div class="grid grid-cols-2 gap-3 mb-4">
+            <button onclick="handleAction('start_auto_mine')" class="bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Start Bot</button>
+            <button onclick="handleAction('claim_auto_mine')" class="bg-green-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Claim</button>
         </div>
-        <button onclick="handleAction('upgrade_bot')" class="w-full bg-yellow-500 text-black py-3 rounded-xl font-black text-[10px] uppercase flex justify-between px-4">
+        <button onclick="handleAction('upgrade_bot')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6">
             <span>Upgrade Level</span>
             <span id="upgrade-cost-text">100 💎</span>
         </button>
@@ -66,34 +82,54 @@
 </div>
 
 <div id="tasks-tab" class="tab-content">
-    <h2 class="text-yellow-500 font-black mb-4 uppercase text-center italic">Daily Tasks</h2>
+    <h2 class="text-yellow-500 font-black mb-4 uppercase text-center italic">Tasks Center</h2>
     <div class="space-y-3">
         <div class="glass-card flex justify-between items-center">
-            <div><p class="text-sm font-bold">Watch Video Ad</p><p class="text-[10px] text-green-400">+50 💎</p></div>
-            <button onclick="handleAction('task_ad')" class="bg-blue-600 px-4 py-2 rounded-lg text-[10px] font-bold">GO</button>
-        </div>
-        <div class="glass-card flex justify-between items-center">
-            <div><p class="text-sm font-bold">Daily Check-in</p><p class="text-[10px] text-green-400">+100 💎</p></div>
-            <button onclick="handleAction('daily_checkin')" class="bg-green-600 px-4 py-2 rounded-lg text-[10px] font-bold">CLAIM</button>
+            <div><p class="text-sm font-bold">Daily Video Ad</p><p class="text-[10px] text-green-400">+50 💎</p></div>
+            <button onclick="handleAction('task_ad')" class="bg-blue-600 px-4 py-2 rounded-lg text-xs font-bold">GO</button>
         </div>
     </div>
 </div>
 
 <div id="leader-tab" class="tab-content">
-    <h2 class="text-yellow-500 font-black mb-4 uppercase text-center italic">Top Players</h2>
-    <div id="leader-list" class="space-y-2">
-        <p class="text-center text-xs text-gray-500">Loading Ranking...</p>
-    </div>
+    <h2 class="text-yellow-500 font-black mb-4 uppercase text-center italic">Leaderboard</h2>
+    <div id="leader-list" class="space-y-2"></div>
 </div>
 
 <div id="refer-tab" class="tab-content text-center">
     <div class="glass-card">
-        <h2 class="text-yellow-500 font-black mb-2 uppercase italic">Refer & Earn</h2>
-        <p class="text-[10px] text-gray-400 mb-6">Invite friends and get 200 💎 each!</p>
-        <div class="bg-black/40 p-4 rounded-xl mb-4 border border-dashed border-yellow-500/50">
-            <p id="ref-link" class="text-[10px] text-yellow-500 truncate mb-2">Loading link...</p>
-            <button onclick="copyRef()" class="bg-yellow-500 text-black px-6 py-2 rounded-lg font-bold text-xs">COPY LINK</button>
+        <h2 class="text-yellow-500 font-black mb-2 uppercase italic">Refer Friends</h2>
+        <p class="text-[10px] text-gray-400 mb-6">Earn 200 💎 for each friend!</p>
+        <p id="ref-link" class="text-[9px] mb-4 text-yellow-500 truncate bg-black/40 p-3 rounded-lg border border-dashed border-yellow-500/50">Loading Link...</p>
+        <button onclick="copyRef()" class="bg-yellow-500 text-black px-10 py-2 rounded-lg font-bold text-xs uppercase">Copy Link</button>
+    </div>
+</div>
+
+<div id="wallet-tab" class="tab-content">
+    <div class="glass-card text-center">
+        <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Withdraw</h2>
+        <input type="number" id="uid-input" placeholder="Free Fire UID" class="w-full p-4 bg-black/40 rounded-xl mb-3 text-center border border-white/10 outline-none">
+        <input type="number" id="amount-input" placeholder="Amount (Min 10,000)" class="w-full p-4 bg-black/40 rounded-xl mb-6 text-center border border-white/10 outline-none">
+        <button onclick="handleAction('withdraw')" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl uppercase">Submit</button>
+    </div>
+</div>
+
+<div id="spin-tab" class="tab-content text-center">
+    <div class="glass-card">
+        <h2 class="text-yellow-500 font-black mb-4 italic uppercase">Lucky Spin</h2>
+        <div class="wheel-container">
+            <div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 25px;">🔻</div>
+            <canvas id="wheel-canvas"></canvas>
         </div>
+        <button onclick="handleAction('spin')" id="spin-btn" class="mt-6 bg-yellow-500 text-black font-black py-4 px-12 rounded-full uppercase">SPIN NOW</button>
+    </div>
+</div>
+
+<div id="shop-tab" class="tab-content">
+    <h2 class="text-blue-400 font-black mb-4 uppercase text-center italic">Shop Pack</h2>
+    <div class="glass-card flex justify-between items-center border-l-4 border-yellow-500 mb-3">
+        <div><p class="text-sm font-bold">Pack Alpha</p><p class="text-[10px] text-gray-400">10,000 Diamonds</p></div>
+        <button class="bg-yellow-500 text-black font-bold px-4 py-2 rounded-lg text-xs">$1.99</button>
     </div>
 </div>
 
@@ -102,43 +138,36 @@
     <div onclick="switchTab('tasks-tab', this)" class="nav-item">📝<br>Tasks</div>
     <div onclick="switchTab('leader-tab', this)" class="nav-item">🏆<br>Board</div>
     <div onclick="switchTab('refer-tab', this)" class="nav-item">👥<br>Refer</div>
+    <div onclick="switchTab('wallet-tab', this)" class="nav-item">💳<br>Wallet</div>
 </nav>
 
 <script>
+// Firebase & SDK Config
 const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-
 let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.random() * 89999 + 10000);
 localStorage.setItem('user_uid', userId);
 const referralLink = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
 let bal = 0; let botLevel = 1; let autoMineStart = 0;
 
-// Sync Data
+// Data Sync
 db.ref('users/' + userId).on('value', snap => {
     const data = snap.val() || { balance: 0, botLevel: 1, autoMineStart: 0 };
     bal = data.balance; botLevel = data.botLevel || 1; autoMineStart = data.autoMineStart || 0;
-    document.getElementById('home-balance').innerText = bal.toLocaleString();
+    document.getElementById('home-balance').innerText = Math.floor(bal).toLocaleString();
     document.getElementById('display-level').innerText = botLevel;
     document.getElementById('upgrade-cost-text').innerText = (100 * Math.pow(2, botLevel - 1)).toLocaleString() + " 💎";
     document.getElementById('ref-link').innerText = referralLink;
 });
 
-// Leaderboard Logic
+// Leaderboard
 db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
-    let listHtml = '';
-    let rank = 1;
-    let users = [];
+    let listHtml = ''; let rank = 1; let users = [];
     snap.forEach(u => { users.push(u.val()); });
     users.reverse().forEach(u => {
-        listHtml += `<div class="glass-card flex justify-between items-center py-3 px-4">
-            <div class="flex items-center gap-3">
-                <span class="text-yellow-500 font-black">#${rank++}</span>
-                <span class="text-xs font-bold">Player_${Math.floor(Math.random()*999)}</span>
-            </div>
-            <span class="text-xs text-green-400 font-bold">${(u.balance || 0).toLocaleString()} 💎</span>
-        </div>`;
+        listHtml += `<div class="glass-card flex justify-between items-center py-2 px-4 mb-2"><span>#${rank++} Player</span><span class="text-green-400 font-bold">${Math.floor(u.balance || 0).toLocaleString()} 💎</span></div>`;
     });
     document.getElementById('leader-list').innerHTML = listHtml;
 });
@@ -147,7 +176,7 @@ function switchTab(id, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active-tab');
-    el.classList.add('active');
+    if(el) el.classList.add('active');
 }
 
 function handleAction(type) {
@@ -155,38 +184,63 @@ function handleAction(type) {
     if (typeof show_10343752 === 'function') {
         show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
     } else {
-        setTimeout(() => executeLogic(type), 2000);
+        setTimeout(() => executeLogic(type), 2500);
     }
 }
 
 function executeLogic(type) {
     document.getElementById('ad-modal').style.display = 'none';
+    const reward = botLevel * 2000;
+    const upgradeCost = 100 * Math.pow(2, botLevel - 1);
+
     if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
     if(type === 'claim_auto_mine') {
         const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
         if(autoMineStart > 0 && elapsed >= 9000) {
-            db.ref('users/' + userId).update({ balance: bal + (botLevel * 2000), autoMineStart: 0 });
-            alert("Claimed!");
-        } else alert("Time not finished!");
+            db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 });
+            alert("Reward Claimed!");
+        } else alert("Not ready yet!");
     }
     if(type === 'upgrade_bot') {
-        let cost = 100 * Math.pow(2, botLevel - 1);
-        if(bal >= cost && botLevel < 25) db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
-        else alert("Need more 💎");
+        if(bal >= upgradeCost && botLevel < 25) db.ref('users/' + userId).update({ balance: bal - upgradeCost, botLevel: botLevel + 1 });
+        else alert("Need more 💎 or Max Level");
     }
     if(type === 'task_ad') { db.ref('users/' + userId).update({ balance: bal + 50 }); alert("+50 💎 Added!"); }
-    if(type === 'daily_checkin') { db.ref('users/' + userId).update({ balance: bal + 100 }); alert("Daily Bonus +100 💎"); }
+    if(type === 'spin') startSpin();
 }
 
-function copyRef() {
-    navigator.clipboard.writeText(referralLink);
-    alert("Refer Link Copied!");
+function copyRef() { navigator.clipboard.writeText(referralLink); alert("Link Copied!"); }
+
+// Spin Logic
+const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
+canvas.width = 260; canvas.height = 260;
+const prizes = [100, 10, 50, 0, 500, 20, 150, 5];
+const colors = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
+function drawWheel() {
+    const arc = (2 * Math.PI) / 8;
+    for (let i = 0; i < 8; i++) {
+        ctx.fillStyle = colors[i]; ctx.beginPath(); ctx.moveTo(130, 130); ctx.arc(130, 130, 130, i * arc, (i + 1) * arc); ctx.fill();
+        ctx.save(); ctx.fillStyle = "white"; ctx.font = "bold 12px Arial"; ctx.translate(130 + Math.cos(i * arc + arc/2) * 85, 130 + Math.sin(i * arc + arc/2) * 85);
+        ctx.rotate(i * arc + arc/2 + Math.PI/2); ctx.fillText(prizes[i], -10, 0); ctx.restore();
+    }
+} drawWheel();
+let currentRotation = 0;
+function startSpin() {
+    const extraDeg = Math.floor(Math.random() * 360) + 3600; currentRotation += extraDeg;
+    canvas.style.transform = `rotate(${currentRotation}deg)`;
+    setTimeout(() => {
+        const actualDeg = currentRotation % 360;
+        const pIndex = Math.floor((360 - actualDeg) / 45) % 8;
+        const won = prizes[pIndex]; db.ref('users/' + userId).update({ balance: bal + won });
+        alert(`Won ${won} 💎!`);
+    }, 5000);
 }
 
+// Mining Timer
 setInterval(() => {
     if (autoMineStart === 0) return;
     const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
-    const duration = 9000;
+    const duration = 9000; // 2.5 Hours
     if (elapsed < duration) {
         const timeLeft = duration - elapsed;
         const m = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
@@ -204,5 +258,5 @@ setInterval(() => {
 }, 1000);
 </script>
 </body>
-</html>
-
+            </html>
+    
