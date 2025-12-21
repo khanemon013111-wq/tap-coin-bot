@@ -123,13 +123,10 @@
 
 <div id="refer-tab" class="tab-content text-center">
     <div class="glass-card">
-        <h2 class="text-yellow-500 font-bold mb-2 uppercase">Referral System</h2>
-        <div class="bg-green-500/10 border border-green-500/20 p-4 rounded-xl mb-4">
-            <p class="text-green-400 font-black text-lg">🎁 50,000 💎</p>
-            <p class="text-[10px] uppercase text-gray-400">Bonus per referral</p>
-        </div>
-        <p id="ref-link" class="text-[9px] mb-4 text-gray-500 truncate bg-black/30 p-3 rounded-lg border border-white/5"></p>
-        <button onclick="copyRef()" class="bg-yellow-500 text-black px-8 py-3 rounded-xl font-black text-xs uppercase w-full">Copy My Link</button>
+        <h2 class="text-yellow-500 font-bold mb-2 uppercase">Refer & Earn</h2>
+        <p class="text-xs text-gray-300 mb-4 italic">Invite a friend and get <span class="text-yellow-400 font-bold">50,000 💎</span> instantly!</p>
+        <p id="ref-link" class="text-[9px] mb-4 text-gray-500 truncate bg-black/30 p-2 rounded"></p>
+        <button onclick="copyRef()" class="bg-yellow-500 text-black px-8 py-2 rounded-lg font-bold text-xs uppercase shadow-md">Copy Link</button>
     </div>
 </div>
 
@@ -151,28 +148,30 @@ const db = firebase.database();
 
 let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.random() * 89999 + 10000);
 localStorage.setItem('user_uid', userId);
+const referralLink = window.location.origin + window.location.pathname + "?start=" + userId;
 
+// Bonus Referral Script
 const urlParams = new URLSearchParams(window.location.search);
-const referrer = urlParams.get('start');
+const referrerId = urlParams.get('start');
 
-// Initialize User & Referral Bonus
 db.ref('users/' + userId).once('value', snap => {
     if (!snap.exists()) {
-        db.ref('users/' + userId).set({ balance: 0, botLevel: 1, autoMineStart: 0, usdBalance: 0 });
-        // Bonus for Referrer
-        if (referrer && referrer !== userId) {
-            db.ref('users/' + referrer).once('value', rSnap => {
+        // Initial user data
+        const userData = { balance: 0, botLevel: 1, autoMineStart: 0, usdBalance: 0 };
+        db.ref('users/' + userId).set(userData);
+
+        // If joined via referral, reward the referrer
+        if (referrerId && referrerId !== userId) {
+            db.ref('users/' + referrerId).once('value', rSnap => {
                 if (rSnap.exists()) {
-                    db.ref('users/' + referrer).update({ 
-                        balance: (rSnap.val().balance || 0) + 50000 
-                    });
+                    let oldBal = rSnap.val().balance || 0;
+                    db.ref('users/' + referrerId).update({ balance: oldBal + 50000 });
                 }
             });
         }
     }
 });
 
-const referralLink = window.location.origin + window.location.pathname + "?start=" + userId;
 let bal = 0; let botLevel = 1; let autoMineStart = 0; let usdBal = 0;
 
 db.ref('users/' + userId).on('value', snap => {
@@ -296,8 +295,8 @@ setInterval(() => {
 
     if (autoMineStart === 0) {
         startBtn.disabled = false; claimBtn.disabled = true;
-        startBtn.className = "bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white w-full";
-        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50 cursor-not-allowed w-full";
+        startBtn.className = "bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white";
+        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50 cursor-not-allowed";
         document.getElementById('mine-timer').innerText = "02:30:00";
         document.getElementById('mine-progress-bar').style.width = "0%";
         document.getElementById('bot-status').innerText = "OFFLINE";
@@ -308,12 +307,14 @@ setInterval(() => {
     const duration = 9000;
     if (elapsed < duration) {
         startBtn.disabled = true; claimBtn.disabled = true;
-        startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50 w-full";
-        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50 w-full";
+        startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
+        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
         const timeLeft = duration - elapsed;
         const h = Math.floor(timeLeft/3600).toString().padStart(2,'0'), m = Math.floor((timeLeft%3600)/60).toString().padStart(2,'0'), s = (timeLeft%60).toString().padStart(2,'0');
         document.getElementById('mine-timer').innerText = `${h}:${m}:${s}`;
         document.getElementById('mine-progress-bar').style.width = (elapsed/duration*100) + "%";
         document.getElementById('auto-mined-val').innerText = ((elapsed/duration)*(botLevel*2000)).toFixed(2);
         document.getElementById('bot-status').innerText = "MINING";
-        document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 
+        document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
+    } else {
+        startBtn.disabled = true; clai
