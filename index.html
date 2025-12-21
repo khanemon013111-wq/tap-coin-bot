@@ -26,8 +26,6 @@
         .nav-item.active { color: #fbbf24; font-weight: bold; }
         #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         button:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
-
-        /* Leaderboard Specific Styles */
         .leader-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .rank-badge { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; margin-right: 10px; }
         .my-sticky-rank { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: linear-gradient(90deg, #fbbf24, #d97706); color: black; border-radius: 12px; padding: 10px 20px; font-weight: 900; display: flex; justify-content: space-between; box-shadow: 0 -4px 15px rgba(0,0,0,0.4); z-index: 400; }
@@ -76,7 +74,7 @@
             <button id="btn-start" onclick="handleAction('start_auto_mine')" class="bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Start</button>
             <button id="btn-claim" onclick="handleAction('claim_auto_mine')" class="bg-green-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Claim</button>
         </div>
-        <button onclick="handleAction('upgrade_bot')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6">
+        <button id="upgrade-btn" onclick="handleAction('upgrade_bot')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 transition-all duration-300">
             <span>Upgrade Bot</span>
             <span id="upgrade-cost-text">100 💎</span>
         </button>
@@ -89,19 +87,9 @@
 </div>
 
 <div id="leader-tab" class="tab-content">
-    <div class="text-center mb-4">
-        <h2 class="text-yellow-500 font-black text-xl italic uppercase tracking-widest">Global Board</h2>
-        <p class="text-[9px] text-gray-400 uppercase">Top 500 Miners</p>
-    </div>
-    <div class="glass-card p-0 overflow-hidden">
-        <div id="leader-list-container" class="max-h-[55vh] overflow-y-auto">
-            <p class="text-center p-10 text-xs text-gray-500">Loading Rankings...</p>
-        </div>
-    </div>
-    <div id="my-sticky-rank" class="my-sticky-rank" style="display:none;">
-        <span class="text-[10px]">YOU: #<span id="my-rank-pos">--</span></span>
-        <span class="text-[10px]">💎 <span id="my-rank-bal">0</span></span>
-    </div>
+    <div class="text-center mb-4"><h2 class="text-yellow-500 font-black text-xl italic uppercase tracking-widest">Global Board</h2><p class="text-[9px] text-gray-400 uppercase">Top 500 Miners</p></div>
+    <div class="glass-card p-0 overflow-hidden"><div id="leader-list-container" class="max-h-[55vh] overflow-y-auto"><p class="text-center p-10 text-xs text-gray-500">Loading Rankings...</p></div></div>
+    <div id="my-sticky-rank" class="my-sticky-rank" style="display:none;"><span class="text-[10px]">YOU: #<span id="my-rank-pos">--</span></span><span class="text-[10px]">💎 <span id="my-rank-bal">0</span></span></div>
 </div>
 
 <div id="spin-tab" class="tab-content text-center"><div class="glass-card py-20"><div class="text-6xl mb-6">🎡</div><h2 class="text-yellow-500 font-black text-2xl mb-2 italic uppercase">Lucky Wheel</h2><p class="text-gray-400 font-bold animate-pulse uppercase tracking-widest text-xs">Coming Soon...</p></div></div>
@@ -178,8 +166,6 @@ function switchTab(id, el) {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active-tab');
     if(el) el.classList.add('active');
-    
-    // Hide sticky rank if not on Leaderboard tab
     document.getElementById('my-sticky-rank').style.display = (id === 'leader-tab') ? 'flex' : 'none';
     if(id === 'leader-tab') loadLeaderboard();
 }
@@ -189,28 +175,11 @@ function loadLeaderboard() {
         let users = [];
         snapshot.forEach(child => { users.push({ id: child.key, ...child.val() }); });
         users.reverse();
-
-        let html = '';
-        let myRank = "500+";
+        let html = ''; let myRank = "500+";
         users.forEach((user, index) => {
-            let rank = index + 1;
-            let isMe = user.id === userId;
-            if(isMe) myRank = rank;
-
+            let rank = index + 1; let isMe = user.id === userId; if(isMe) myRank = rank;
             let badgeColor = rank === 1 ? 'bg-yellow-500 text-black' : rank === 2 ? 'bg-gray-300 text-black' : rank === 3 ? 'bg-orange-600' : 'bg-white/10';
-            
-            html += `
-                <div class="leader-item ${isMe ? 'bg-yellow-500/20' : ''}">
-                    <div class="flex items-center">
-                        <div class="rank-badge ${badgeColor}">${rank}</div>
-                        <div>
-                            <p class="text-[10px] font-bold ${isMe ? 'text-yellow-400' : 'text-white'}">${user.id.substring(0, 12)}${isMe ? ' (YOU)' : ''}</p>
-                            <p class="text-[7px] text-gray-500 uppercase">Bot Level ${user.botLevel || 1}</p>
-                        </div>
-                    </div>
-                    <p class="text-xs font-black text-yellow-500">💎 ${Math.floor(user.balance).toLocaleString()}</p>
-                </div>
-            `;
+            html += `<div class="leader-item ${isMe ? 'bg-yellow-500/20' : ''}"><div class="flex items-center"><div class="rank-badge ${badgeColor}">${rank}</div><div><p class="text-[10px] font-bold ${isMe ? 'text-yellow-400' : 'text-white'}">${user.id.substring(0, 12)}${isMe ? ' (YOU)' : ''}</p><p class="text-[7px] text-gray-500 uppercase">Bot Level ${user.botLevel || 1}</p></div></div><p class="text-xs font-black text-yellow-500">💎 ${Math.floor(user.balance).toLocaleString()}</p></div>`;
         });
         document.getElementById('leader-list-container').innerHTML = html;
         document.getElementById('my-rank-pos').innerText = myRank;
@@ -218,13 +187,27 @@ function loadLeaderboard() {
     });
 }
 
-function copyRef() {
-    navigator.clipboard.writeText(document.getElementById('ref-link').innerText).then(() => alert("Link Copied!"));
-}
+function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-link').innerText).then(() => alert("Link Copied!")); }
 
 setInterval(() => {
     const startBtn = document.getElementById('btn-start');
     const claimBtn = document.getElementById('btn-claim');
+    const upBtn = document.getElementById('upgrade-btn');
+    const upgradeCost = 100 * Math.pow(2, botLevel - 1);
+
+    // Upgrade Button Logic
+    if (bal < upgradeCost) {
+        upBtn.style.opacity = "0.5";
+        upBtn.style.filter = "grayscale(1)";
+        upBtn.style.cursor = "not-allowed";
+        upBtn.disabled = true;
+    } else {
+        upBtn.style.opacity = "1";
+        upBtn.style.filter = "grayscale(0)";
+        upBtn.style.cursor = "pointer";
+        upBtn.disabled = false;
+    }
+
     if (!startBtn || !claimBtn) return;
     if (autoMineStart === 0) {
         startBtn.disabled = false; claimBtn.disabled = true;
@@ -242,7 +225,6 @@ setInterval(() => {
         const h = Math.floor(timeLeft/3600).toString().padStart(2,'0'), m = Math.floor((timeLeft%3600)/60).toString().padStart(2,'0'), s = (timeLeft%60).toString().padStart(2,'0');
         document.getElementById('mine-timer').innerText = `${h}:${m}:${s}`;
         document.getElementById('mine-progress-bar').style.width = (elapsed/duration*100) + "%";
-        document.getElementById('mine-percent').innerText = Math.floor(elapsed/duration*100) + "%";
         document.getElementById('auto-mined-val').innerText = ((elapsed/duration)*(botLevel*2000)).toFixed(2);
         document.getElementById('bot-status').innerText = "MINING";
         document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
@@ -254,5 +236,5 @@ setInterval(() => {
 }, 1000);
 </script>
 </body>
-    </html>
-                                                                                                                                             
+                                                                                                                                                                                                       </html>
+                                                                                                                       
