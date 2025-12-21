@@ -19,16 +19,16 @@
         .float-btn { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; cursor: pointer; }
         .spin-float { background: linear-gradient(45deg, #fbbf24, #d97706); }
         .shop-float { background: linear-gradient(45deg, #3b82f6, #1d4ed8); }
-        .level-row { display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 10px; }
-        .level-row.current { background: rgba(251, 191, 36, 0.2); border-radius: 8px; border: 1px solid #fbbf24; color: #fbbf24; font-weight: bold; }
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; }
         .nav-item { font-size: 10px; color: #94a3b8; text-align: center; flex: 1; cursor: pointer; }
         .nav-item.active { color: #fbbf24; font-weight: bold; }
         #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
-        .leader-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .rank-badge { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; margin-right: 10px; }
-        .my-sticky-rank { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: linear-gradient(90deg, #fbbf24, #d97706); color: black; border-radius: 12px; padding: 10px 20px; font-weight: 900; display: flex; justify-content: space-between; box-shadow: 0 -4px 15px rgba(0,0,0,0.4); z-index: 400; }
+        
+        /* Spin Wheel Premium Styles */
+        .wheel-container { position: relative; width: 300px; height: 300px; margin: 20px auto; border-radius: 50%; border: 8px solid #b45309; box-shadow: 0 0 30px rgba(251, 191, 36, 0.4); }
+        #spinCanvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 7s cubic-bezier(0.15, 0, 0.1, 1); }
+        .wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 100; filter: drop-shadow(0 4px 4px black); }
+        .wheel-hub { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: radial-gradient(circle, #fbbf24, #b45309); border-radius: 50%; border: 3px solid #0f172a; z-index: 50; }
     </style>
 </head>
 <body>
@@ -92,11 +92,37 @@
     <div id="my-sticky-rank" class="my-sticky-rank" style="display:none;"><span class="text-[10px]">YOU: #<span id="my-rank-pos">--</span></span><span class="text-[10px]">💎 <span id="my-rank-bal">0</span></span></div>
 </div>
 
-<div id="spin-tab" class="tab-content text-center"><div class="glass-card py-20"><div class="text-6xl mb-6">🎡</div><h2 class="text-yellow-500 font-black text-2xl mb-2 italic uppercase">Lucky Wheel</h2><p class="text-gray-400 font-bold animate-pulse uppercase tracking-widest text-xs">Coming Soon...</p></div></div>
+<div id="spin-tab" class="tab-content text-center">
+    <div class="glass-card">
+        <h2 class="text-yellow-500 font-black text-xl italic uppercase">Royal Spin</h2>
+        <div class="wheel-container">
+            <div class="wheel-pointer">
+                <svg width="30" height="40" viewBox="0 0 40 50"><path d="M20 50 L40 10 A20 20 0 0 0 0 10 Z" fill="#ef4444" stroke="#fff" stroke-width="2"/></svg>
+            </div>
+            <div class="wheel-hub"></div>
+            <canvas id="spinCanvas"></canvas>
+        </div>
+        <button id="spinBtn" onclick="startTheSpin()" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-4 rounded-2xl font-black text-sm uppercase shadow-lg mt-4">
+            SPIN (100,000 💎)
+        </button>
+        <p class="text-[9px] text-gray-500 mt-3 uppercase tracking-widest">Win Diamonds or Real USD</p>
+    </div>
+</div>
+
 <div id="shop-tab" class="tab-content text-center"><div class="glass-card py-20"><div class="text-6xl mb-6">🛒</div><h2 class="text-blue-500 font-black text-2xl mb-2 italic uppercase">Diamond Shop</h2><p class="text-gray-400 font-bold animate-pulse uppercase tracking-widest text-xs">Coming Soon...</p></div></div>
 <div id="tasks-tab" class="tab-content text-center"><div class="glass-card py-20"><div class="text-6xl mb-6">📝</div><h2 class="text-green-500 font-black text-2xl mb-2 italic uppercase">Daily Tasks</h2><p class="text-gray-400 font-bold animate-pulse uppercase tracking-widest text-xs">Coming Soon...</p></div></div>
 <div id="refer-tab" class="tab-content text-center"><div class="glass-card"><h2 class="text-yellow-500 font-bold mb-2">Refer Friends</h2><p class="text-[10px] text-green-400 mb-4 font-bold">Get 50,000 💎 per refer!</p><p id="ref-link" class="text-[9px] mb-4 text-gray-500 truncate bg-black/30 p-2 rounded">Loading...</p><button onclick="copyRef()" class="bg-yellow-500 text-black px-8 py-2 rounded-lg font-bold text-xs uppercase">Copy Link</button></div></div>
-<div id="wallet-tab" class="tab-content text-center"><div class="glass-card py-20"><div class="text-5xl mb-4">💳</div><h2 class="text-yellow-500 font-black text-xl mb-2 italic">WITHDRAW</h2><p class="text-gray-400 text-sm font-bold animate-pulse uppercase tracking-widest">COMING SOON...</p></div></div>
+<div id="wallet-tab" class="tab-content text-center">
+    <div class="glass-card py-10">
+        <div class="text-5xl mb-4">💳</div>
+        <h2 class="text-yellow-500 font-black text-xl mb-2 italic">WALLET</h2>
+        <div class="bg-black/30 p-4 rounded-xl mb-4">
+            <p class="text-[10px] text-gray-400 uppercase">USD Balance</p>
+            <p class="text-2xl font-black text-green-500">$ <span id="usd-bal-display">0.00</span></p>
+        </div>
+        <p class="text-gray-400 text-[9px] font-bold animate-pulse uppercase">Withdrawals Coming Soon...</p>
+    </div>
+</div>
 
 <nav class="nav-bar">
     <div onclick="switchTab('home-tab', this)" class="nav-item active">🏠<br>Home</div>
@@ -115,18 +141,85 @@ let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.rando
 localStorage.setItem('user_uid', userId);
 const referralLink = window.location.origin + window.location.pathname + "?start=" + userId;
 
-let bal = 0; let botLevel = 1; let autoMineStart = 0;
+let bal = 0; let botLevel = 1; let autoMineStart = 0; let usdBal = 0;
 
 db.ref('users/' + userId).on('value', snap => {
-    const data = snap.val() || { balance: 0, botLevel: 1, autoMineStart: 0 };
+    const data = snap.val() || { balance: 0, botLevel: 1, autoMineStart: 0, usdBalance: 0 };
     bal = data.balance; botLevel = data.botLevel || 1; autoMineStart = data.autoMineStart || 0;
+    usdBal = data.usdBalance || 0;
     document.getElementById('home-balance').innerText = Math.floor(bal).toLocaleString();
+    document.getElementById('usd-bal-display').innerText = usdBal.toFixed(2);
     document.getElementById('display-level').innerText = botLevel;
     document.getElementById('upgrade-cost-text').innerText = (100 * Math.pow(2, botLevel - 1)).toLocaleString() + " 💎";
     document.getElementById('ref-link').innerText = referralLink;
     generateLevelChart(botLevel);
 });
 
+// Spin Logic Setup
+const canvas = document.getElementById('spinCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 500; canvas.height = 500;
+const prizes = [
+    {t:"100K", v:100000, type:"d"}, {t:"$0.01", v:0.01, type:"u"},
+    {t:"20K", v:20000, type:"d"},    {t:"$0.05", v:0.05, type:"u"},
+    {t:"50K", v:50000, type:"d"},    {t:"$5.00", v:5.00, type:"u"}, // Fake
+    {t:"30K", v:30000, type:"d"},    {t:"$0.10", v:0.10, type:"u"},
+    {t:"80K", v:80000, type:"d"},    {t:"$0.20", v:0.20, type:"u"},
+    {t:"40K", v:40000, type:"d"},    {t:"$10.00", v:10.00, type:"u"}, // Fake
+    {t:"60K", v:60000, type:"d"},    {t:"$0.50", v:0.50, type:"u"},
+    {t:"90K", v:90000, type:"d"},    {t:"$1.00", v:1.00, type:"u"},
+    {t:"70K", v:70000, type:"d"},    {t:"$0.02", v:0.02, type:"u"}
+];
+
+function drawWheel() {
+    const slice = (2 * Math.PI) / 18;
+    for (let i = 0; i < 18; i++) {
+        ctx.beginPath();
+        ctx.fillStyle = i % 2 === 0 ? "#0f172a" : "#1e293b";
+        ctx.moveTo(250, 250);
+        ctx.arc(250, 250, 245, i * slice, (i + 1) * slice);
+        ctx.fill();
+        ctx.save();
+        ctx.translate(250, 250);
+        ctx.rotate(i * slice + slice / 2);
+        ctx.fillStyle = prizes[i].type === 'd' ? "#fbbf24" : "#4ade80";
+        ctx.font = "bold 16px Arial";
+        ctx.fillText(prizes[i].t, 180, 5);
+        ctx.restore();
+    }
+}
+drawWheel();
+
+let isSpinning = false;
+function startTheSpin() {
+    if (isSpinning) return;
+    if (bal < 100000) { alert("Insufficient Diamonds! You need 100,000."); return; }
+
+    isSpinning = true;
+    db.ref('users/' + userId).update({ balance: bal - 100000 });
+
+    const safePool = [0, 1, 2, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17];
+    const winIdx = safePool[Math.floor(Math.random() * safePool.length)];
+    const deg = 3600 + (360 - (winIdx * 20));
+    
+    canvas.style.transform = `rotate(${deg}deg)`;
+
+    setTimeout(() => {
+        isSpinning = false;
+        const reward = prizes[winIdx];
+        if (reward.type === "d") {
+            db.ref('users/' + userId).update({ balance: (bal - 100000) + reward.v });
+        } else {
+            db.ref('users/' + userId).update({ usdBalance: usdBal + reward.v });
+        }
+        alert("You won: " + reward.t);
+        canvas.style.transition = "none";
+        canvas.style.transform = `rotate(${deg % 360}deg)`;
+        setTimeout(() => canvas.style.transition = "transform 7s cubic-bezier(0.15, 0, 0.1, 1)", 100);
+    }, 7200);
+}
+
+// Other functions remain same
 function generateLevelChart(currentLvl) {
     let html = '';
     for(let i=1; i<=25; i++) {
@@ -195,18 +288,8 @@ setInterval(() => {
     const upBtn = document.getElementById('upgrade-btn');
     const upgradeCost = 100 * Math.pow(2, botLevel - 1);
 
-    // Upgrade Button Logic
-    if (bal < upgradeCost) {
-        upBtn.style.opacity = "0.5";
-        upBtn.style.filter = "grayscale(1)";
-        upBtn.style.cursor = "not-allowed";
-        upBtn.disabled = true;
-    } else {
-        upBtn.style.opacity = "1";
-        upBtn.style.filter = "grayscale(0)";
-        upBtn.style.cursor = "pointer";
-        upBtn.disabled = false;
-    }
+    if (bal < upgradeCost) { upBtn.disabled = true; upBtn.style.opacity = "0.5"; } 
+    else { upBtn.disabled = false; upBtn.style.opacity = "1"; }
 
     if (!startBtn || !claimBtn) return;
     if (autoMineStart === 0) {
@@ -236,5 +319,5 @@ setInterval(() => {
 }, 1000);
 </script>
 </body>
-                                                                                                                                                                                                       </html>
-                                                                                                                       
+    </html>
+                                                                                                                                                                                                        
