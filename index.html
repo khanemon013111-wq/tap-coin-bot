@@ -115,8 +115,8 @@
 </nav>
 
 <script>
-// Firebase এবং Initial Data Setup (আগের মতোই)
-const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqA@L3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
+// Firebase Config - দাদু এখান থেকে @ চিহ্নটা সরিয়ে দিয়েছি যাতে কানেকশন কাজ করে
+const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqAL3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
@@ -137,22 +137,31 @@ function generateLevelChart(currentLvl) {
     document.getElementById('level-list-container').innerHTML = html;
 }
 
+// দাদু এখানে লজিক আপডেট করেছি যাতে NaN না দেখায়
 db.ref('users/' + userId).on('value', snap => {
-    const data = snap.val() || { balance: 0, botLevel: 1, autoMineStart: 0 };
-    bal = data.balance; botLevel = data.botLevel || 1; autoMineStart = data.autoMineStart || 0;
+    const data = snap.val() || {};
+    
+    // Number() এবং || 0 ব্যবহার করে নিশ্চিত করা হয়েছে যাতে NaN না আসে
+    bal = Number(data.balance) || 0; 
+    botLevel = Number(data.botLevel) || 1; 
+    autoMineStart = Number(data.autoMineStart) || 0;
+
     document.getElementById('home-balance').innerText = Math.floor(bal).toLocaleString();
     document.getElementById('display-level').innerText = botLevel;
-    document.getElementById('upgrade-cost-text').innerText = (100 * Math.pow(2, botLevel - 1)).toLocaleString() + " 💎";
+    
+    let upgradeCost = 100 * Math.pow(2, botLevel - 1);
+    document.getElementById('upgrade-cost-text').innerText = upgradeCost.toLocaleString() + " 💎";
+    
     document.getElementById('ref-link').innerText = referralLink;
     generateLevelChart(botLevel);
 });
 
-// Leaderboard এবং Tabs Logic
 db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
     let listHtml = ''; let rank = 1; let users = [];
     snap.forEach(u => { users.push(u.val()); });
     users.reverse().forEach(u => {
-        listHtml += `<div class="glass-card flex justify-between items-center py-2 px-4 mb-2"><span>#${rank++} Player</span><span class="text-green-400 font-bold">${Math.floor(u.balance || 0).toLocaleString()} 💎</span></div>`;
+        let userBal = Number(u.balance) || 0;
+        listHtml += `<div class="glass-card flex justify-between items-center py-2 px-4 mb-2"><span>#${rank++} Player</span><span class="text-green-400 font-bold">${Math.floor(userBal).toLocaleString()} 💎</span></div>`;
     });
     document.getElementById('leader-list').innerHTML = listHtml;
 });
@@ -188,7 +197,6 @@ function executeLogic(type) {
     if(type === 'spin') startSpin();
 }
 
-// Wheel (Spin) Logic (আগের মতোই)
 const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
 canvas.width = 260; canvas.height = 260;
 const prizes = [500, 10, 50, 0, 100, 20, 200, 5];
@@ -213,13 +221,11 @@ function startSpin() {
     }, 5000);
 }
 
-// দাদু এখানে বাটন কালার এবং স্ট্যাটাস আপডেট লজিক ঠিক করা হয়েছে
 setInterval(() => {
     const startBtn = document.getElementById('btn-start');
     const claimBtn = document.getElementById('btn-claim');
 
     if (autoMineStart === 0) {
-        // অফলাইন মোড
         startBtn.disabled = false;
         claimBtn.disabled = true;
         startBtn.className = "bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white";
@@ -237,7 +243,6 @@ setInterval(() => {
     const duration = 9000;
 
     if (elapsed < duration) {
-        // মাইনিং চলছে মোড
         startBtn.disabled = true;
         claimBtn.disabled = true;
         startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
@@ -254,7 +259,6 @@ setInterval(() => {
         document.getElementById('bot-status').innerText = "MINING";
         document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
     } else {
-        // রেডি মোড
         startBtn.disabled = true;
         claimBtn.disabled = false;
         startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
@@ -275,5 +279,5 @@ function copyRef() {
 }
 </script>
 </body>
-                                                  </html>
-    
+    </html>
+                                                                                                                                                                                                                           
