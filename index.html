@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Diamond - Bot Master</title>
+    <title>Royal Diamond - Global Master</title>
     <script src='//libtl.com/sdk.js' data-zone='10343752' data-sdk='show_10343752'></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -80,7 +80,7 @@
     </div>
 
     <div class="glass-card">
-        <h3 class="text-yellow-500 font-black text-[10px] mb-4 uppercase">Earning Info</h3>
+        <h3 class="text-yellow-500 font-black text-[10px] mb-4 uppercase italic">Earning Info</h3>
         <div id="level-list-container" class="max-height-[300px] overflow-y-auto pr-1" style="max-height: 200px;"></div>
     </div>
 </div>
@@ -113,8 +113,16 @@
     </div>
 </div>
 
+<div id="leader-tab" class="tab-content">
+    <h2 class="text-center py-4 font-black italic uppercase text-yellow-500">Global Board</h2>
+    <div class="glass-card mb-4 text-center border-dashed border-yellow-500/30">
+        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Active Players</p>
+        <p class="text-2xl font-black text-white"><span id="total-users-count">0</span></p>
+    </div>
+    <div id="leader-list" class="space-y-2"></div>
+</div>
+
 <div id="tasks-tab" class="tab-content text-center py-20 font-bold uppercase text-gray-500">📝 Tasks Section Coming Soon</div>
-<div id="leader-tab" class="tab-content text-center py-20 font-bold uppercase text-gray-500">🏆 Global Board Coming Soon</div>
 <div id="refer-tab" class="tab-content text-center">
     <div class="glass-card">
         <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Invite Friends</h2>
@@ -168,19 +176,49 @@ function generateLevelChart(currentLvl) {
     document.getElementById('level-list-container').innerHTML = html;
 }
 
+function updateLeaderboard() {
+    const leaderListEl = document.getElementById('leader-list');
+    const totalUserEl = document.getElementById('total-users-count');
+
+    // Count Users
+    db.ref('users').on('value', (snapshot) => {
+        totalUserEl.innerText = snapshot.numChildren().toLocaleString();
+    });
+
+    // Top 10 List
+    db.ref('users').orderByChild('balance').limitToLast(10).on('value', (snapshot) => {
+        let usersArray = [];
+        snapshot.forEach((child) => { usersArray.push({ id: child.key, ...child.val() }); });
+        usersArray.reverse();
+        let html = '';
+        usersArray.forEach((user, index) => {
+            let medal = (index === 0) ? "🥇" : (index === 1) ? "🥈" : (index === 2) ? "🥉" : `#${index + 1}`;
+            html += `
+            <div class="flex justify-between items-center p-3 mb-2 bg-white/5 rounded-xl border border-white/10">
+                <div class="flex items-center gap-3"><span class="text-yellow-500 font-bold">${medal}</span>
+                    <div><p class="text-[10px] font-bold text-white">${user.id.substring(0,10)}</p><p class="text-[8px] text-gray-500">LVL ${user.botLevel || 1}</p></div>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-black text-yellow-500">💎 ${Math.floor(user.balance || 0).toLocaleString()}</p>
+                    <p class="text-[8px] text-green-400">$ ${Number(user.usdtBalance || 0).toFixed(2)}</p>
+                </div>
+            </div>`;
+        });
+        leaderListEl.innerHTML = html;
+    });
+}
+
 function switchTab(id, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active-tab');
     if(el) el.classList.add('active');
+    if(id === 'leader-tab') updateLeaderboard();
 }
 
 function handleAction(type) {
-    if(type === 'spin' && bal < 100000) { alert("দাদু, ১,০০,০০০ ডায়মন্ড নেই!"); return; }
-    if(type === 'upgrade_bot') {
-        let cost = 100 * Math.pow(2, botLevel - 1);
-        if(bal < cost) { alert("ব্যালেন্স কম!"); return; }
-    }
+    if(type === 'spin' && bal < 100000) { alert("১,০০,০০০ ডায়মন্ড নেই!"); return; }
+    if(type === 'upgrade_bot' && bal < (100 * Math.pow(2, botLevel - 1))) { alert("ব্যালেন্স কম!"); return; }
     document.getElementById('ad-modal').style.display = 'flex';
     if (typeof show_10343752 === 'function') {
         show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
@@ -236,41 +274,28 @@ function startSpin() {
 function processWithdraw() {
     const uid = document.getElementById('binance-uid').value;
     const amount = parseFloat(document.getElementById('withdraw-amount').value);
-    if(!uid || uid.length < 5) { alert("Binance UID Required!"); return; }
-    if(!amount || amount < 20) { alert("Minimum 20 USDT!"); return; }
-    if(amount > usdtBal) { alert("Low Balance!"); return; }
-    const reqKey = db.ref('withdrawRequests').push().key;
-    db.ref('withdrawRequests/' + reqKey).set({ userId, binanceUID: uid, amount, status: 'pending', time: Date.now() }).then(() => {
+    if(!uid || uid.length < 5) { alert("UID Required!"); return; }
+    if(!amount || amount < 20) { alert("সর্বনিম্ন ২০ ডলার লাগবে!"); return; }
+    if(amount > usdtBal) { alert("ব্যালেন্স নেই!"); return; }
+    db.ref('withdrawRequests').push().set({ userId, binanceUID: uid, amount, status: 'pending', time: Date.now() }).then(() => {
         db.ref('users/' + userId).update({ usdtBalance: usdtBal - amount });
-        alert("Success! Processing...");
+        alert("Success!");
     });
 }
 
-// Global Button & Mining Controller
 setInterval(() => {
     const startBtn = document.getElementById('btn-start');
     const claimBtn = document.getElementById('btn-claim');
     const upgradeBtn = document.getElementById('btn-upgrade');
     
-    // Upgrade Visuals
     let cost = 100 * Math.pow(2, botLevel - 1);
-    if (bal < cost || botLevel >= 25) {
-        upgradeBtn.disabled = true;
-        upgradeBtn.className = "w-full bg-gray-700 text-gray-500 py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 opacity-50 cursor-not-allowed";
-    } else {
-        upgradeBtn.disabled = false;
-        upgradeBtn.className = "w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 shadow-lg";
-    }
+    upgradeBtn.disabled = (bal < cost || botLevel >= 25);
+    upgradeBtn.style.opacity = upgradeBtn.disabled ? "0.5" : "1";
 
-    // MINING LOGIC WITH BUTTON FIX
     if (autoMineStart === 0) {
         startBtn.disabled = false; claimBtn.disabled = true;
-        startBtn.className = "bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white";
-        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
-        document.getElementById('mine-timer').innerText = "02:30:00";
-        document.getElementById('mine-progress-bar').style.width = "0%";
-        document.getElementById('mine-percent').innerText = "0%";
-        document.getElementById('auto-mined-val').innerText = "0.00";
+        startBtn.className = "bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase text-white w-full";
+        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase text-gray-400 opacity-50 w-full";
         document.getElementById('bot-status').innerText = "OFFLINE";
         document.getElementById('bot-status').className = "text-[9px] bg-red-600 px-2 py-0.5 rounded text-white font-bold";
         return;
@@ -280,8 +305,8 @@ setInterval(() => {
     const duration = 9000;
     if (elapsed < duration) {
         startBtn.disabled = true; claimBtn.disabled = true;
-        startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50 cursor-not-allowed";
-        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
+        startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase text-gray-400 opacity-50 w-full";
+        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase text-gray-400 opacity-50 w-full";
         const timeLeft = duration - elapsed;
         const h = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
         const m = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
@@ -294,12 +319,9 @@ setInterval(() => {
         document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
     } else {
         startBtn.disabled = true; claimBtn.disabled = false;
-        startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
-        claimBtn.className = "bg-green-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white animate-pulse";
+        claimBtn.className = "bg-green-600 py-3 rounded-xl font-bold text-xs uppercase text-white animate-pulse w-full";
         document.getElementById('mine-timer').innerText = "00:00:00";
         document.getElementById('mine-progress-bar').style.width = "100%";
-        document.getElementById('mine-percent').innerText = "100%";
-        document.getElementById('auto-mined-val').innerText = (botLevel * 2000).toFixed(2);
         document.getElementById('bot-status').innerText = "READY";
         document.getElementById('bot-status').className = "text-[9px] bg-green-500 px-2 py-0.5 rounded text-white font-bold animate-bounce";
     }
@@ -308,5 +330,5 @@ setInterval(() => {
 function copyRef() { navigator.clipboard.writeText(referralLink).then(() => alert("Copied!")); }
 </script>
 </body>
-                                                                                                                                                                                 </html>
-            
+</html>
+
