@@ -69,8 +69,8 @@
         </div>
         
         <div class="grid grid-cols-2 gap-3 mb-4">
-            <button id="btn-start" onclick="handleAction('start_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg transition-all duration-300">Start</button>
-            <button id="btn-claim" onclick="handleAction('claim_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg transition-all duration-300">Claim</button>
+            <button id="btn-start" onclick="handleAction('start_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Start</button>
+            <button id="btn-claim" onclick="handleAction('claim_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg">Claim</button>
         </div>
         
         <button id="btn-upgrade" onclick="handleAction('upgrade_bot')" class="w-full py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 transition-all duration-300">
@@ -80,32 +80,27 @@
     </div>
 
     <div class="glass-card">
-        <h3 class="text-yellow-500 font-black text-xs mb-4 uppercase italic">Bot Level History Chart</h3>
-        <div class="level-row font-bold text-gray-400 border-b border-gray-700 mb-2">
-            <span>LVL</span>
-            <span>INCOME</span>
-            <span>COST</span>
-        </div>
-        <div id="level-list-container" class="max-height-[300px] overflow-y-auto pr-2" style="max-height: 400px;"></div>
+        <h3 class="text-yellow-500 font-black text-xs mb-4 uppercase italic">Bot Level History</h3>
+        <div id="level-list-container" class="max-height-[300px] overflow-y-auto" style="max-height: 300px;"></div>
     </div>
 </div>
 
 <div id="spin-tab" class="tab-content text-center">
     <div class="glass-card">
-        <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Lucky Wheel</h2>
+        <h2 class="text-yellow-500 font-black mb-2 uppercase italic">Lucky Wheel</h2>
+        <p class="text-[10px] text-gray-400 mb-4">Cost: 100,000 💎 per spin</p>
         <div style="position: relative; width: 280px; height: 280px; margin: auto;">
-            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 30px; color: #fbbf24;">▼</div>
+            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 30px; color: #ff0000;">▼</div>
             <canvas id="wheel-canvas" style="width: 100%; height: 100%; border-radius: 50%; border: 6px solid #fbbf24; transition: transform 6s cubic-bezier(0.1, 0, 0, 1);"></canvas>
         </div>
         <button onclick="handleAction('spin')" id="spin-btn" class="mt-8 bg-yellow-500 text-black font-black py-4 px-12 rounded-full uppercase shadow-xl">SPIN NOW</button>
     </div>
 </div>
 
-<div id="shop-tab" class="tab-content"><h2 class="text-center py-10 uppercase font-black text-yellow-500 italic">Shop Coming Soon</h2></div>
-<div id="tasks-tab" class="tab-content"><h2 class="text-center py-10 uppercase font-black text-yellow-500 italic">Tasks Coming Soon</h2></div>
-<div id="leader-tab" class="tab-content text-xs"><h2 class="text-center py-10 uppercase italic font-bold">Top 10 Board</h2><div id="leader-list"></div></div>
+<div id="tasks-tab" class="tab-content"><h2 class="text-center py-10 font-bold">Tasks Coming Soon</h2></div>
+<div id="leader-tab" class="tab-content"><h2 class="text-center py-10 font-bold italic uppercase">Top 10 Player</h2><div id="leader-list"></div></div>
 <div id="refer-tab" class="tab-content text-center"><div class="glass-card"><h2 class="text-yellow-500 font-bold mb-4">Refer Friends</h2><p id="ref-link" class="text-[9px] mb-4 text-gray-500 truncate">Loading...</p><button onclick="copyRef()" class="bg-yellow-500 text-black px-8 py-2 rounded-lg font-bold text-xs uppercase">Copy</button></div></div>
-<div id="wallet-tab" class="tab-content"><div class="glass-card text-center py-10"><div class="text-5xl mb-4">💳</div><h2 class="text-yellow-500 font-black text-xl mb-2 uppercase italic">Withdraw</h2><p class="text-gray-400 text-sm font-bold animate-pulse">COMING SOON...</p></div></div>
+<div id="wallet-tab" class="tab-content"><div class="glass-card text-center py-10">💳<br>Withdraw Coming Soon</div></div>
 
 <nav class="nav-bar">
     <div onclick="switchTab('home-tab', this)" class="nav-item active">🏠<br>Home</div>
@@ -126,17 +121,6 @@ const referralLink = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
 let bal = 0; let botLevel = 1; let autoMineStart = 0;
 
-function generateLevelChart(currentLvl) {
-    let html = '';
-    for(let i=1; i<=25; i++) {
-        let income = i * 2000;
-        let cost = 100 * Math.pow(2, i-1);
-        let activeClass = (i === currentLvl) ? 'current' : '';
-        html += `<div class="level-row ${activeClass}"><span>LVL ${i}</span><span>${income.toLocaleString()} 💎</span><span>${(i === 25 ? 'MAX' : cost.toLocaleString() + ' 💎')}</span></div>`;
-    }
-    document.getElementById('level-list-container').innerHTML = html;
-}
-
 db.ref('users/' + userId).on('value', snap => {
     const data = snap.val() || {};
     bal = Number(data.balance) || 0; 
@@ -149,15 +133,16 @@ db.ref('users/' + userId).on('value', snap => {
     generateLevelChart(botLevel);
 });
 
-db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
-    let listHtml = ''; let rank = 1; let users = [];
-    snap.forEach(u => { users.push(u.val()); });
-    users.reverse().forEach(u => {
-        let userBal = Number(u.balance) || 0;
-        listHtml += `<div class="glass-card flex justify-between items-center py-2 px-4 mb-2"><span>#${rank++} Player</span><span class="text-green-400 font-bold">${Math.floor(userBal).toLocaleString()} 💎</span></div>`;
-    });
-    document.getElementById('leader-list').innerHTML = listHtml;
-});
+function generateLevelChart(currentLvl) {
+    let html = '';
+    for(let i=1; i<=25; i++) {
+        let income = i * 2000;
+        let cost = 100 * Math.pow(2, i-1);
+        let activeClass = (i === currentLvl) ? 'current' : '';
+        html += `<div class="level-row ${activeClass}"><span>LVL ${i}</span><span>${income} 💎</span><span>${(i === 25 ? 'MAX' : cost)}</span></div>`;
+    }
+    document.getElementById('level-list-container').innerHTML = html;
+}
 
 function switchTab(id, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
@@ -167,68 +152,97 @@ function switchTab(id, el) {
 }
 
 function handleAction(type) {
-    if(type === 'claim_auto_mine') {
-        const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
-        if(autoMineStart === 0 || elapsed < 9000) { alert("দাদু, এখনো ৩ ঘণ্টা পূর্ণ হয়নি!"); return; }
+    if(type === 'spin' && bal < 100000) { alert("দাদু, স্পিন করতে ১,০০,০০০ ডায়মন্ড লাগবে!"); return; }
+    if(type === 'upgrade_bot') {
+        let cost = 100 * Math.pow(2, botLevel - 1);
+        if(bal < cost) { alert("পর্যাপ্ত ব্যালেন্স নেই!"); return; }
     }
-    const cost = 100 * Math.pow(2, botLevel - 1);
-    if(type === 'upgrade_bot' && bal < cost) { alert("দাদু, আপনার ব্যালেন্স পর্যাপ্ত নয়!"); return; }
-
     document.getElementById('ad-modal').style.display = 'flex';
     if (typeof show_10343752 === 'function') {
         show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
-    } else { setTimeout(() => executeLogic(type), 2000); }
+    } else { setTimeout(() => executeLogic(type), 1500); }
 }
 
 function executeLogic(type) {
     document.getElementById('ad-modal').style.display = 'none';
-    const reward = botLevel * 2000;
-    const upgradeCost = 100 * Math.pow(2, botLevel - 1);
     if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
-    if(type === 'claim_auto_mine') { db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 }); alert("💎 Reward Claimed!"); }
+    if(type === 'claim_auto_mine') {
+        const reward = botLevel * 2000;
+        db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 });
+    }
     if(type === 'upgrade_bot') {
-        if(bal >= upgradeCost && botLevel < 25) db.ref('users/' + userId).update({ balance: bal - upgradeCost, botLevel: botLevel + 1 });
+        let cost = 100 * Math.pow(2, botLevel - 1);
+        db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
     }
     if(type === 'spin') startSpin();
 }
 
-// ১৮টি ঘরের চাকা
+// ১৮টি ঘরের স্পিন লজিক (দাদুর ফর্মুলা)
 const canvas = document.getElementById('wheel-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = 300; canvas.height = 300;
-const prizes = [500, 10, 50, 0, 100, 20, 200, 5, 1000, 25, 150, 0, 300, 40, 50, 10, 75, 5];
-const colors = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
+
+// ৯টি ডায়মন্ড ঘর (হলুদ) + ৯টি USDT ঘর (নীল)
+const prizes = [
+    "100000 💎", "0.10 USDT", "90000 💎", "10 USDT", 
+    "80000 💎", "0.05 USDT", "70000 💎", "0.50 USDT", 
+    "60000 💎", "5 USDT", "50000 💎", "0.20 USDT", 
+    "400000 💎", "0.15 USDT", "300000 💎", "0.80 USDT", 
+    "200000 💎", "0.01 USDT"
+];
 
 function drawWheel() {
     const arc = (2 * Math.PI) / 18;
     for (let i = 0; i < 18; i++) {
-        ctx.fillStyle = colors[i]; ctx.beginPath(); ctx.moveTo(150, 150); ctx.arc(150, 150, 150, i * arc, (i + 1) * arc); ctx.fill();
-        ctx.save(); ctx.fillStyle = (colors[i] === "#fbbf24") ? "black" : "white"; ctx.font = "bold 10px Arial";
+        ctx.fillStyle = (i % 2 === 0) ? "#fbbf24" : "#3b82f6";
+        ctx.beginPath(); ctx.moveTo(150, 150); ctx.arc(150, 150, 150, i * arc, (i + 1) * arc); ctx.fill();
+        ctx.save();
+        ctx.fillStyle = (i % 2 === 0) ? "black" : "white";
+        ctx.font = "bold 9px Arial";
         ctx.translate(150 + Math.cos(i * arc + arc/2) * 110, 150 + Math.sin(i * arc + arc/2) * 110);
-        ctx.rotate(i * arc + arc/2 + Math.PI/2); ctx.fillText(prizes[i], -ctx.measureText(prizes[i]).width/2, 0); ctx.restore();
+        ctx.rotate(i * arc + arc/2 + Math.PI/2);
+        let txt = prizes[i].split(" ")[0];
+        ctx.fillText(txt, -ctx.measureText(txt).width/2, 0);
+        ctx.restore();
     }
 } drawWheel();
 
 let currRot = 0;
 function startSpin() {
-    const extra = Math.floor(Math.random() * 360) + 3600; currRot += extra;
+    // স্পিন ফি কাটা
+    db.ref('users/' + userId).update({ balance: bal - 100000 });
+    
+    const extra = Math.floor(Math.random() * 360) + 3600;
+    currRot += extra;
     canvas.style.transform = `rotate(${currRot}deg)`;
+    
     setTimeout(() => {
         const actualDeg = currRot % 360;
-        const pIdx = Math.floor((360 - actualDeg) / (360 / 18)) % 18;
-        const won = prizes[pIdx]; db.ref('users/' + userId).update({ balance: bal + won });
-        alert(`You won ${won} 💎!`);
+        let pIdx = Math.floor((360 - actualDeg) / (360 / 18)) % 18;
+        
+        // দাদুর লজিক: ১০ বা ৫ ডলারে পড়লে সেটা ডায়মন্ডে কনভার্ট হবে (অফশনাল)
+        if (pIdx === 3) pIdx = 2; // ১০ USDT পড়লে ৯০হাজার ডায়মন্ড পাবে
+        if (pIdx === 9) pIdx = 8; // ৫ USDT পড়লে ৬০হাজার ডায়মন্ড পাবে
+        
+        const won = prizes[pIdx];
+        if (won.includes("💎")) {
+            let amt = parseInt(won);
+            db.ref('users/' + userId).update({ balance: (bal - 100000) + amt });
+            alert(`দাদু, আপনি জিতলেন ${amt} 💎!`);
+        } else {
+            alert(`দাদু, আপনি জিতলেন ${won}! (USDT Balance Updated)`);
+        }
     }, 6000);
 }
 
-// বাটন কন্ট্রোল এবং টাইমার ইন্টারভ্যাল
+// বাটন স্ট্যাটাস কন্ট্রোল ইন্টারভ্যাল
 setInterval(() => {
     const startBtn = document.getElementById('btn-start');
     const claimBtn = document.getElementById('btn-claim');
     const upgradeBtn = document.getElementById('btn-upgrade');
 
-    // আপডেট বাটন লজিক (ব্যালেন্স না থাকলে ধূসর হবে)
-    const cost = 100 * Math.pow(2, botLevel - 1);
+    // আপডেট বাটন লজিক
+    let cost = 100 * Math.pow(2, botLevel - 1);
     if (bal < cost || botLevel >= 25) {
         upgradeBtn.disabled = true;
         upgradeBtn.className = "w-full bg-gray-700 text-gray-500 py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 opacity-50 cursor-not-allowed";
@@ -240,13 +254,7 @@ setInterval(() => {
     if (autoMineStart === 0) {
         startBtn.disabled = false; claimBtn.disabled = true;
         startBtn.className = "bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white";
-        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50 cursor-not-allowed";
-        document.getElementById('mine-timer').innerText = "02:30:00";
-        document.getElementById('mine-progress-bar').style.width = "0%";
-        document.getElementById('mine-percent').innerText = "0%";
-        document.getElementById('auto-mined-val').innerText = "0.00";
-        document.getElementById('bot-status').innerText = "OFFLINE";
-        document.getElementById('bot-status').className = "text-[9px] bg-red-600 px-2 py-0.5 rounded text-white font-bold";
+        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
         return;
     }
     const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
@@ -263,18 +271,10 @@ setInterval(() => {
         document.getElementById('mine-progress-bar').style.width = (elapsed/duration*100) + "%";
         document.getElementById('mine-percent').innerText = Math.floor(elapsed/duration*100) + "%";
         document.getElementById('auto-mined-val').innerText = ((elapsed/duration)*(botLevel*2000)).toFixed(2);
-        document.getElementById('bot-status').innerText = "MINING";
-        document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
     } else {
         startBtn.disabled = true; claimBtn.disabled = false;
         startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
         claimBtn.className = "bg-green-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white animate-pulse";
-        document.getElementById('bot-status').innerText = "READY";
-        document.getElementById('bot-status').className = "text-[9px] bg-green-500 px-2 py-0.5 rounded text-white font-bold animate-bounce";
-        document.getElementById('mine-timer').innerText = "00:00:00";
-        document.getElementById('mine-progress-bar').style.width = "100%";
-        document.getElementById('mine-percent').innerText = "100%";
-        document.getElementById('auto-mined-val').innerText = (botLevel*2000).toFixed(2);
     }
 }, 1000);
 
@@ -284,5 +284,5 @@ function copyRef() {
 }
 </script>
 </body>
-            </html>
-        
+    </html>
+    
