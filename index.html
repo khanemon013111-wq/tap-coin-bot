@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Diamond - Global Master</title>
+    <title>Royal Diamond - Bot Master</title>
     <script src='//libtl.com/sdk.js' data-zone='10343752' data-sdk='show_10343752'></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -69,8 +69,8 @@
         </div>
         
         <div class="grid grid-cols-2 gap-3 mb-4">
-            <button id="btn-start" onclick="handleAction('start_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg transition-all">Start</button>
-            <button id="btn-claim" onclick="handleAction('claim_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg transition-all">Claim</button>
+            <button id="btn-start" onclick="handleAction('start_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white">Start</button>
+            <button id="btn-claim" onclick="handleAction('claim_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white">Claim</button>
         </div>
         
         <button id="btn-upgrade" onclick="handleAction('upgrade_bot')" class="w-full py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 shadow-xl transition-all">
@@ -80,7 +80,7 @@
     </div>
 
     <div class="glass-card">
-        <h3 class="text-yellow-500 font-black text-[10px] mb-4 uppercase italic">Earning Info</h3>
+        <h3 class="text-yellow-500 font-black text-[10px] mb-4 uppercase">Earning Info</h3>
         <div id="level-list-container" class="max-height-[300px] overflow-y-auto pr-1" style="max-height: 200px;"></div>
     </div>
 </div>
@@ -109,14 +109,14 @@
             <input type="number" id="withdraw-amount" placeholder="Min 20 USDT" class="w-full bg-black/50 border border-gray-700 p-4 rounded-xl text-xs mb-6 focus:outline-none focus:border-yellow-500 text-white">
             <button onclick="processWithdraw()" class="w-full bg-green-600 text-white font-black py-4 rounded-xl text-xs uppercase shadow-xl active:scale-95">Withdraw Now</button>
         </div>
-        <div class="bg-black/20 p-4 rounded-xl opacity-50"><p class="text-[10px] text-yellow-500 font-black">DIAMOND WITHDRAW COMING SOON</p></div>
+        <p class="text-[10px] text-yellow-500 font-black opacity-50">DIAMOND WITHDRAW COMING SOON</p>
     </div>
 </div>
 
 <div id="leader-tab" class="tab-content">
     <h2 class="text-center py-4 font-black italic uppercase text-yellow-500">Global Board</h2>
     <div class="glass-card mb-4 text-center border-dashed border-yellow-500/30">
-        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Active Players</p>
+        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Total Active Users</p>
         <p class="text-2xl font-black text-white"><span id="total-users-count">0</span></p>
     </div>
     <div id="leader-list" class="space-y-2"></div>
@@ -177,34 +177,19 @@ function generateLevelChart(currentLvl) {
 }
 
 function updateLeaderboard() {
-    const leaderListEl = document.getElementById('leader-list');
-    const totalUserEl = document.getElementById('total-users-count');
-
-    // Count Users
-    db.ref('users').on('value', (snapshot) => {
-        totalUserEl.innerText = snapshot.numChildren().toLocaleString();
-    });
-
-    // Top 10 List
+    db.ref('users').on('value', snap => { document.getElementById('total-users-count').innerText = snap.numChildren().toLocaleString(); });
     db.ref('users').orderByChild('balance').limitToLast(10).on('value', (snapshot) => {
-        let usersArray = [];
-        snapshot.forEach((child) => { usersArray.push({ id: child.key, ...child.val() }); });
-        usersArray.reverse();
+        let arr = []; snapshot.forEach(c => { arr.push({id: c.key, ...c.val()}); });
+        arr.reverse();
         let html = '';
-        usersArray.forEach((user, index) => {
-            let medal = (index === 0) ? "🥇" : (index === 1) ? "🥈" : (index === 2) ? "🥉" : `#${index + 1}`;
-            html += `
-            <div class="flex justify-between items-center p-3 mb-2 bg-white/5 rounded-xl border border-white/10">
-                <div class="flex items-center gap-3"><span class="text-yellow-500 font-bold">${medal}</span>
-                    <div><p class="text-[10px] font-bold text-white">${user.id.substring(0,10)}</p><p class="text-[8px] text-gray-500">LVL ${user.botLevel || 1}</p></div>
-                </div>
-                <div class="text-right">
-                    <p class="text-[10px] font-black text-yellow-500">💎 ${Math.floor(user.balance || 0).toLocaleString()}</p>
-                    <p class="text-[8px] text-green-400">$ ${Number(user.usdtBalance || 0).toFixed(2)}</p>
-                </div>
-            </div>`;
+        arr.forEach((u, i) => {
+            let m = (i===0)?"🥇":(i===1)?"🥈":(i===2)?"🥉":`#${i+1}`;
+            html += `<div class="flex justify-between items-center p-3 mb-2 bg-white/5 rounded-xl border border-white/10">
+                <div class="flex items-center gap-3"><span class="text-yellow-500 font-bold">${m}</span>
+                <div><p class="text-[10px] font-bold text-white">${u.id.substring(0,10)}</p><p class="text-[8px] text-gray-500">LVL ${u.botLevel || 1}</p></div></div>
+                <div class="text-right"><p class="text-[10px] font-black text-yellow-500">💎 ${Math.floor(u.balance||0).toLocaleString()}</p></div></div>`;
         });
-        leaderListEl.innerHTML = html;
+        document.getElementById('leader-list').innerHTML = html;
     });
 }
 
@@ -217,8 +202,8 @@ function switchTab(id, el) {
 }
 
 function handleAction(type) {
-    if(type === 'spin' && bal < 100000) { alert("১,০০,০০০ ডায়মন্ড নেই!"); return; }
-    if(type === 'upgrade_bot' && bal < (100 * Math.pow(2, botLevel - 1))) { alert("ব্যালেন্স কম!"); return; }
+    if(type === 'spin' && bal < 100000) { alert("ডায়মন্ড নেই!"); return; }
+    if(type === 'upgrade_bot' && bal < (100 * Math.pow(2, botLevel - 1))) { alert("ব্যালেন্স নেই!"); return; }
     document.getElementById('ad-modal').style.display = 'flex';
     if (typeof show_10343752 === 'function') {
         show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
@@ -233,11 +218,10 @@ function executeLogic(type) {
     if(type === 'spin') startSpin();
 }
 
-// 🎡 Spin Wheel
+// Wheel Settings
 const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
 canvas.width = 300; canvas.height = 300;
 const prizes = ["100000 💎", "0.10 USDT", "90000 💎", "10 USDT", "80000 💎", "0.05 USDT", "70000 💎", "0.50 USDT", "60000 💎", "5 USDT", "50000 💎", "0.20 USDT", "400000 💎", "0.15 USDT", "300000 💎", "0.80 USDT", "200000 💎", "0.01 USDT"];
-
 function drawWheel() {
     const arc = (2 * Math.PI) / 18;
     for (let i = 0; i < 18; i++) {
@@ -246,55 +230,54 @@ function drawWheel() {
         ctx.save(); ctx.fillStyle = (i % 2 === 0) ? "black" : "white"; ctx.font = "bold 9px Arial";
         ctx.translate(150 + Math.cos(i * arc + arc/2) * 110, 150 + Math.sin(i * arc + arc/2) * 110);
         ctx.rotate(i * arc + arc/2 + Math.PI/2);
-        let txt = prizes[i].split(" ")[0]; ctx.fillText(txt, -ctx.measureText(txt).width/2, 0);
-        ctx.restore();
+        let txt = prizes[i].split(" ")[0]; ctx.fillText(txt, -ctx.measureText(txt).width/2, 0); ctx.restore();
     }
 } drawWheel();
 
 let currRot = 0;
 function startSpin() {
     db.ref('users/' + userId).update({ balance: bal - 100000 });
-    const extra = Math.floor(Math.random() * 360) + 3600; currRot += extra;
+    currRot += Math.floor(Math.random() * 360) + 3600;
     canvas.style.transform = `rotate(${currRot}deg)`;
     setTimeout(() => {
-        const actualDeg = currRot % 360;
-        let pIdx = Math.floor((360 - actualDeg) / (360 / 18)) % 18;
-        if (pIdx === 3) pIdx = 2; if (pIdx === 9) pIdx = 8;
+        let pIdx = Math.floor((360 - (currRot % 360)) / (360 / 18)) % 18;
         const won = prizes[pIdx];
-        if (won.includes("💎")) {
-            db.ref('users/' + userId).update({ balance: (bal - 100000) + parseInt(won) });
-            alert(`Winner: ${won}`);
-        } else {
-            db.ref('users/' + userId).update({ usdtBalance: usdtBal + parseFloat(won) });
-            alert(`Winner: ${won}`);
-        }
+        if (won.includes("💎")) { db.ref('users/' + userId).update({ balance: (bal - 100000) + parseInt(won) }); }
+        else { db.ref('users/' + userId).update({ usdtBalance: usdtBal + parseFloat(won) }); }
+        alert(`Winner: ${won}`);
     }, 6000);
 }
 
 function processWithdraw() {
     const uid = document.getElementById('binance-uid').value;
     const amount = parseFloat(document.getElementById('withdraw-amount').value);
-    if(!uid || uid.length < 5) { alert("UID Required!"); return; }
-    if(!amount || amount < 20) { alert("সর্বনিম্ন ২০ ডলার লাগবে!"); return; }
-    if(amount > usdtBal) { alert("ব্যালেন্স নেই!"); return; }
+    if(!uid || amount < 20) { alert("Minimum 20 USDT & Valid UID Required!"); return; }
+    if(amount > usdtBal) { alert("Insufficient Balance!"); return; }
     db.ref('withdrawRequests').push().set({ userId, binanceUID: uid, amount, status: 'pending', time: Date.now() }).then(() => {
         db.ref('users/' + userId).update({ usdtBalance: usdtBal - amount });
-        alert("Success!");
+        alert("Withdrawal Request Sent!");
     });
 }
 
+// Global UI Controller
 setInterval(() => {
     const startBtn = document.getElementById('btn-start');
     const claimBtn = document.getElementById('btn-claim');
     const upgradeBtn = document.getElementById('btn-upgrade');
     
+    // --- UPGRADE BUTTON FIX (Gold Background, Black Text) ---
     let cost = 100 * Math.pow(2, botLevel - 1);
-    upgradeBtn.disabled = (bal < cost || botLevel >= 25);
-    upgradeBtn.style.opacity = upgradeBtn.disabled ? "0.5" : "1";
+    if (bal < cost || botLevel >= 25) {
+        upgradeBtn.disabled = true;
+        upgradeBtn.className = "w-full bg-gray-700 text-gray-500 py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 opacity-50 cursor-not-allowed";
+    } else {
+        upgradeBtn.disabled = false;
+        upgradeBtn.className = "w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 shadow-lg active:scale-95 transition-all";
+    }
 
     if (autoMineStart === 0) {
         startBtn.disabled = false; claimBtn.disabled = true;
-        startBtn.className = "bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase text-white w-full";
+        startBtn.className = "bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase text-white w-full shadow-lg";
         claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase text-gray-400 opacity-50 w-full";
         document.getElementById('bot-status').innerText = "OFFLINE";
         document.getElementById('bot-status').className = "text-[9px] bg-red-600 px-2 py-0.5 rounded text-white font-bold";
@@ -305,7 +288,7 @@ setInterval(() => {
     const duration = 9000;
     if (elapsed < duration) {
         startBtn.disabled = true; claimBtn.disabled = true;
-        startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase text-gray-400 opacity-50 w-full";
+        startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase text-gray-400 opacity-50 w-full cursor-not-allowed";
         claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase text-gray-400 opacity-50 w-full";
         const timeLeft = duration - elapsed;
         const h = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
@@ -319,7 +302,7 @@ setInterval(() => {
         document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
     } else {
         startBtn.disabled = true; claimBtn.disabled = false;
-        claimBtn.className = "bg-green-600 py-3 rounded-xl font-bold text-xs uppercase text-white animate-pulse w-full";
+        claimBtn.className = "bg-green-600 py-3 rounded-xl font-bold text-xs uppercase text-white animate-pulse w-full shadow-lg";
         document.getElementById('mine-timer').innerText = "00:00:00";
         document.getElementById('mine-progress-bar').style.width = "100%";
         document.getElementById('bot-status').innerText = "READY";
@@ -327,8 +310,8 @@ setInterval(() => {
     }
 }, 1000);
 
-function copyRef() { navigator.clipboard.writeText(referralLink).then(() => alert("Copied!")); }
+function copyRef() { navigator.clipboard.writeText(referralLink).then(() => alert("Referral Copied!")); }
 </script>
 </body>
-</html>
-
+            </html>
+            
