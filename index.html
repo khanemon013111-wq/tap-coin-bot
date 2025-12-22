@@ -36,7 +36,7 @@
 <div id="ad-modal">
     <div class="text-center">
         <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-        <p class="text-yellow-500 font-bold uppercase text-[10px]">Loading Ad...</p>
+        <p class="text-yellow-500 font-bold uppercase text-[10px]">Processing...</p>
     </div>
 </div>
 
@@ -98,6 +98,10 @@
         <input type="number" id="withdraw-amount" placeholder="Enter Amount ($)" class="royal-input">
         <input type="text" id="binance-uid" placeholder="Enter Binance UID" class="royal-input">
         <button id="btn-withdraw" onclick="submitWithdraw()" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg mt-2 opacity-50 cursor-not-allowed">Request Withdrawal</button>
+    </div>
+    <div class="glass-card border-l-4 border-blue-500">
+        <p class="text-blue-400 font-black text-sm uppercase italic">Diamond Withdrawal</p>
+        <p class="text-gray-500 font-bold text-[10px] mt-2 animate-pulse uppercase tracking-widest">⚠️ Coming Soon...</p>
     </div>
 </div>
 
@@ -200,58 +204,6 @@ function startTheSpin() {
     }, 7200);
 }
 
-// --- অ্যাড এবং অ্যাকশন হ্যান্ডলার (Updated) ---
-function handleAction(type) {
-    const cost = 100 * Math.pow(2, botLevel - 1);
-    const reward = botLevel * 2000;
-
-    // ক্লিমের জন্য আগে টাইম চেক
-    if(type === 'claim_auto_mine') {
-        const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
-        if(autoMineStart === 0 || elapsed < 9000) return;
-    }
-    
-    // আপগ্রেডের জন্য আগে ব্যালেন্স চেক
-    if(type === 'upgrade_bot') {
-        if(bal < cost || botLevel >= 25) return alert("Not enough Diamonds or Max Level!");
-    }
-
-    // অ্যাড মোডাল দেখানো
-    document.getElementById('ad-modal').style.display = 'flex';
-
-    // আসল অ্যাড SDK কল করা
-    if (typeof show_10343752 === 'function') {
-        show_10343752().then(() => {
-            // অ্যাড দেখা সফল হলে এই ফাংশনটি রান করবে
-            processDatabaseUpdate(type, reward, cost);
-            document.getElementById('ad-modal').style.display = 'none';
-        }).catch((e) => {
-            // অ্যাড লোড না হলে সরাসরি কাজ করবে
-            processDatabaseUpdate(type, reward, cost);
-            document.getElementById('ad-modal').style.display = 'none';
-        });
-    } else {
-        // যদি SDK লোড না হয় তবে ১.৫ সেকেন্ড পর কাজ করবে
-        setTimeout(() => {
-            processDatabaseUpdate(type, reward, cost);
-            document.getElementById('ad-modal').style.display = 'none';
-        }, 1500);
-    }
-}
-
-// ডেটাবেজ আপডেট করার ফাংশন
-function processDatabaseUpdate(type, reward, cost) {
-    if(type === 'start_auto_mine') {
-        db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
-    }
-    if(type === 'claim_auto_mine') {
-        db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 });
-    }
-    if(type === 'upgrade_bot') {
-        db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
-    }
-}
-
 function submitWithdraw() {
     const amount = parseFloat(document.getElementById('withdraw-amount').value);
     const uid = document.getElementById('binance-uid').value;
@@ -262,6 +214,22 @@ function submitWithdraw() {
         db.ref('users/' + userId).update({ usdBalance: usdBal - amount });
         alert("Withdrawal Requested!");
     });
+}
+
+function handleAction(type) {
+    if(type === 'claim_auto_mine') {
+        const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
+        if(autoMineStart === 0 || elapsed < 9000) return;
+    }
+    document.getElementById('ad-modal').style.display = 'flex';
+    setTimeout(() => {
+        document.getElementById('ad-modal').style.display = 'none';
+        const reward = botLevel * 2000;
+        const cost = 100 * Math.pow(2, botLevel - 1);
+        if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
+        if(type === 'claim_auto_mine') db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 });
+        if(type === 'upgrade_bot' && bal >= cost && botLevel < 25) db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
+    }, 1500);
 }
 
 function switchTab(id, el) {
@@ -321,4 +289,11 @@ setInterval(() => {
     } else {
         startBtn.disabled = true; claimBtn.disabled = false;
         startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
-        claimBtn.className = "bg-green-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white animate-pul
+        claimBtn.className = "bg-green-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white animate-pulse";
+        document.getElementById('bot-status').innerText = "READY";
+        document.getElementById('bot-status').className = "text-[9px] bg-green-500 px-2 py-0.5 rounded text-white font-bold animate-bounce";
+    }
+}, 1000);
+</script>
+</body>
+    </html>
