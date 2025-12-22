@@ -73,7 +73,7 @@
             <button id="btn-claim" onclick="handleAction('claim_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg transition-all duration-300">Claim</button>
         </div>
         
-        <button onclick="handleAction('upgrade_bot')" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6">
+        <button id="btn-upgrade" onclick="handleAction('upgrade_bot')" class="w-full py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 transition-all duration-300">
             <span>Upgrade Bot</span>
             <span id="upgrade-cost-text">100 💎</span>
         </button>
@@ -93,13 +93,14 @@
 <div id="spin-tab" class="tab-content text-center">
     <div class="glass-card">
         <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Lucky Wheel</h2>
-        <div style="position: relative; width: 260px; height: 260px; margin: auto;">
-            <div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 25px;">🔻</div>
-            <canvas id="wheel-canvas" style="width: 100%; height: 100%; border-radius: 50%; border: 8px solid #fbbf24; transition: transform 5s cubic-bezier(0.1, 0, 0, 1);"></canvas>
+        <div style="position: relative; width: 280px; height: 280px; margin: auto;">
+            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 30px; color: #fbbf24;">▼</div>
+            <canvas id="wheel-canvas" style="width: 100%; height: 100%; border-radius: 50%; border: 6px solid #fbbf24; transition: transform 6s cubic-bezier(0.1, 0, 0, 1);"></canvas>
         </div>
         <button onclick="handleAction('spin')" id="spin-btn" class="mt-8 bg-yellow-500 text-black font-black py-4 px-12 rounded-full uppercase shadow-xl">SPIN NOW</button>
     </div>
 </div>
+
 <div id="shop-tab" class="tab-content"><h2 class="text-center py-10 uppercase font-black text-yellow-500 italic">Shop Coming Soon</h2></div>
 <div id="tasks-tab" class="tab-content"><h2 class="text-center py-10 uppercase font-black text-yellow-500 italic">Tasks Coming Soon</h2></div>
 <div id="leader-tab" class="tab-content text-xs"><h2 class="text-center py-10 uppercase italic font-bold">Top 10 Board</h2><div id="leader-list"></div></div>
@@ -115,7 +116,6 @@
 </nav>
 
 <script>
-// Firebase Config - দাদু এখান থেকে @ চিহ্নটা সরিয়ে দিয়েছি যাতে কানেকশন কাজ করে
 const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqAL3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -137,21 +137,14 @@ function generateLevelChart(currentLvl) {
     document.getElementById('level-list-container').innerHTML = html;
 }
 
-// দাদু এখানে লজিক আপডেট করেছি যাতে NaN না দেখায়
 db.ref('users/' + userId).on('value', snap => {
     const data = snap.val() || {};
-    
-    // Number() এবং || 0 ব্যবহার করে নিশ্চিত করা হয়েছে যাতে NaN না আসে
     bal = Number(data.balance) || 0; 
     botLevel = Number(data.botLevel) || 1; 
     autoMineStart = Number(data.autoMineStart) || 0;
-
     document.getElementById('home-balance').innerText = Math.floor(bal).toLocaleString();
     document.getElementById('display-level').innerText = botLevel;
-    
-    let upgradeCost = 100 * Math.pow(2, botLevel - 1);
-    document.getElementById('upgrade-cost-text').innerText = upgradeCost.toLocaleString() + " 💎";
-    
+    document.getElementById('upgrade-cost-text').innerText = (100 * Math.pow(2, botLevel - 1)).toLocaleString() + " 💎";
     document.getElementById('ref-link').innerText = referralLink;
     generateLevelChart(botLevel);
 });
@@ -178,6 +171,9 @@ function handleAction(type) {
         const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
         if(autoMineStart === 0 || elapsed < 9000) { alert("দাদু, এখনো ৩ ঘণ্টা পূর্ণ হয়নি!"); return; }
     }
+    const cost = 100 * Math.pow(2, botLevel - 1);
+    if(type === 'upgrade_bot' && bal < cost) { alert("দাদু, আপনার ব্যালেন্স পর্যাপ্ত নয়!"); return; }
+
     document.getElementById('ad-modal').style.display = 'flex';
     if (typeof show_10343752 === 'function') {
         show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
@@ -192,45 +188,59 @@ function executeLogic(type) {
     if(type === 'claim_auto_mine') { db.ref('users/' + userId).update({ balance: bal + reward, autoMineStart: 0 }); alert("💎 Reward Claimed!"); }
     if(type === 'upgrade_bot') {
         if(bal >= upgradeCost && botLevel < 25) db.ref('users/' + userId).update({ balance: bal - upgradeCost, botLevel: botLevel + 1 });
-        else alert("Need more diamonds!");
     }
     if(type === 'spin') startSpin();
 }
 
-const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
-canvas.width = 260; canvas.height = 260;
-const prizes = [500, 10, 50, 0, 100, 20, 200, 5];
-const colors = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
+// ১৮টি ঘরের চাকা
+const canvas = document.getElementById('wheel-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 300; canvas.height = 300;
+const prizes = [500, 10, 50, 0, 100, 20, 200, 5, 1000, 25, 150, 0, 300, 40, 50, 10, 75, 5];
+const colors = ["#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b", "#fbbf24", "#1e293b"];
+
 function drawWheel() {
-    const arc = (2 * Math.PI) / 8;
-    for (let i = 0; i < 8; i++) {
-        ctx.fillStyle = colors[i]; ctx.beginPath(); ctx.moveTo(130, 130); ctx.arc(130, 130, 130, i * arc, (i + 1) * arc); ctx.fill();
-        ctx.save(); ctx.fillStyle = "white"; ctx.font = "bold 12px Arial"; ctx.translate(130 + Math.cos(i * arc + arc/2) * 85, 130 + Math.sin(i * arc + arc/2) * 85);
-        ctx.rotate(i * arc + arc/2 + Math.PI/2); ctx.fillText(prizes[i], -10, 0); ctx.restore();
+    const arc = (2 * Math.PI) / 18;
+    for (let i = 0; i < 18; i++) {
+        ctx.fillStyle = colors[i]; ctx.beginPath(); ctx.moveTo(150, 150); ctx.arc(150, 150, 150, i * arc, (i + 1) * arc); ctx.fill();
+        ctx.save(); ctx.fillStyle = (colors[i] === "#fbbf24") ? "black" : "white"; ctx.font = "bold 10px Arial";
+        ctx.translate(150 + Math.cos(i * arc + arc/2) * 110, 150 + Math.sin(i * arc + arc/2) * 110);
+        ctx.rotate(i * arc + arc/2 + Math.PI/2); ctx.fillText(prizes[i], -ctx.measureText(prizes[i]).width/2, 0); ctx.restore();
     }
 } drawWheel();
+
 let currRot = 0;
 function startSpin() {
     const extra = Math.floor(Math.random() * 360) + 3600; currRot += extra;
     canvas.style.transform = `rotate(${currRot}deg)`;
     setTimeout(() => {
         const actualDeg = currRot % 360;
-        const pIdx = Math.floor((360 - actualDeg) / 45) % 8;
+        const pIdx = Math.floor((360 - actualDeg) / (360 / 18)) % 18;
         const won = prizes[pIdx]; db.ref('users/' + userId).update({ balance: bal + won });
         alert(`You won ${won} 💎!`);
-    }, 5000);
+    }, 6000);
 }
 
+// বাটন কন্ট্রোল এবং টাইমার ইন্টারভ্যাল
 setInterval(() => {
     const startBtn = document.getElementById('btn-start');
     const claimBtn = document.getElementById('btn-claim');
+    const upgradeBtn = document.getElementById('btn-upgrade');
+
+    // আপডেট বাটন লজিক (ব্যালেন্স না থাকলে ধূসর হবে)
+    const cost = 100 * Math.pow(2, botLevel - 1);
+    if (bal < cost || botLevel >= 25) {
+        upgradeBtn.disabled = true;
+        upgradeBtn.className = "w-full bg-gray-700 text-gray-500 py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 opacity-50 cursor-not-allowed";
+    } else {
+        upgradeBtn.disabled = false;
+        upgradeBtn.className = "w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 shadow-lg";
+    }
 
     if (autoMineStart === 0) {
-        startBtn.disabled = false;
-        claimBtn.disabled = true;
+        startBtn.disabled = false; claimBtn.disabled = true;
         startBtn.className = "bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white";
         claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50 cursor-not-allowed";
-        
         document.getElementById('mine-timer').innerText = "02:30:00";
         document.getElementById('mine-progress-bar').style.width = "0%";
         document.getElementById('mine-percent').innerText = "0%";
@@ -241,13 +251,10 @@ setInterval(() => {
     }
     const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
     const duration = 9000;
-
     if (elapsed < duration) {
-        startBtn.disabled = true;
-        claimBtn.disabled = true;
+        startBtn.disabled = true; claimBtn.disabled = true;
         startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
         claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
-        
         const timeLeft = duration - elapsed;
         const h = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
         const m = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
@@ -259,11 +266,9 @@ setInterval(() => {
         document.getElementById('bot-status').innerText = "MINING";
         document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
     } else {
-        startBtn.disabled = true;
-        claimBtn.disabled = false;
+        startBtn.disabled = true; claimBtn.disabled = false;
         startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-gray-400 opacity-50";
         claimBtn.className = "bg-green-600 py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white animate-pulse";
-        
         document.getElementById('bot-status').innerText = "READY";
         document.getElementById('bot-status').className = "text-[9px] bg-green-500 px-2 py-0.5 rounded text-white font-bold animate-bounce";
         document.getElementById('mine-timer').innerText = "00:00:00";
@@ -279,5 +284,5 @@ function copyRef() {
 }
 </script>
 </body>
-    </html>
-                                                                                                                                                                                                                           
+            </html>
+        
