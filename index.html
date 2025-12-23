@@ -26,15 +26,7 @@
         .nav-item.active { color: #fbbf24; font-weight: bold; }
         #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         input::placeholder { color: #4b5563; }
-        
-        /* নতুন ধূসর বাটন স্টাইল */
-        button:disabled {
-            background: #4b5563 !important;
-            color: #94a3b8 !important;
-            cursor: not-allowed;
-            opacity: 0.6;
-            box-shadow: none !important;
-        }
+        button:disabled { background: #4b5563 !important; color: #94a3b8 !important; cursor: not-allowed; opacity: 0.6; }
     </style>
 </head>
 <body>
@@ -170,17 +162,11 @@ db.ref('users/' + userId).on('value', snap => {
     usdtBal = Number(data.usdtBalance) || 0;
     botLevel = Number(data.botLevel) || 1; 
     autoMineStart = Number(data.autoMineStart) || 0;
-    
-    // ডাটাবেজ থেকে সম্পন্ন হওয়া টাস্ক চেক করা
     const completedTasks = data.completedTasks || {};
     Object.keys(completedTasks).forEach(taskId => {
         let btn = document.getElementById(taskId);
-        if(btn) {
-            btn.disabled = true;
-            btn.innerText = "DONE";
-        }
+        if(btn) { btn.disabled = true; btn.innerText = "DONE"; }
     });
-
     document.getElementById('home-balance').innerText = Math.floor(bal).toLocaleString();
     document.getElementById('usdt-balance').innerText = usdtBal.toFixed(2);
     document.getElementById('wallet-usdt-display').innerText = usdtBal.toFixed(2);
@@ -190,24 +176,38 @@ db.ref('users/' + userId).on('value', snap => {
     generateLevelChart(botLevel);
 });
 
+function handleAction(type) {
+    if(type === 'spin' && bal < 100000) { alert("Insufficient Diamonds!"); return; }
+    
+    // এ্যাড লোড করার ফাংশন কল
+    if(typeof show_10343752 === 'function') { show_10343752(); }
+
+    document.getElementById('ad-modal').style.display = 'flex';
+    setTimeout(() => {
+        document.getElementById('ad-modal').style.display = 'none';
+        if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
+        if(type === 'claim_auto_mine') db.ref('users/' + userId).update({ balance: bal + (botLevel * 2000), autoMineStart: 0 });
+        if(type === 'upgrade_bot') {
+            let cost = 100 * Math.pow(2, botLevel - 1);
+            if(bal >= cost) db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
+        }
+        if(type === 'spin') startSpin();
+    }, 2000);
+}
+
 function handleTask(url, reward, taskId) {
+    if(typeof show_10343752 === 'function') { show_10343752(); }
     window.open(url, '_blank');
     document.getElementById('ad-modal').style.display = 'flex';
     setTimeout(() => {
         document.getElementById('ad-modal').style.display = 'none';
-        
-        // বাটন ধূসর করা এবং ডাটাবেজে সেভ করা
         let updates = {};
         updates['balance'] = bal + reward;
         updates['completedTasks/' + taskId] = true;
-        
         db.ref('users/' + userId).update(updates);
-        
         alert(`Success! Reward Received: ${reward} 💎`);
     }, 5000);
 }
-
-// বাকি সব ফাংশন (generateLevelChart, updateLeaderboard, switchTab, handleAction, startSpin, processWithdraw, setInterval, copyRef) আগের মতোই আছে...
 
 function generateLevelChart(currentLvl) {
     let html = '';
@@ -241,21 +241,6 @@ function switchTab(id, el) {
     document.getElementById(id).classList.add('active-tab');
     if(el) el.classList.add('active');
     if(id === 'leader-tab') updateLeaderboard();
-}
-
-function handleAction(type) {
-    if(type === 'spin' && bal < 100000) { alert("Insufficient Diamonds!"); return; }
-    document.getElementById('ad-modal').style.display = 'flex';
-    setTimeout(() => {
-        document.getElementById('ad-modal').style.display = 'none';
-        if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
-        if(type === 'claim_auto_mine') db.ref('users/' + userId).update({ balance: bal + (botLevel * 2000), autoMineStart: 0 });
-        if(type === 'upgrade_bot') {
-            let cost = 100 * Math.pow(2, botLevel - 1);
-            if(bal >= cost) db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
-        }
-        if(type === 'spin') startSpin();
-    }, 1500);
 }
 
 const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
@@ -326,5 +311,5 @@ setInterval(() => {
 function copyRef() { navigator.clipboard.writeText(referralLink); alert("Referral Link Copied!"); }
 </script>
 </body>
-    </html>
-        
+</html>
+
