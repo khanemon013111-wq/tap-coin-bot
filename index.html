@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -67,18 +67,15 @@
             </div>
             <p class="text-center mt-3 text-2xl font-black text-green-400"><span id="auto-mined-val">0.00</span> 💎</p>
         </div>
-        
         <div class="grid grid-cols-2 gap-3 mb-4">
             <button id="btn-start" onclick="handleAction('start_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white bg-blue-600">Start</button>
             <button id="btn-claim" onclick="handleAction('claim_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white bg-green-600 opacity-50">Claim</button>
         </div>
-        
         <button id="btn-upgrade" onclick="handleAction('upgrade_bot')" class="w-full py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 shadow-xl bg-yellow-500 text-black">
             <span>Upgrade Bot</span>
             <span id="upgrade-cost-text">100 💎</span>
         </button>
     </div>
-
     <div class="glass-card">
         <h3 class="text-yellow-500 font-black text-[10px] mb-4 uppercase">Earning Info</h3>
         <div id="level-list-container" style="max-height: 200px; overflow-y: auto;"></div>
@@ -89,16 +86,16 @@
     <h2 class="text-center py-4 font-black italic uppercase text-yellow-500">Available Tasks</h2>
     <div class="space-y-3">
         <div class="glass-card flex justify-between items-center border-l-4 border-yellow-500 p-4">
-            <div><p class="text-[12px] font-bold">Watch Video</p><p class="text-[10px] text-gray-400">Reward: 30,000 💎</p></div>
-            <button onclick="handleTask('task_v1', 'https://www.youtube.com/watch?v=VIDEO_ID', 30000)" class="bg-yellow-500 text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase">Watch</button>
+            <div><p class="text-[12px] font-bold">Watch New Video</p><p class="text-[10px] text-gray-400">Reward: 30,000 💎</p></div>
+            <button onclick="handleTask('https://www.youtube.com/watch?v=VIDEO_ID', 30000)" class="bg-yellow-500 text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase shadow-lg">Watch</button>
         </div>
         <div class="glass-card flex justify-between items-center border-l-4 border-red-600 p-4">
             <div><p class="text-[12px] font-bold">Subscribe YouTube</p><p class="text-[10px] text-gray-400">Reward: 50,000 💎</p></div>
-            <button onclick="handleTask('task_sub', 'https://youtube.com/@YourChannel', 50000)" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">GO</button>
+            <button onclick="handleTask('https://youtube.com/@YourChannel', 50000)" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">GO</button>
         </div>
         <div class="glass-card flex justify-between items-center border-l-4 border-blue-500 p-4">
             <div><p class="text-[12px] font-bold">Join Telegram</p><p class="text-[10px] text-gray-400">Reward: 40,000 💎</p></div>
-            <button onclick="handleTask('task_tg', 'https://t.me/YourChannel', 40000)" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">Join</button>
+            <button onclick="handleTask('https://t.me/YourChannel', 40000)" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">Join</button>
         </div>
     </div>
 </div>
@@ -120,7 +117,7 @@
     <div class="glass-card text-center">
         <h2 class="text-yellow-500 font-black text-xl mb-6 uppercase italic">Withdraw</h2>
         <div class="bg-black/30 p-5 rounded-2xl border border-green-500/20 mb-6 text-center">
-            <p class="text-xs text-green-400">Balance: $ <span id="wallet-usdt-display">0.00</span></p>
+            <p class="text-xs text-green-400">USDT Balance: $ <span id="wallet-usdt-display">0.00</span></p>
             <input type="number" id="binance-uid" placeholder="Binance UID" class="w-full bg-black/50 border border-gray-700 p-3 rounded-xl text-xs mt-4 mb-2 focus:outline-none text-white">
             <input type="number" id="withdraw-amount" placeholder="Min 20 USDT" class="w-full bg-black/50 border border-gray-700 p-3 rounded-xl text-xs mb-4 focus:outline-none text-white">
             <button onclick="processWithdraw()" class="w-full bg-green-600 text-white font-black py-3 rounded-xl text-xs uppercase shadow-xl">Withdraw Now</button>
@@ -132,10 +129,10 @@
     <div class="glass-card">
         <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Lucky Wheel</h2>
         <div style="position: relative; width: 280px; height: 280px; margin: auto;">
-            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 30px; color: red;">▼</div>
+            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 30px; color: #ff0000;">▼</div>
             <canvas id="wheel-canvas" style="width: 100%; height: 100%; border-radius: 50%; border: 6px solid #fbbf24; transition: transform 6s cubic-bezier(0.1, 0, 0, 1);"></canvas>
         </div>
-        <button onclick="handleAction('spin')" class="mt-8 bg-yellow-500 text-black font-black py-4 px-12 rounded-full uppercase shadow-xl">SPIN NOW</button>
+        <button onclick="handleAction('spin')" id="spin-btn" class="mt-8 bg-yellow-500 text-black font-black py-4 px-12 rounded-full uppercase shadow-xl active:scale-90 transition-all">SPIN NOW</button>
     </div>
 </div>
 
@@ -148,7 +145,6 @@
 </nav>
 
 <script>
-// Firebase Config
 const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqAL3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -159,7 +155,6 @@ const referralLink = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
 let bal = 0, usdtBal = 0, botLevel = 1, autoMineStart = 0;
 
-// Balance & Sync
 db.ref('users/' + userId).on('value', snap => {
     const data = snap.val() || {};
     bal = Number(data.balance) || 0;
@@ -175,46 +170,29 @@ db.ref('users/' + userId).on('value', snap => {
     generateLevelChart(botLevel);
 });
 
-// One-Time Task System (FIXED)
-function handleTask(taskKey, url, reward) {
-    db.ref('users/' + userId + '/completedTasks/' + taskKey).once('value', snap => {
-        if (snap.exists() && snap.val() === true) {
-            alert("দাদু, এই টাস্ক থেকে আপনি একবার রিওয়ার্ড নিয়ে ফেলেছেন!");
-        } else {
-            window.open(url, '_blank');
-            document.getElementById('ad-modal').style.display = 'flex';
-            setTimeout(() => {
-                document.getElementById('ad-modal').style.display = 'none';
-                db.ref('users/' + userId + '/completedTasks/' + taskKey).set(true);
-                db.ref('users/' + userId).update({ balance: bal + reward });
-                alert(`সাফল্য! আপনি ${reward.toLocaleString()} 💎 ডায়মন্ড পেয়েছেন।`);
-            }, 5000);
-        }
-    });
-}
-
-function generateLevelChart(cLvl) {
-    let h = '';
+function generateLevelChart(currentLvl) {
+    let html = '';
     for(let i=1; i<=25; i++) {
-        let inc = i * 2000, cost = 100 * Math.pow(2, i-1);
-        h += `<div class="level-row ${i===cLvl?'current':''}"><span>LVL ${i}</span><span>${inc} 💎</span><span>${i===25?'MAX':cost.toLocaleString()}</span></div>`;
+        let income = i * 2000, cost = 100 * Math.pow(2, i-1);
+        let activeClass = (i === currentLvl) ? 'current' : '';
+        html += `<div class="level-row ${activeClass}"><span>LVL ${i}</span><span>${income} 💎</span><span>${(i === 25 ? 'MAX' : cost.toLocaleString())}</span></div>`;
     }
-    document.getElementById('level-list-container').innerHTML = h;
+    document.getElementById('level-list-container').innerHTML = html;
 }
 
 function updateLeaderboard() {
-    db.ref('users').orderByChild('balance').limitToLast(10).on('value', snap => {
-        let arr = []; snap.forEach(c => { arr.push({id: c.key, ...c.val()}); });
+    db.ref('users').orderByChild('balance').limitToLast(10).on('value', (snapshot) => {
+        let arr = []; snapshot.forEach(c => { arr.push({id: c.key, ...c.val()}); });
         arr.reverse();
-        let h = '';
+        let html = '';
         arr.forEach((u, i) => {
             let m = (i===0)?"🥇":(i===1)?"🥈":(i===2)?"🥉":`#${i+1}`;
-            h += `<div class="flex justify-between p-3 mb-2 bg-white/5 rounded-xl border border-white/10 text-[10px]">
-                <span>${m} ${u.id.substring(0,10)}</span>
-                <span class="text-yellow-500 font-bold">💎 ${Math.floor(u.balance||0).toLocaleString()}</span>
-            </div>`;
+            html += `<div class="flex justify-between items-center p-3 mb-2 bg-white/5 rounded-xl border border-white/10">
+                <div class="flex items-center gap-3"><span class="text-yellow-500 font-bold">${m}</span>
+                <p class="text-[10px] font-bold text-white">${u.id.substring(0,10)}</p></div>
+                <p class="text-[10px] font-black text-yellow-500">💎 ${Math.floor(u.balance||0).toLocaleString()}</p></div>`;
         });
-        document.getElementById('leader-list').innerHTML = h;
+        document.getElementById('leader-list').innerHTML = html;
     });
 }
 
@@ -241,11 +219,19 @@ function handleAction(type) {
     }, 1500);
 }
 
-// Wheel Logic
+function handleTask(url, reward) {
+    window.open(url, '_blank');
+    document.getElementById('ad-modal').style.display = 'flex';
+    setTimeout(() => {
+        document.getElementById('ad-modal').style.display = 'none';
+        db.ref('users/' + userId).update({ balance: bal + reward });
+        alert(`Success! Reward Received: ${reward} 💎`);
+    }, 5000);
+}
+
 const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
 canvas.width = 300; canvas.height = 300;
 const prizes = ["100k 💎", "0.1 USDT", "90k 💎", "10 USDT", "80k 💎", "0.05 USDT", "70k 💎", "0.5 USDT", "60k 💎", "5 USDT", "50k 💎", "0.2 USDT", "400k 💎", "0.15 USDT", "300k 💎", "0.8 USDT", "200k 💎", "0.01 USDT"];
-
 function drawWheel() {
     const arc = (2 * Math.PI) / 18;
     for (let i = 0; i < 18; i++) {
@@ -256,8 +242,7 @@ function drawWheel() {
         ctx.rotate(i * arc + arc/2 + Math.PI/2);
         ctx.fillText(prizes[i].split(" ")[0], -ctx.measureText(prizes[i].split(" ")[0]).width/2, 0); ctx.restore();
     }
-} 
-drawWheel();
+} drawWheel();
 
 let currRot = 0;
 function startSpin() {
@@ -269,45 +254,48 @@ function startSpin() {
         let won = prizes[pIdx];
         if (won.includes("💎")) db.ref('users/' + userId).update({ balance: (bal - 100000) + (parseInt(won)*1000) });
         else db.ref('users/' + userId).update({ usdtBalance: usdtBal + parseFloat(won) });
-        alert(`You Won: ${won}`);
+        alert(`Winner: ${won}`);
     }, 6000);
 }
 
 function processWithdraw() {
-    let u = document.getElementById('binance-uid').value, a = parseFloat(document.getElementById('withdraw-amount').value);
-    if(u && a >= 20 && a <= usdtBal) {
-        db.ref('withdrawals').push({userId, uid: u, amt: a, status: 'pending', time: Date.now()});
-        db.ref('users/' + userId).update({ usdtBalance: usdtBal - a });
-        alert("Withdraw Request Sent!");
-    } else { alert("Minimum 20 USDT or Invalid UID!"); }
+    let uid = document.getElementById('binance-uid').value;
+    let amt = parseFloat(document.getElementById('withdraw-amount').value);
+    if(uid && amt >= 20 && amt <= usdtBal) {
+        db.ref('withdrawals').push({ userId, uid, amt, status: 'pending', time: Date.now() });
+        db.ref('users/' + userId).update({ usdtBalance: usdtBal - amt });
+        alert("Withdrawal Request Sent!");
+    } else { alert("Minimum 20 USDT & Valid UID required!"); }
 }
 
-// Mining Timer Loop
 setInterval(() => {
-    let sB = document.getElementById('btn-start'), cB = document.getElementById('btn-claim');
+    let startBtn = document.getElementById('btn-start'), claimBtn = document.getElementById('btn-claim');
     if (autoMineStart === 0) {
-        sB.disabled = false; cB.disabled = true; cB.style.opacity = "0.5"; sB.style.opacity = "1";
-        document.getElementById('bot-status').innerText = "OFFLINE"; return;
+        startBtn.disabled = false; claimBtn.disabled = true;
+        claimBtn.style.opacity = "0.5"; startBtn.style.opacity = "1";
+        document.getElementById('bot-status').innerText = "OFFLINE";
+        return;
     }
-    let e = Math.floor(Date.now() / 1000) - autoMineStart, d = 9000;
-    if (e < d) {
-        sB.disabled = true; cB.disabled = true; sB.style.opacity = "0.5";
-        let l = d - e;
-        document.getElementById('mine-timer').innerText = new Date(l * 1000).toISOString().substr(11, 8);
-        document.getElementById('mine-progress-bar').style.width = (e/d*100) + "%";
-        document.getElementById('mine-percent').innerText = Math.floor(e/d*100) + "%";
-        document.getElementById('auto-mined-val').innerText = (e/d*(botLevel*2000)).toFixed(2);
+    let elapsed = Math.floor(Date.now() / 1000) - autoMineStart, duration = 9000;
+    if (elapsed < duration) {
+        startBtn.disabled = true; claimBtn.disabled = true;
+        startBtn.style.opacity = "0.5";
+        let left = duration - elapsed;
+        document.getElementById('mine-timer').innerText = new Date(left * 1000).toISOString().substr(11, 8);
+        document.getElementById('mine-progress-bar').style.width = (elapsed/duration*100) + "%";
+        document.getElementById('mine-percent').innerText = Math.floor(elapsed/duration*100) + "%";
+        document.getElementById('auto-mined-val').innerText = ((elapsed/duration)*(botLevel*2000)).toFixed(2);
         document.getElementById('bot-status').innerText = "MINING";
     } else {
-        cB.disabled = false; cB.style.opacity = "1";
+        claimBtn.disabled = false; claimBtn.style.opacity = "1";
         document.getElementById('mine-timer').innerText = "00:00:00";
         document.getElementById('mine-progress-bar').style.width = "100%";
         document.getElementById('bot-status').innerText = "READY";
     }
 }, 1000);
 
-function copyRef() { navigator.clipboard.writeText(referralLink); alert("Copied!"); }
+function copyRef() { navigator.clipboard.writeText(referralLink); alert("Referral Link Copied!"); }
 </script>
 </body>
-                                                                       </html>
-    
+ </html>
+             
