@@ -14,19 +14,16 @@
         .tab-content { display: none; width: 100%; max-width: 420px; margin: auto; padding: 15px; animation: fadeIn 0.4s; }
         .active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; }
-        .top-icons { position: fixed; top: 20px; right: 15px; display: flex; flex-direction: column; gap: 12px; z-index: 1000; }
-        .float-btn { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; cursor: pointer; }
-        .spin-float { background: linear-gradient(45deg, #fbbf24, #d97706); animation: iconSpin 12s linear infinite; }
+        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; margin-bottom: 15px; }
+        .top-icons { position: fixed; top: 20px; right: 15px; z-index: 1000; }
+        .float-btn { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); animation: iconSpin 12s linear infinite; cursor: pointer; background: linear-gradient(45deg, #fbbf24, #d97706); }
         @keyframes iconSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .level-row { display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 10px; }
+        .level-row { display: grid; grid-template-columns: 1fr 2fr 2fr; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 11px; }
         .level-row.current { background: rgba(251, 191, 36, 0.2); border-radius: 8px; border: 1px solid #fbbf24; color: #fbbf24; font-weight: bold; }
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); z-index: 500; }
         .nav-item { font-size: 10px; color: #94a3b8; text-align: center; flex: 1; cursor: pointer; }
         .nav-item.active { color: #fbbf24; font-weight: bold; }
         #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
-        input::placeholder { color: #4b5563; }
-        button:disabled { background: #4b5563 !important; color: #94a3b8 !important; cursor: not-allowed; opacity: 0.6; box-shadow: none !important; }
     </style>
 </head>
 <body>
@@ -38,27 +35,25 @@
     </div>
 </div>
 
-<div class="top-icons">
-    <div onclick="switchTab('spin-tab')" class="float-btn spin-float">🎡</div>
-</div>
+<div class="top-icons" onclick="switchTab('spin-tab')"><div class="float-btn">🎡</div></div>
 
 <div class="text-center mt-10">
     <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 italic tracking-tighter">ROYAL DIAMOND</h1>
 </div>
 
 <div id="home-tab" class="tab-content active-tab">
-    <div class="glass-card text-center mb-4 border-b-4 border-yellow-500">
-        <p class="text-gray-400 text-[10px] uppercase tracking-widest">Balance</p>
+    <div class="glass-card text-center border-b-4 border-yellow-500">
+        <p class="text-gray-400 text-[10px] uppercase tracking-widest">Your Balance</p>
         <p class="text-3xl font-black text-yellow-500">💎 <span id="home-balance">0</span></p>
         <p class="text-sm text-green-400 font-bold mt-1">💰 USDT: $<span id="usdt-balance">0.00</span></p>
     </div>
     
-    <div class="glass-card mb-4">
+    <div class="glass-card">
         <div class="flex justify-between items-center mb-4">
             <span class="text-yellow-500 font-black text-xs italic">LVL <span id="display-level">1</span> BOT</span>
-            <span id="bot-status" class="text-[9px] bg-red-600 px-2 py-0.5 rounded text-white font-bold tracking-tighter">OFFLINE</span>
+            <span id="bot-status" class="text-[9px] bg-red-600 px-2 py-0.5 rounded text-white font-bold tracking-tighter uppercase">Offline</span>
         </div>
-        <div class="bg-black/40 p-5 rounded-xl mb-4 border border-white/5">
+        <div class="bg-black/40 p-5 rounded-xl mb-4 border border-white/5 text-center">
             <div class="flex justify-between text-[10px] mb-2 text-gray-400">
                 <span>Timer: <span id="mine-timer">02:30:00</span></span>
                 <span id="mine-percent">0%</span>
@@ -69,17 +64,17 @@
             <p class="text-center mt-3 text-2xl font-black text-green-400"><span id="auto-mined-val">0.00</span> 💎</p>
         </div>
         <div class="grid grid-cols-2 gap-3 mb-4">
-            <button id="btn-start" onclick="handleAction('start_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white bg-blue-600">Start</button>
-            <button id="btn-claim" onclick="handleAction('claim_auto_mine')" class="py-3 rounded-xl font-bold text-xs uppercase shadow-lg text-white bg-green-600 opacity-50">Claim</button>
+            <button id="btn-start" onclick="handleAction('start')" class="py-3 rounded-xl font-bold text-xs uppercase text-white bg-blue-600">Start</button>
+            <button id="btn-claim" onclick="handleAction('claim')" class="py-3 rounded-xl font-bold text-xs uppercase text-white bg-green-600 opacity-50">Claim</button>
         </div>
-        <button id="btn-upgrade" onclick="handleAction('upgrade_bot')" class="w-full py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 shadow-xl bg-yellow-500 text-black">
-            <span>Upgrade Bot</span>
-            <span id="upgrade-cost-text">100 💎</span>
+        <button onclick="handleAction('upgrade')" class="w-full py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 shadow-xl bg-yellow-500 text-black">
+            <span>Upgrade Bot</span><span id="upgrade-cost-text">100 💎</span>
         </button>
     </div>
+
     <div class="glass-card">
-        <h3 class="text-yellow-500 font-black text-[10px] mb-4 uppercase">Earning Info</h3>
-        <div id="level-list-container" style="max-height: 200px; overflow-y: auto;"></div>
+        <h3 class="text-yellow-500 font-black text-[10px] mb-4 uppercase">Bot Earning & Cost List</h3>
+        <div id="level-list-container" style="max-height: 250px; overflow-y: auto;"></div>
     </div>
 </div>
 
@@ -88,15 +83,15 @@
     <div class="space-y-3">
         <div class="glass-card flex justify-between items-center border-l-4 border-yellow-500 p-4">
             <div><p class="text-[12px] font-bold">Watch New Video</p><p class="text-[10px] text-gray-400">Reward: 30,000 💎</p></div>
-            <button id="task1" onclick="handleTask('https://www.youtube.com/watch?v=VIDEO_ID', 30000, 'task1')" class="bg-yellow-500 text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase shadow-lg">Watch</button>
+            <button id="task1" onclick="handleTask('https://youtube.com', 30000, 'task1')" class="bg-yellow-500 text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase">Watch</button>
         </div>
         <div class="glass-card flex justify-between items-center border-l-4 border-red-600 p-4">
             <div><p class="text-[12px] font-bold">Subscribe YouTube</p><p class="text-[10px] text-gray-400">Reward: 50,000 💎</p></div>
-            <button id="task2" onclick="handleTask('https://youtube.com/@YourChannel', 50000, 'task2')" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">GO</button>
+            <button id="task2" onclick="handleTask('https://youtube.com', 50000, 'task2')" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">GO</button>
         </div>
         <div class="glass-card flex justify-between items-center border-l-4 border-blue-500 p-4">
             <div><p class="text-[12px] font-bold">Join Telegram</p><p class="text-[10px] text-gray-400">Reward: 40,000 💎</p></div>
-            <button id="task3" onclick="handleTask('https://t.me/YourChannel', 40000, 'task3')" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">Join</button>
+            <button id="task3" onclick="handleTask('https://t.me', 40000, 'task3')" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">Join</button>
         </div>
     </div>
 </div>
@@ -109,6 +104,7 @@
 <div id="refer-tab" class="tab-content text-center">
     <div class="glass-card">
         <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Invite Friends</h2>
+        <p class="text-[11px] text-gray-300 mb-2">Every new referral gives you <span class="text-yellow-500 font-bold">10,000 💎</span></p>
         <p id="ref-link" class="text-[9px] mb-6 p-3 bg-black/40 rounded-lg text-gray-400 truncate italic">Loading...</p>
         <button onclick="copyRef()" class="bg-yellow-500 text-black px-12 py-3 rounded-xl font-black text-xs uppercase shadow-lg">Copy Link</button>
     </div>
@@ -117,11 +113,11 @@
 <div id="wallet-tab" class="tab-content">
     <div class="glass-card text-center">
         <h2 class="text-yellow-500 font-black text-xl mb-6 uppercase italic">Withdraw</h2>
-        <div class="bg-black/30 p-5 rounded-2xl border border-green-500/20 mb-6 text-center">
+        <div class="bg-black/30 p-5 rounded-2xl border border-green-500/20 mb-6">
             <p class="text-xs text-green-400">USDT Balance: $ <span id="wallet-usdt-display">0.00</span></p>
-            <input type="number" id="binance-uid" placeholder="Binance UID" class="w-full bg-black/50 border border-gray-700 p-3 rounded-xl text-xs mt-4 mb-2 focus:outline-none text-white">
-            <input type="number" id="withdraw-amount" placeholder="Min 20 USDT" class="w-full bg-black/50 border border-gray-700 p-3 rounded-xl text-xs mb-4 focus:outline-none text-white">
-            <button onclick="processWithdraw()" class="w-full bg-green-600 text-white font-black py-3 rounded-xl text-xs uppercase shadow-xl">Withdraw Now</button>
+            <input type="text" id="binance-uid" placeholder="Binance UID" class="w-full bg-black/50 border border-gray-700 p-3 rounded-xl text-xs mt-4 mb-2 text-white outline-none">
+            <input type="number" id="withdraw-amount" placeholder="Min 20 USDT" class="w-full bg-black/50 border border-gray-700 p-3 rounded-xl text-xs mb-4 text-white outline-none">
+            <button onclick="processWithdraw()" class="w-full bg-green-600 text-white font-black py-3 rounded-xl text-xs uppercase">Withdraw Now</button>
         </div>
     </div>
 </div>
@@ -136,7 +132,7 @@
             <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 30px; color: #ff0000;">▼</div>
             <canvas id="wheel-canvas" style="width: 100%; height: 100%; border-radius: 50%; border: 6px solid #fbbf24; transition: transform 6s cubic-bezier(0.1, 0, 0, 1);"></canvas>
         </div>
-        <button onclick="handleAction('spin')" id="spin-btn" class="mt-8 bg-yellow-500 text-black font-black py-4 px-12 rounded-full uppercase shadow-xl active:scale-95 transition-all leading-tight">
+        <button onclick="handleAction('spin')" id="spin-btn" class="mt-8 bg-yellow-500 text-black font-black py-4 px-12 rounded-full uppercase shadow-xl leading-tight">
             SPIN NOW <br> <span class="text-[9px] font-bold opacity-70">- 100,000 💎</span>
         </button>
     </div>
@@ -151,6 +147,7 @@
 </nav>
 
 <script>
+// Firebase Setup
 const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqAL3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -161,17 +158,26 @@ const referralLink = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
 let bal = 0, usdtBal = 0, botLevel = 1, autoMineStart = 0;
 
+// Referral Check
+const urlParams = new URLSearchParams(window.location.search);
+const referrerId = urlParams.get('start');
+
+db.ref('users/' + userId).once('value', snap => {
+    if (!snap.exists()) {
+        db.ref('users/' + userId).set({ balance: 0, usdtBalance: 0, botLevel: 1, autoMineStart: 0 });
+        if (referrerId && referrerId !== userId) {
+            db.ref('users/' + referrerId + '/balance').transaction(b => (b || 0) + 10000);
+        }
+    }
+});
+
+// Sync Data
 db.ref('users/' + userId).on('value', snap => {
     const data = snap.val() || {};
     bal = Number(data.balance) || 0;
     usdtBal = Number(data.usdtBalance) || 0;
     botLevel = Number(data.botLevel) || 1; 
     autoMineStart = Number(data.autoMineStart) || 0;
-    const completedTasks = data.completedTasks || {};
-    Object.keys(completedTasks).forEach(taskId => {
-        let btn = document.getElementById(taskId);
-        if(btn) { btn.disabled = true; btn.innerText = "DONE"; }
-    });
     document.getElementById('home-balance').innerText = Math.floor(bal).toLocaleString();
     document.getElementById('usdt-balance').innerText = usdtBal.toFixed(2);
     document.getElementById('wallet-usdt-display').innerText = usdtBal.toFixed(2);
@@ -182,58 +188,63 @@ db.ref('users/' + userId).on('value', snap => {
 });
 
 function handleAction(type) {
-    if(type === 'spin' && bal < 100000) { alert("Insufficient Diamonds!"); return; }
-    if(typeof show_10343752 === 'function') { show_10343752(); }
+    if(type === 'spin' && bal < 100000) { alert("Not enough diamonds!"); return; }
+    if(typeof show_10343752 === 'function') show_10343752();
     document.getElementById('ad-modal').style.display = 'flex';
     setTimeout(() => {
         document.getElementById('ad-modal').style.display = 'none';
-        if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
-        if(type === 'claim_auto_mine') db.ref('users/' + userId).update({ balance: bal + (botLevel * 2000), autoMineStart: 0 });
-        if(type === 'upgrade_bot') {
+        if(type === 'start') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
+        if(type === 'claim') db.ref('users/' + userId).update({ balance: bal + (botLevel * 2000), autoMineStart: 0 });
+        if(type === 'upgrade') {
             let cost = 100 * Math.pow(2, botLevel - 1);
             if(bal >= cost) db.ref('users/' + userId).update({ balance: bal - cost, botLevel: botLevel + 1 });
+            else alert("Need more diamonds!");
         }
         if(type === 'spin') startSpin();
     }, 2000);
 }
 
-function handleTask(url, reward, taskId) {
-    if(typeof show_10343752 === 'function') { show_10343752(); }
+function handleTask(url, reward, id) {
+    if(typeof show_10343752 === 'function') show_10343752();
     window.open(url, '_blank');
     document.getElementById('ad-modal').style.display = 'flex';
     setTimeout(() => {
         document.getElementById('ad-modal').style.display = 'none';
-        let updates = {};
-        updates['balance'] = bal + reward;
-        updates['completedTasks/' + taskId] = true;
-        db.ref('users/' + userId).update(updates);
-        alert(`Success! Reward Received: ${reward} 💎`);
+        db.ref('users/' + userId).update({ balance: bal + reward });
+        let btn = document.getElementById(id);
+        btn.disabled = true; btn.innerText = "DONE"; btn.style.opacity = "0.5";
     }, 5000);
 }
 
-function generateLevelChart(currentLvl) {
+function generateLevelChart(current) {
     let html = '';
     for(let i=1; i<=25; i++) {
         let income = i * 2000, cost = 100 * Math.pow(2, i-1);
-        let activeClass = (i === currentLvl) ? 'current' : '';
-        html += `<div class="level-row ${activeClass}"><span>LVL ${i}</span><span>${income} 💎</span><span>${(i === 25 ? 'MAX' : cost.toLocaleString())}</span></div>`;
+        let active = (i === current) ? 'current' : '';
+        html += `<div class="level-row ${active}"><span>LVL ${i}</span><span>${income} 💎</span><span>${(i === 25 ? 'MAX' : cost.toLocaleString())}</span></div>`;
     }
     document.getElementById('level-list-container').innerHTML = html;
 }
 
+// Perfect Leaderboard Sort Logic
 function updateLeaderboard() {
-    db.ref('users').orderByChild('balance').limitToLast(10).on('value', (snapshot) => {
-        let arr = []; snapshot.forEach(c => { arr.push({id: c.key, ...c.val()}); });
-        arr.reverse();
-        let html = '';
-        arr.forEach((u, i) => {
-            let m = (i===0)?"🥇":(i===1)?"🥈":(i===2)?"🥉":`#${i+1}`;
-            html += `<div class="flex justify-between items-center p-3 mb-2 bg-white/5 rounded-xl border border-white/10">
-                <div class="flex items-center gap-3"><span class="text-yellow-500 font-bold">${m}</span>
-                <p class="text-[10px] font-bold text-white">${u.id.substring(0,10)}</p></div>
-                <p class="text-[10px] font-black text-yellow-500">💎 ${Math.floor(u.balance||0).toLocaleString()}</p></div>`;
+    document.getElementById('leader-list').innerHTML = '<p class="text-center text-[10px] text-gray-500">Loading...</p>';
+    db.ref('users').once('value', snap => {
+        let arr = [];
+        snap.forEach(u => { 
+            arr.push({id: u.key, balance: Number(u.val().balance || 0)}); 
         });
-        document.getElementById('leader-list').innerHTML = html;
+        arr.sort((a, b) => b.balance - a.balance);
+        let top10 = arr.slice(0, 10);
+        let html = top10.map((u, i) => {
+            let rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+            return `<div class="flex justify-between p-3 bg-white/5 rounded-xl border border-white/10 mb-2">
+                <span class="text-yellow-500 font-bold w-8">${rank}</span>
+                <span class="text-[10px] flex-1">${u.id.substring(0,12)}...</span>
+                <span class="text-yellow-500 font-black">💎 ${Math.floor(u.balance).toLocaleString()}</span>
+            </div>`
+        }).join('');
+        document.getElementById('leader-list').innerHTML = html || '<p class="text-center text-xs">No Data</p>';
     });
 }
 
@@ -245,6 +256,7 @@ function switchTab(id, el) {
     if(id === 'leader-tab') updateLeaderboard();
 }
 
+// Wheel Logic
 const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
 canvas.width = 300; canvas.height = 300;
 const prizes = ["100k 💎", "0.1 USDT", "90k 💎", "10 USDT", "80k 💎", "0.05 USDT", "70k 💎", "0.5 USDT", "60k 💎", "5 USDT", "50k 💎", "0.2 USDT", "400k 💎", "0.15 USDT", "300k 💎", "0.8 USDT", "200k 💎", "0.01 USDT"];
@@ -260,17 +272,17 @@ function drawWheel() {
     }
 } drawWheel();
 
-let currRot = 0;
+let rot = 0;
 function startSpin() {
     db.ref('users/' + userId).update({ balance: bal - 100000 });
-    currRot += Math.floor(Math.random() * 360) + 3600;
-    canvas.style.transform = `rotate(${currRot}deg)`;
+    rot += Math.floor(Math.random() * 360) + 3600;
+    canvas.style.transform = `rotate(${rot}deg)`;
     setTimeout(() => {
-        let pIdx = Math.floor((360 - (currRot % 360)) / (360 / 18)) % 18;
-        let won = prizes[pIdx];
+        let idx = Math.floor((360 - (rot % 360)) / (360 / 18)) % 18;
+        let won = prizes[idx];
         if (won.includes("💎")) db.ref('users/' + userId).update({ balance: (bal - 100000) + (parseInt(won)*1000) });
         else db.ref('users/' + userId).update({ usdtBalance: usdtBal + parseFloat(won) });
-        alert(`Winner: ${won}`);
+        alert(`Won: ${won}`);
     }, 6000);
 }
 
@@ -280,38 +292,33 @@ function processWithdraw() {
     if(uid && amt >= 20 && amt <= usdtBal) {
         db.ref('withdrawals').push({ userId, uid, amt, status: 'pending', time: Date.now() });
         db.ref('users/' + userId).update({ usdtBalance: usdtBal - amt });
-        alert("Withdrawal Request Sent!");
-    } else { alert("Minimum 20 USDT & Valid UID required!"); }
+        alert("Request Sent!");
+    } else alert("Min 20 USDT & Valid UID!");
 }
 
 setInterval(() => {
-    let startBtn = document.getElementById('btn-start'), claimBtn = document.getElementById('btn-claim');
+    let sBtn = document.getElementById('btn-start'), cBtn = document.getElementById('btn-claim');
     if (autoMineStart === 0) {
-        startBtn.disabled = false; claimBtn.disabled = true;
-        claimBtn.style.opacity = "0.5"; startBtn.style.opacity = "1";
-        document.getElementById('bot-status').innerText = "OFFLINE";
-        return;
+        sBtn.disabled = false; cBtn.disabled = true; cBtn.style.opacity = "0.5"; sBtn.style.opacity = "1";
+        document.getElementById('bot-status').innerText = "Offline"; return;
     }
-    let elapsed = Math.floor(Date.now() / 1000) - autoMineStart, duration = 9000;
-    if (elapsed < duration) {
-        startBtn.disabled = true; claimBtn.disabled = true;
-        startBtn.style.opacity = "0.5";
-        let left = duration - elapsed;
+    let elap = Math.floor(Date.now() / 1000) - autoMineStart, dur = 9000;
+    if (elap < dur) {
+        sBtn.disabled = true; cBtn.disabled = true; sBtn.style.opacity = "0.5";
+        let left = dur - elap;
         document.getElementById('mine-timer').innerText = new Date(left * 1000).toISOString().substr(11, 8);
-        document.getElementById('mine-progress-bar').style.width = (elapsed/duration*100) + "%";
-        document.getElementById('mine-percent').innerText = Math.floor(elapsed/duration*100) + "%";
-        document.getElementById('auto-mined-val').innerText = ((elapsed/duration)*(botLevel*2000)).toFixed(2);
-        document.getElementById('bot-status').innerText = "MINING";
+        document.getElementById('mine-progress-bar').style.width = (elap/dur*100) + "%";
+        document.getElementById('mine-percent').innerText = Math.floor(elap/dur*100) + "%";
+        document.getElementById('auto-mined-val').innerText = ((elap/dur)*(botLevel*2000)).toFixed(2);
+        document.getElementById('bot-status').innerText = "Mining";
     } else {
-        claimBtn.disabled = false; claimBtn.style.opacity = "1";
-        document.getElementById('mine-timer').innerText = "00:00:00";
-        document.getElementById('mine-progress-bar').style.width = "100%";
-        document.getElementById('bot-status').innerText = "READY";
+        cBtn.disabled = false; cBtn.style.opacity = "1";
+        document.getElementById('bot-status').innerText = "Ready";
     }
 }, 1000);
 
-function copyRef() { navigator.clipboard.writeText(referralLink); alert("Referral Link Copied!"); }
+function copyRef() { navigator.clipboard.writeText(referralLink); alert("Copied!"); }
 </script>
 </body>
     </html>
-
+                
