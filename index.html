@@ -26,6 +26,15 @@
         .nav-item.active { color: #fbbf24; font-weight: bold; }
         #ad-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         input::placeholder { color: #4b5563; }
+        
+        /* নতুন ধূসর বাটন স্টাইল */
+        button:disabled {
+            background: #4b5563 !important;
+            color: #94a3b8 !important;
+            cursor: not-allowed;
+            opacity: 0.6;
+            box-shadow: none !important;
+        }
     </style>
 </head>
 <body>
@@ -87,15 +96,15 @@
     <div class="space-y-3">
         <div class="glass-card flex justify-between items-center border-l-4 border-yellow-500 p-4">
             <div><p class="text-[12px] font-bold">Watch New Video</p><p class="text-[10px] text-gray-400">Reward: 30,000 💎</p></div>
-            <button onclick="handleTask('https://www.youtube.com/watch?v=VIDEO_ID', 30000)" class="bg-yellow-500 text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase shadow-lg">Watch</button>
+            <button id="task1" onclick="handleTask('https://www.youtube.com/watch?v=VIDEO_ID', 30000, 'task1')" class="bg-yellow-500 text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase shadow-lg">Watch</button>
         </div>
         <div class="glass-card flex justify-between items-center border-l-4 border-red-600 p-4">
             <div><p class="text-[12px] font-bold">Subscribe YouTube</p><p class="text-[10px] text-gray-400">Reward: 50,000 💎</p></div>
-            <button onclick="handleTask('https://youtube.com/@YourChannel', 50000)" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">GO</button>
+            <button id="task2" onclick="handleTask('https://youtube.com/@YourChannel', 50000, 'task2')" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">GO</button>
         </div>
         <div class="glass-card flex justify-between items-center border-l-4 border-blue-500 p-4">
             <div><p class="text-[12px] font-bold">Join Telegram</p><p class="text-[10px] text-gray-400">Reward: 40,000 💎</p></div>
-            <button onclick="handleTask('https://t.me/YourChannel', 40000)" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">Join</button>
+            <button id="task3" onclick="handleTask('https://t.me/YourChannel', 40000, 'task3')" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">Join</button>
         </div>
     </div>
 </div>
@@ -161,6 +170,17 @@ db.ref('users/' + userId).on('value', snap => {
     usdtBal = Number(data.usdtBalance) || 0;
     botLevel = Number(data.botLevel) || 1; 
     autoMineStart = Number(data.autoMineStart) || 0;
+    
+    // ডাটাবেজ থেকে সম্পন্ন হওয়া টাস্ক চেক করা
+    const completedTasks = data.completedTasks || {};
+    Object.keys(completedTasks).forEach(taskId => {
+        let btn = document.getElementById(taskId);
+        if(btn) {
+            btn.disabled = true;
+            btn.innerText = "DONE";
+        }
+    });
+
     document.getElementById('home-balance').innerText = Math.floor(bal).toLocaleString();
     document.getElementById('usdt-balance').innerText = usdtBal.toFixed(2);
     document.getElementById('wallet-usdt-display').innerText = usdtBal.toFixed(2);
@@ -169,6 +189,25 @@ db.ref('users/' + userId).on('value', snap => {
     document.getElementById('ref-link').innerText = referralLink;
     generateLevelChart(botLevel);
 });
+
+function handleTask(url, reward, taskId) {
+    window.open(url, '_blank');
+    document.getElementById('ad-modal').style.display = 'flex';
+    setTimeout(() => {
+        document.getElementById('ad-modal').style.display = 'none';
+        
+        // বাটন ধূসর করা এবং ডাটাবেজে সেভ করা
+        let updates = {};
+        updates['balance'] = bal + reward;
+        updates['completedTasks/' + taskId] = true;
+        
+        db.ref('users/' + userId).update(updates);
+        
+        alert(`Success! Reward Received: ${reward} 💎`);
+    }, 5000);
+}
+
+// বাকি সব ফাংশন (generateLevelChart, updateLeaderboard, switchTab, handleAction, startSpin, processWithdraw, setInterval, copyRef) আগের মতোই আছে...
 
 function generateLevelChart(currentLvl) {
     let html = '';
@@ -217,16 +256,6 @@ function handleAction(type) {
         }
         if(type === 'spin') startSpin();
     }, 1500);
-}
-
-function handleTask(url, reward) {
-    window.open(url, '_blank');
-    document.getElementById('ad-modal').style.display = 'flex';
-    setTimeout(() => {
-        document.getElementById('ad-modal').style.display = 'none';
-        db.ref('users/' + userId).update({ balance: bal + reward });
-        alert(`Success! Reward Received: ${reward} 💎`);
-    }, 5000);
 }
 
 const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
@@ -297,5 +326,5 @@ setInterval(() => {
 function copyRef() { navigator.clipboard.writeText(referralLink); alert("Referral Link Copied!"); }
 </script>
 </body>
- </html>
-             
+    </html>
+        
