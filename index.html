@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Royal Diamond - Bot Master</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10343752' data-sdk='show_10343752'></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -81,7 +82,25 @@
 
     <div class="glass-card">
         <h3 class="text-yellow-500 font-black text-[10px] mb-4 uppercase">Earning Info</h3>
-        <div id="level-list-container" class="max-height-[300px] overflow-y-auto pr-1" style="max-height: 200px;"></div>
+        <div id="level-list-container" style="max-height: 200px; overflow-y: auto;"></div>
+    </div>
+</div>
+
+<div id="tasks-tab" class="tab-content">
+    <h2 class="text-center py-4 font-black italic uppercase text-yellow-500">Available Tasks</h2>
+    <div class="space-y-3">
+        <div class="glass-card flex justify-between items-center border-l-4 border-red-600 p-4">
+            <div><p class="text-[12px] font-bold">Subscribe YouTube</p><p class="text-[10px] text-gray-400">Reward: 50,000 💎</p></div>
+            <button onclick="handleTask('https://youtube.com/@YourChannel', 50000)" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">GO</button>
+        </div>
+        <div class="glass-card flex justify-between items-center border-l-4 border-red-500 p-4">
+            <div><p class="text-[12px] font-bold">Watch Video</p><p class="text-[10px] text-gray-400">Reward: 30,000 💎</p></div>
+            <button onclick="handleTask('https://youtube.com/watch?v=VideoID', 30000)" class="bg-red-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">Watch</button>
+        </div>
+        <div class="glass-card flex justify-between items-center border-l-4 border-blue-500 p-4">
+            <div><p class="text-[12px] font-bold">Join Telegram</p><p class="text-[10px] text-gray-400">Reward: 40,000 💎</p></div>
+            <button onclick="handleTask('https://t.me/YourChannel', 40000)" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">Join</button>
+        </div>
     </div>
 </div>
 
@@ -97,39 +116,9 @@
     </div>
 </div>
 
-<div id="wallet-tab" class="tab-content">
-    <div class="glass-card text-center">
-        <h2 class="text-yellow-500 font-black text-xl mb-6 uppercase italic">Withdraw</h2>
-        <div class="bg-black/30 p-5 rounded-2xl border border-green-500/20 mb-6">
-            <div class="flex justify-between items-center mb-6">
-                <span class="text-green-400 font-black text-xs">USDT</span>
-                <span class="text-xl font-black text-white">$ <span id="wallet-usdt">0.00</span></span>
-            </div>
-            <input type="number" id="binance-uid" placeholder="Binance UID" class="w-full bg-black/50 border border-gray-700 p-4 rounded-xl text-xs mb-3 focus:outline-none focus:border-yellow-500 text-white">
-            <input type="number" id="withdraw-amount" placeholder="Min 20 USDT" class="w-full bg-black/50 border border-gray-700 p-4 rounded-xl text-xs mb-6 focus:outline-none focus:border-yellow-500 text-white">
-            <button onclick="processWithdraw()" class="w-full bg-green-600 text-white font-black py-4 rounded-xl text-xs uppercase shadow-xl active:scale-95">Withdraw Now</button>
-        </div>
-        <p class="text-[10px] text-yellow-500 font-black opacity-50">DIAMOND WITHDRAW COMING SOON</p>
-    </div>
-</div>
-
-<div id="leader-tab" class="tab-content">
-    <h2 class="text-center py-4 font-black italic uppercase text-yellow-500">Global Board</h2>
-    <div class="glass-card mb-4 text-center border-dashed border-yellow-500/30">
-        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Total Active Users</p>
-        <p class="text-2xl font-black text-white"><span id="total-users-count">0</span></p>
-    </div>
-    <div id="leader-list" class="space-y-2"></div>
-</div>
-
-<div id="tasks-tab" class="tab-content text-center py-20 font-bold uppercase text-gray-500">📝 Tasks Section Coming Soon</div>
-<div id="refer-tab" class="tab-content text-center">
-    <div class="glass-card">
-        <h2 class="text-yellow-500 font-black mb-4 uppercase italic">Invite Friends</h2>
-        <p id="ref-link" class="text-[9px] mb-6 p-3 bg-black/40 rounded-lg text-gray-400 truncate">Loading...</p>
-        <button onclick="copyRef()" class="bg-yellow-500 text-black px-12 py-3 rounded-xl font-black text-xs uppercase shadow-lg">Copy Link</button>
-    </div>
-</div>
+<div id="leader-tab" class="tab-content"><div id="leader-list" class="space-y-2"></div></div>
+<div id="refer-tab" class="tab-content text-center"><div class="glass-card"><p id="ref-link" class="truncate text-[9px] mb-4">Loading...</p><button onclick="copyRef()" class="bg-yellow-500 text-black px-8 py-2 rounded-xl font-bold">Copy Link</button></div></div>
+<div id="wallet-tab" class="tab-content"><div class="glass-card text-center"><p class="text-xl font-bold">$ <span id="wallet-usdt">0.00</span></p><input type="number" id="binance-uid" placeholder="Binance UID" class="w-full bg-black p-3 rounded mt-4"><button onclick="processWithdraw()" class="w-full bg-green-600 p-3 rounded mt-2">Withdraw</button></div></div>
 
 <nav class="nav-bar">
     <div onclick="switchTab('home-tab', this)" class="nav-item active">🏠<br>Home</div>
@@ -140,16 +129,19 @@
 </nav>
 
 <script>
+// Firebase Config
 const firebaseConfig = { apiKey: "AIzaSyA-2VRyhIktuhWesvHRa2LkqAL3g_fDU0", authDomain: "royaldiamondbot.firebaseapp.com", databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com", projectId: "royaldiamondbot", storageBucket: "royaldiamondbot.firebasestorage.app", messagingSenderId: "156914195366", appId: "1:156914195366:web:e5ab56df62ecbf90550d67" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// User Auth
 let userId = localStorage.getItem('user_uid') || "User_" + Math.floor(Math.random() * 89999 + 10000);
 localStorage.setItem('user_uid', userId);
 const referralLink = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
 let bal = 0, usdtBal = 0, botLevel = 1, autoMineStart = 0;
 
+// Firebase Data Sync
 db.ref('users/' + userId).on('value', snap => {
     const data = snap.val() || {};
     bal = Number(data.balance) || 0;
@@ -176,63 +168,58 @@ function generateLevelChart(currentLvl) {
     document.getElementById('level-list-container').innerHTML = html;
 }
 
-function updateLeaderboard() {
-    db.ref('users').on('value', snap => { document.getElementById('total-users-count').innerText = snap.numChildren().toLocaleString(); });
-    db.ref('users').orderByChild('balance').limitToLast(10).on('value', (snapshot) => {
-        let arr = []; snapshot.forEach(c => { arr.push({id: c.key, ...c.val()}); });
-        arr.reverse();
-        let html = '';
-        arr.forEach((u, i) => {
-            let m = (i===0)?"🥇":(i===1)?"🥈":(i===2)?"🥉":`#${i+1}`;
-            html += `<div class="flex justify-between items-center p-3 mb-2 bg-white/5 rounded-xl border border-white/10">
-                <div class="flex items-center gap-3"><span class="text-yellow-500 font-bold">${m}</span>
-                <div><p class="text-[10px] font-bold text-white">${u.id.substring(0,10)}</p><p class="text-[8px] text-gray-500">LVL ${u.botLevel || 1}</p></div></div>
-                <div class="text-right"><p class="text-[10px] font-black text-yellow-500">💎 ${Math.floor(u.balance||0).toLocaleString()}</p></div></div>`;
-        });
-        document.getElementById('leader-list').innerHTML = html;
-    });
-}
-
 function switchTab(id, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active-tab');
     if(el) el.classList.add('active');
-    if(id === 'leader-tab') updateLeaderboard();
 }
 
 function handleAction(type) {
-    if(type === 'spin' && bal < 100000) { alert("ডায়মন্ড নেই!"); return; }
-    if(type === 'upgrade_bot' && bal < (100 * Math.pow(2, botLevel - 1))) { alert("ব্যালেন্স নেই!"); return; }
+    if(type === 'spin' && bal < 100000) { alert("Insufficient Diamonds!"); return; }
+    if(type === 'upgrade_bot' && bal < (100 * Math.pow(2, botLevel - 1))) { alert("Insufficient Diamonds!"); return; }
+    
     document.getElementById('ad-modal').style.display = 'flex';
-    if (typeof show_10343752 === 'function') {
-        show_10343752().then(() => executeLogic(type)).catch(() => executeLogic(type));
-    } else { setTimeout(() => executeLogic(type), 1500); }
+    setTimeout(() => {
+        document.getElementById('ad-modal').style.display = 'none';
+        executeLogic(type);
+    }, 1500);
 }
 
 function executeLogic(type) {
-    document.getElementById('ad-modal').style.display = 'none';
     if(type === 'start_auto_mine') db.ref('users/' + userId).update({ autoMineStart: Math.floor(Date.now() / 1000) });
     if(type === 'claim_auto_mine') db.ref('users/' + userId).update({ balance: bal + (botLevel * 2000), autoMineStart: 0 });
     if(type === 'upgrade_bot') db.ref('users/' + userId).update({ balance: bal - (100 * Math.pow(2, botLevel - 1)), botLevel: botLevel + 1 });
     if(type === 'spin') startSpin();
 }
 
+function handleTask(url, reward) {
+    window.open(url, '_blank');
+    document.getElementById('ad-modal').style.display = 'flex';
+    setTimeout(() => {
+        document.getElementById('ad-modal').style.display = 'none';
+        db.ref('users/' + userId).update({ balance: bal + reward });
+        alert("Success! You received " + reward + " 💎");
+    }, 4000);
+}
+
 // Wheel Settings
 const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
 canvas.width = 300; canvas.height = 300;
-const prizes = ["100000 💎", "0.10 USDT", "90000 💎", "10 USDT", "80000 💎", "0.05 USDT", "70000 💎", "0.50 USDT", "60000 💎", "5 USDT", "50000 💎", "0.20 USDT", "400000 💎", "0.15 USDT", "300000 💎", "0.80 USDT", "200000 💎", "0.01 USDT"];
+const prizes = ["100k 💎", "0.10 USDT", "90k 💎", "10 USDT", "80k 💎", "0.05 USDT", "70k 💎", "0.50 USDT", "60k 💎", "5 USDT", "50k 💎", "0.20 USDT", "400k 💎", "0.15 USDT", "300k 💎", "0.80 USDT", "200k 💎", "0.01 USDT"];
+
 function drawWheel() {
     const arc = (2 * Math.PI) / 18;
     for (let i = 0; i < 18; i++) {
         ctx.fillStyle = (i % 2 === 0) ? "#fbbf24" : "#3b82f6";
         ctx.beginPath(); ctx.moveTo(150, 150); ctx.arc(150, 150, 150, i * arc, (i + 1) * arc); ctx.fill();
-        ctx.save(); ctx.fillStyle = (i % 2 === 0) ? "black" : "white"; ctx.font = "bold 9px Arial";
+        ctx.save(); ctx.fillStyle = "black"; ctx.font = "bold 10px Arial";
         ctx.translate(150 + Math.cos(i * arc + arc/2) * 110, 150 + Math.sin(i * arc + arc/2) * 110);
         ctx.rotate(i * arc + arc/2 + Math.PI/2);
-        let txt = prizes[i].split(" ")[0]; ctx.fillText(txt, -ctx.measureText(txt).width/2, 0); ctx.restore();
+        ctx.fillText(prizes[i].split(" ")[0], -10, 0); ctx.restore();
     }
-} drawWheel();
+} 
+drawWheel();
 
 let currRot = 0;
 function startSpin() {
@@ -241,77 +228,37 @@ function startSpin() {
     canvas.style.transform = `rotate(${currRot}deg)`;
     setTimeout(() => {
         let pIdx = Math.floor((360 - (currRot % 360)) / (360 / 18)) % 18;
-        const won = prizes[pIdx];
-        if (won.includes("💎")) { db.ref('users/' + userId).update({ balance: (bal - 100000) + parseInt(won) }); }
+        let won = prizes[pIdx];
+        if (won.includes("💎")) { db.ref('users/' + userId).update({ balance: (bal - 100000) + parseInt(won) * 1000 }); }
         else { db.ref('users/' + userId).update({ usdtBalance: usdtBal + parseFloat(won) }); }
-        alert(`Winner: ${won}`);
+        alert("Winner: " + won);
     }, 6000);
-}
-
-function processWithdraw() {
-    const uid = document.getElementById('binance-uid').value;
-    const amount = parseFloat(document.getElementById('withdraw-amount').value);
-    if(!uid || amount < 20) { alert("Minimum 20 USDT & Valid UID Required!"); return; }
-    if(amount > usdtBal) { alert("Insufficient Balance!"); return; }
-    db.ref('withdrawRequests').push().set({ userId, binanceUID: uid, amount, status: 'pending', time: Date.now() }).then(() => {
-        db.ref('users/' + userId).update({ usdtBalance: usdtBal - amount });
-        alert("Withdrawal Request Sent!");
-    });
 }
 
 // Global UI Controller
 setInterval(() => {
     const startBtn = document.getElementById('btn-start');
     const claimBtn = document.getElementById('btn-claim');
-    const upgradeBtn = document.getElementById('btn-upgrade');
-    
-    // --- UPGRADE BUTTON FIX (Gold Background, Black Text) ---
-    let cost = 100 * Math.pow(2, botLevel - 1);
-    if (bal < cost || botLevel >= 25) {
-        upgradeBtn.disabled = true;
-        upgradeBtn.className = "w-full bg-gray-700 text-gray-500 py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 opacity-50 cursor-not-allowed";
-    } else {
-        upgradeBtn.disabled = false;
-        upgradeBtn.className = "w-full bg-yellow-500 text-black py-4 rounded-xl font-black text-[10px] uppercase flex justify-between px-6 shadow-lg active:scale-95 transition-all";
-    }
-
     if (autoMineStart === 0) {
         startBtn.disabled = false; claimBtn.disabled = true;
-        startBtn.className = "bg-blue-600 py-3 rounded-xl font-bold text-xs uppercase text-white w-full shadow-lg";
-        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase text-gray-400 opacity-50 w-full";
-        document.getElementById('bot-status').innerText = "OFFLINE";
-        document.getElementById('bot-status').className = "text-[9px] bg-red-600 px-2 py-0.5 rounded text-white font-bold";
+        startBtn.className = "bg-blue-600 py-3 rounded-xl w-full";
+        claimBtn.className = "bg-gray-700 py-3 rounded-xl w-full opacity-50";
         return;
     }
-
     const elapsed = Math.floor(Date.now() / 1000) - autoMineStart;
     const duration = 9000;
     if (elapsed < duration) {
-        startBtn.disabled = true; claimBtn.disabled = true;
-        startBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase text-gray-400 opacity-50 w-full cursor-not-allowed";
-        claimBtn.className = "bg-gray-700 py-3 rounded-xl font-bold text-xs uppercase text-gray-400 opacity-50 w-full";
-        const timeLeft = duration - elapsed;
-        const h = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
-        const m = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
-        const s = (timeLeft % 60).toString().padStart(2, '0');
-        document.getElementById('mine-timer').innerText = `${h}:${m}:${s}`;
+        startBtn.disabled = true;
+        document.getElementById('mine-timer').innerText = new Date((duration - elapsed) * 1000).toISOString().substr(11, 8);
         document.getElementById('mine-progress-bar').style.width = (elapsed/duration*100) + "%";
-        document.getElementById('mine-percent').innerText = Math.floor(elapsed/duration*100) + "%";
-        document.getElementById('auto-mined-val').innerText = ((elapsed/duration)*(botLevel*2000)).toFixed(2);
-        document.getElementById('bot-status').innerText = "MINING";
-        document.getElementById('bot-status').className = "text-[9px] bg-yellow-500 px-2 py-0.5 rounded text-black font-bold";
     } else {
-        startBtn.disabled = true; claimBtn.disabled = false;
-        claimBtn.className = "bg-green-600 py-3 rounded-xl font-bold text-xs uppercase text-white animate-pulse w-full shadow-lg";
-        document.getElementById('mine-timer').innerText = "00:00:00";
-        document.getElementById('mine-progress-bar').style.width = "100%";
-        document.getElementById('bot-status').innerText = "READY";
-        document.getElementById('bot-status').className = "text-[9px] bg-green-500 px-2 py-0.5 rounded text-white font-bold animate-bounce";
+        claimBtn.disabled = false;
+        claimBtn.className = "bg-green-600 py-3 rounded-xl w-full animate-pulse";
     }
 }, 1000);
 
-function copyRef() { navigator.clipboard.writeText(referralLink).then(() => alert("Referral Copied!")); }
+function copyRef() { navigator.clipboard.writeText(referralLink); alert("Copied!"); }
 </script>
 </body>
             </html>
- 
+                     
