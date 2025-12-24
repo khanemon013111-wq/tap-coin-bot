@@ -91,7 +91,7 @@
         </div>
         <div class="glass-card flex justify-between items-center border-l-4 border-blue-500 p-4">
             <div><p class="text-[12px] font-bold">Join Telegram</p><p class="text-[10px] text-gray-400">Reward: 40,000 💎</p></div>
-            <button id="task3" onclick="handleTask('https://t.me', 40000, 'task3')" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">Join</button>
+            <button id="task3" onclick="handleTask('https://t.me/Referralincamebd01', 40000, 'task3')" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase">Join</button>
         </div>
     </div>
 </div>
@@ -158,7 +158,7 @@ const referralLink = "https://t.me/Referralincamebd01311_bot?start=" + userId;
 
 let bal = 0, usdtBal = 0, botLevel = 1, autoMineStart = 0;
 
-// Referral Check
+// Refer Check on Login
 const urlParams = new URLSearchParams(window.location.search);
 const referrerId = urlParams.get('start');
 
@@ -171,7 +171,7 @@ db.ref('users/' + userId).once('value', snap => {
     }
 });
 
-// Sync Data
+// Sync Real-time Data
 db.ref('users/' + userId).on('value', snap => {
     const data = snap.val() || {};
     bal = Number(data.balance) || 0;
@@ -185,6 +185,7 @@ db.ref('users/' + userId).on('value', snap => {
     document.getElementById('upgrade-cost-text').innerText = (100 * Math.pow(2, botLevel - 1)).toLocaleString() + " 💎";
     document.getElementById('ref-link').innerText = referralLink;
     generateLevelChart(botLevel);
+    checkCompletedTasks();
 });
 
 function handleAction(type) {
@@ -204,16 +205,37 @@ function handleAction(type) {
     }, 2000);
 }
 
-function handleTask(url, reward, id) {
-    if(typeof show_10343752 === 'function') show_10343752();
-    window.open(url, '_blank');
-    document.getElementById('ad-modal').style.display = 'flex';
-    setTimeout(() => {
-        document.getElementById('ad-modal').style.display = 'none';
-        db.ref('users/' + userId).update({ balance: bal + reward });
-        let btn = document.getElementById(id);
-        btn.disabled = true; btn.innerText = "DONE"; btn.style.opacity = "0.5";
-    }, 5000);
+// ওয়ান-টাইম সিকিউর টাস্ক সিস্টেম
+function handleTask(url, reward, taskId) {
+    db.ref('users/' + userId + '/completedTasks/' + taskId).once('value', snap => {
+        if (snap.exists()) {
+            alert("Already completed!");
+        } else {
+            if(typeof show_10343752 === 'function') show_10343752();
+            window.open(url, '_blank');
+            document.getElementById('ad-modal').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('ad-modal').style.display = 'none';
+                db.ref('users/' + userId).update({ balance: bal + reward });
+                db.ref('users/' + userId + '/completedTasks/' + taskId).set(true);
+            }, 5000);
+        }
+    });
+}
+
+function checkCompletedTasks() {
+    db.ref('users/' + userId + '/completedTasks').once('value', snap => {
+        if (snap.exists()) {
+            let done = snap.val();
+            for (let id in done) {
+                let btn = document.getElementById(id);
+                if (btn) {
+                    btn.disabled = true; btn.innerText = "DONE"; btn.style.opacity = "0.5";
+                    btn.classList.add('bg-gray-600');
+                }
+            }
+        }
+    });
 }
 
 function generateLevelChart(current) {
@@ -226,17 +248,12 @@ function generateLevelChart(current) {
     document.getElementById('level-list-container').innerHTML = html;
 }
 
-// Perfect Leaderboard Sort Logic
 function updateLeaderboard() {
-    document.getElementById('leader-list').innerHTML = '<p class="text-center text-[10px] text-gray-500">Loading...</p>';
     db.ref('users').once('value', snap => {
         let arr = [];
-        snap.forEach(u => { 
-            arr.push({id: u.key, balance: Number(u.val().balance || 0)}); 
-        });
+        snap.forEach(u => { arr.push({id: u.key, balance: Number(u.val().balance || 0)}); });
         arr.sort((a, b) => b.balance - a.balance);
-        let top10 = arr.slice(0, 10);
-        let html = top10.map((u, i) => {
+        let html = arr.slice(0, 10).map((u, i) => {
             let rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
             return `<div class="flex justify-between p-3 bg-white/5 rounded-xl border border-white/10 mb-2">
                 <span class="text-yellow-500 font-bold w-8">${rank}</span>
@@ -244,7 +261,7 @@ function updateLeaderboard() {
                 <span class="text-yellow-500 font-black">💎 ${Math.floor(u.balance).toLocaleString()}</span>
             </div>`
         }).join('');
-        document.getElementById('leader-list').innerHTML = html || '<p class="text-center text-xs">No Data</p>';
+        document.getElementById('leader-list').innerHTML = html;
     });
 }
 
@@ -256,10 +273,17 @@ function switchTab(id, el) {
     if(id === 'leader-tab') updateLeaderboard();
 }
 
-// Wheel Logic
+// --- সিন্দুক পাহারা স্পিন লজিক ---
 const canvas = document.getElementById('wheel-canvas'); const ctx = canvas.getContext('2d');
 canvas.width = 300; canvas.height = 300;
-const prizes = ["100k 💎", "0.1 USDT", "90k 💎", "10 USDT", "80k 💎", "0.05 USDT", "70k 💎", "0.5 USDT", "60k 💎", "5 USDT", "50k 💎", "0.2 USDT", "400k 💎", "0.15 USDT", "300k 💎", "0.8 USDT", "200k 💎", "0.01 USDT"];
+
+const prizes = [
+    "10.5 USDT", "20k 💎", "0.10 USDT", "30k 💎", "0.05 USDT", 
+    "40k 💎", "0.20 USDT", "50k 💎", "0.15 USDT", "60k 💎", 
+    "0.30 USDT", "70k 💎", "0.01 USDT", "80k 💎", "0.40 USDT", 
+    "90k 💎", "0.50 USDT", "100k 💎"
+];
+
 function drawWheel() {
     const arc = (2 * Math.PI) / 18;
     for (let i = 0; i < 18; i++) {
@@ -268,22 +292,34 @@ function drawWheel() {
         ctx.save(); ctx.fillStyle = "black"; ctx.font = "bold 9px Arial";
         ctx.translate(150 + Math.cos(i * arc + arc/2) * 110, 150 + Math.sin(i * arc + arc/2) * 110);
         ctx.rotate(i * arc + arc/2 + Math.PI/2);
-        ctx.fillText(prizes[i].split(" ")[0], -ctx.measureText(prizes[i].split(" ")[0]).width/2, 0); ctx.restore();
+        let text = prizes[i].split(" ")[0];
+        ctx.fillText(text, -ctx.measureText(text).width/2, 0); ctx.restore();
     }
 } drawWheel();
 
-let rot = 0;
+let currentRotation = 0;
 function startSpin() {
     db.ref('users/' + userId).update({ balance: bal - 100000 });
-    rot += Math.floor(Math.random() * 360) + 3600;
-    canvas.style.transform = `rotate(${rot}deg)`;
+
+    // ১০.৫ USDT (index 0) কখনোই পড়বে না
+    let safeIdx;
+    do { safeIdx = Math.floor(Math.random() * 18); } while (safeIdx === 0);
+
+    let extraRot = (18 - safeIdx) * (360 / 18);
+    currentRotation += 3600 + extraRot;
+    canvas.style.transform = `rotate(${currentRotation}deg)`;
+
     setTimeout(() => {
-        let idx = Math.floor((360 - (rot % 360)) / (360 / 18)) % 18;
-        let won = prizes[idx];
-        if (won.includes("💎")) db.ref('users/' + userId).update({ balance: (bal - 100000) + (parseInt(won)*1000) });
-        else db.ref('users/' + userId).update({ usdtBalance: usdtBal + parseFloat(won) });
-        alert(`Won: ${won}`);
-    }, 6000);
+        let won = prizes[safeIdx];
+        if (won.includes("💎")) {
+            let val = parseInt(won) * 1000;
+            db.ref('users/' + userId).update({ balance: (bal - 100000) + val });
+        } else {
+            let val = parseFloat(won);
+            db.ref('users/' + userId).update({ usdtBalance: usdtBal + val });
+        }
+        alert(`You Won: ${won}`);
+    }, 6100);
 }
 
 function processWithdraw() {
