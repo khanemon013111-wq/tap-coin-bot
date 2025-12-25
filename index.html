@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - High Speed Ad</title>
+    <title>Fishing Pro - Refer Fixed</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -24,7 +24,6 @@
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
         .withdraw-input, .withdraw-select { width: 95%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid rgba(0,242,255,0.3); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 13px; }
 
-        /* দাদুর স্পেশাল অ্যাড লক স্ক্রিন ও প্রগ্রেস বার */
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .progress-container { width: 80%; height: 8px; background: #333; border-radius: 10px; margin: 20px 0; overflow: hidden; border: 1px solid rgba(0, 242, 255, 0.2); }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #00f2ff, #00d2ff); transition: width 0.3s; }
@@ -42,7 +41,7 @@
         <div class="progress-container">
             <div id="myBar" class="progress-bar"></div>
         </div>
-        <div id="lock-timer">7</div>
+        <div id="lock-timer">10</div>
         <div id="action-area"></div>
         <small onclick="cancelAd()" style="color:#444; text-decoration:underline; margin-top: 40px; cursor:pointer;">Cancel Reward</small>
     </div>
@@ -69,8 +68,8 @@
     <div id="refer-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#00f2ff;">👥 REFERRAL</h3>
-        <div class="refer-box" id="refer-link-box">Loading...</div>
-        <button class="btn-action" onclick="alert('Link Copied!')">COPY LINK</button>
+        <div class="refer-box" id="refer-link-box" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; font-size: 10px; margin-bottom: 10px; word-break: break-all;">Loading...</div>
+        <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
     </div>
 
     <div id="sea-shop" class="modal">
@@ -127,17 +126,15 @@
         let adLimits = { 1: 10, 2: 10, 3: 10 };
         let fishes = [];
 
-        // --- স্মার্ট অ্যাড ভেরিফিকেশন লজিক ---
         let rewardType = "";
         let rewardOpt = 0;
         let adStartTime = 0;
         let timerRunning = false;
-        const AD_DURATION = 7; 
+        const AD_DURATION = 10; 
 
         function startVerifiedAd(type, opt = 0) {
             rewardType = type; rewardOpt = opt;
             if(type === 'dia' && adLimits[opt] <= 0) return alert("Limit reached!");
-
             window.open(ADSTERRA_SMARTLINK, '_blank');
             adStartTime = Date.now();
             timerRunning = true;
@@ -145,21 +142,15 @@
             updateAdUI(AD_DURATION);
         }
 
-        // গেমের মেইন লুপে বা ইন্টারভালে টাইমার চেক
         setInterval(() => {
             if (!timerRunning) return;
-
             let elapsed = Math.floor((Date.now() - adStartTime) / 1000);
             let remaining = AD_DURATION - elapsed;
-
             if (document.visibilityState === 'visible' && remaining > 0) {
-                // ইউজার ফিরে এসেছে কিন্তু সময় বাকি - রিটার্ন বাটন দেখাবে
                 showReturnUI();
             } else if (remaining <= 0) {
-                // ৭ সেকেন্ড পূর্ণ হয়েছে
                 completeAd();
             } else {
-                // ইউজার অ্যাডে আছে - টাইমার কমছে
                 updateAdUI(remaining);
             }
         }, 500);
@@ -202,7 +193,36 @@
             }
             alert("Success! Reward added.");
         }
-        // --- এন্ড অ্যাড লজিক ---
+
+        // --- রেফার লিঙ্ক কপি করার ফিক্সড ফাংশন ---
+        function copyReferLink() {
+            const link = `https://t.me/${BOT_USERNAME}?start=${userId}`;
+            
+            // আধুনিক ব্রাউজারের জন্য
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link).then(() => {
+                    alert('Refer link copied!');
+                }).catch(() => {
+                    fallbackCopy(link);
+                });
+            } else {
+                fallbackCopy(link);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('Refer link copied!');
+            } catch (err) {
+                alert('Failed to copy. Please manually copy the link.');
+            }
+            document.body.removeChild(textArea);
+        }
 
         db.ref('users/' + userId).on('value', (snap) => {
             const val = snap.val();
