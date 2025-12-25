@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Ad Fixed</title>
+    <title>Fishing Pro - Adsterra Integrated</title>
     
-    <script src="https://alwingulla.com/88/tag.min.js" data-zone="10343752" async data-cfasync="false"></script>
+    <script>
+        const ADSTERRA_SMARTLINK = "https://www.effectivegatecpm.com/rarb5qds06?key=79349eb6a9357e2e416a3ef19425a5c1";
+        
+        function openAdsterraAd() {
+            window.open(ADSTERRA_SMARTLINK, '_blank');
+        }
+    </script>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -113,20 +119,6 @@
         let adLimits = { 1: 10, 2: 10, 3: 10 };
         let fishes = [];
 
-        // --- অ্যাড সিস্টেম ফাংশন ---
-        function showRewardAd(onComplete) {
-            if (typeof show_10343752 === 'function') {
-                show_10343752().then(() => {
-                    // অ্যাড দেখা শেষ হলে এই ফাংশনটি চলবে
-                    onComplete();
-                }).catch((e) => {
-                    alert("Ad not ready yet. Please try again.");
-                });
-            } else {
-                alert("Ad Loading... Please wait and click again.");
-            }
-        }
-
         db.ref('users/' + userId).on('value', (snap) => {
             const val = snap.val();
             if(val) {
@@ -153,22 +145,20 @@
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; if(id==='sea-shop') renderShop(); }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
 
-        // এনার্জি রিফিল অ্যাড
+        // এনার্জি রিফিল অ্যাড - Adsterra লিঙ্ক কাজ করবে
         function watchEnergyAd() { 
-            showRewardAd(() => { 
-                energy = 5; 
-                db.ref('users/' + userId).update({ energy }); 
-            }); 
+            openAdsterraAd(); // অ্যাড ওপেন হবে
+            energy = 5; 
+            db.ref('users/' + userId).update({ energy }); 
         }
 
-        // ডায়মন্ড কালেকশন অ্যাড
+        // ডায়মন্ড কালেকশন অ্যাড - Adsterra লিঙ্ক কাজ করবে
         function collectDiamond(opt) { 
             if(adLimits[opt] > 0) { 
-                showRewardAd(() => { 
-                    adLimits[opt]--; 
-                    diamonds++; 
-                    db.ref('users/' + userId).update({ diamonds, adLimits }); 
-                }); 
+                openAdsterraAd(); // অ্যাড ওপেন হবে
+                adLimits[opt]--; 
+                diamonds++; 
+                db.ref('users/' + userId).update({ diamonds, adLimits }); 
             } else {
                 alert("Limit reached for today!");
             }
@@ -237,5 +227,5 @@
         draw();
     </script>
 </body>
-</html>
-
+                                                                                                                 </html>
+        
