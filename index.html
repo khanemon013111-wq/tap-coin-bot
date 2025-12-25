@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Diamond Fee Edition</title>
+    <title>Fishing Pro - Full Edition</title>
     
     <script>
         const ADSTERRA_SMARTLINK = "https://www.effectivegatecpm.com/rarb5qds06?key=79349eb6a9357e2e416a3ef19425a5c1";
@@ -63,11 +63,11 @@
 
     <div id="diamond-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#ff00e6;">💎 DAILY DIAMONDS</h3>
-        <p style="font-size: 10px; margin-bottom: 5px; color:#bbb;">Watch ads for 15s to claim rewards</p>
-        <button class="btn-action" onclick="collectDiamond(1, this)">📺 OPTION 1 (<span id="limit-1">10</span>/10)</button>
-        <button class="btn-action" onclick="collectDiamond(2, this)">📺 OPTION 2 (<span id="limit-2">10</span>/10)</button>
-        <button class="btn-action" onclick="collectDiamond(3, this)">📺 OPTION 3 (<span id="limit-3">10</span>/10)</button>
+        <h3 style="color:#ff00e6;">💎 EARN DIAMONDS</h3>
+        <p style="font-size: 10px; margin-bottom: 5px; color:#bbb;">Watch 15s Ad to get 1 Diamond fee</p>
+        <button class="btn-action" onclick="collectDiamond(1, this)">📺 WATCH AD (<span id="limit-1">10</span>/10)</button>
+        <button class="btn-action" onclick="collectDiamond(2, this)">📺 WATCH AD (<span id="limit-2">10</span>/10)</button>
+        <button class="btn-action" onclick="collectDiamond(3, this)">📺 WATCH AD (<span id="limit-3">10</span>/10)</button>
     </div>
 
     <div id="refer-modal" class="modal">
@@ -166,7 +166,7 @@
             if(adLimits[opt] > 0) { 
                 openAdWithTimer(() => { 
                     adLimits[opt]--; 
-                    diamonds += 100; // লোভ বাড়ানোর জন্য ১০০ করে দিলাম, আপনি চাইলে ১ দিতে পারেন
+                    diamonds += 1; 
                     db.ref('users/' + userId).update({ diamonds, adLimits }); 
                 }, btn); 
             } else { alert("Daily limit reached!"); }
@@ -181,7 +181,7 @@
             const diamondFee = withdrawAmount * 1000;
 
             if(balance < withdrawAmount) return alert("Insufficient USD balance!");
-            if(diamonds < diamondFee) return alert("Insufficient Diamonds for fee (Need " + diamondFee + ")!");
+            if(diamonds < diamondFee) return alert("Insufficient Diamonds (Need " + diamondFee + ")!");
 
             db.ref('withdraw_requests').push({
                 userId, binanceId: bId, amountRequested: withdrawAmount, feePaid: diamondFee, status: 'pending', date: Date.now()
@@ -225,13 +225,10 @@
             let grad = ctx.createLinearGradient(0,0,0,canvas.height);
             grad.addColorStop(0,"#00a8e8"); grad.addColorStop(1,"#001e30");
             ctx.fillStyle=grad; ctx.fillRect(0,0,canvas.width,canvas.height);
-            
             if(hook.state==='dropping'){ hook.y+=10; if(hook.y>canvas.height-180) hook.state='retracting'; }
             else if(hook.state==='retracting'){ hook.y-=10; if(hook.y<=80){ hook.state='idle'; let caught=fishes.filter(f=>f.caught); if(caught.length>0){ balance+=caught.length*0.00005; db.ref('users/'+userId).update({balance}); fishes=fishes.filter(f=>!f.caught); } } }
-            
             ctx.strokeStyle="white"; ctx.beginPath(); ctx.moveTo(canvas.width/2,0); ctx.lineTo(hook.x,hook.y); ctx.stroke();
             ctx.strokeStyle="#ddd"; ctx.lineWidth=4; ctx.beginPath(); ctx.arc(hook.x,hook.y+10,10,0,Math.PI); ctx.stroke();
-            
             while(fishes.length < currentLvl*4){ fishes.push({x:Math.random()*canvas.width, y:250+Math.random()*(canvas.height-450), speed:1.5+Math.random()*1.5, dir:Math.random()>0.5?1:-1, caught:false, color:`hsl(${Math.random()*360},70%,50%)`}); }
             fishes.forEach(f=>{ if(f.caught){ f.x=hook.x; f.y=hook.y+25; } else { f.x+=f.speed*f.dir; if(f.x>canvas.width+30)f.dir=-1; if(f.x<-30)f.dir=1; if(hook.state==='retracting'&&Math.hypot(hook.x-f.x,hook.y-f.y)<30) f.caught=true; } drawFish(f.x,f.y,f.color,f.dir); });
             requestAnimationFrame(draw);
@@ -241,5 +238,5 @@
         draw();
     </script>
 </body>
-    </html>
+                                                                                     </html>
     
