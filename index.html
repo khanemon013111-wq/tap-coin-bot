@@ -1,73 +1,92 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>মানি ফিশিং - প্রো শপ</title>
+    <title>Money Fishing - Pro Ad System</title>
     <style>
-        body { margin: 0; padding: 0; background: #001a00; overflow: hidden; touch-action: none; font-family: sans-serif; }
+        :root { --ui-cyan: #00f2ff; --ui-gold: #ffd700; }
+        body { margin: 0; padding: 0; background: #001219; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; }
         canvas { display: block; }
-        #ui { 
-            position: absolute; width: 100%; top: 10px; 
-            color: #00ff00; font-size: 20px; text-align: center; 
-            text-shadow: 2px 2px #000; pointer-events: none; z-index: 10;
+
+        /* UI Top Bar */
+        #ui-top-bar {
+            position: absolute; top: 15px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 10px; box-sizing: border-box; z-index: 100;
         }
-        #btn-container {
-            position: absolute; bottom: 20px; width: 100%;
-            display: flex; justify-content: center; z-index: 20;
+        .ui-box {
+            background: rgba(0, 40, 60, 0.7); backdrop-filter: blur(8px);
+            border: 1.5px solid var(--ui-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
+            padding: 6px 12px; border-radius: 30px; color: white; font-weight: 700;
+            display: flex; align-items: center; gap: 6px; font-size: 11px;
         }
-        .btn {
-            border: 2px solid #fff; padding: 12px 25px;
-            color: white; font-size: 16px; border-radius: 30px; font-weight: bold; cursor: pointer;
+        .energy-bar-bg { background: rgba(255,255,255,0.2); width: 40px; height: 7px; border-radius: 5px; overflow: hidden; }
+        .energy-fill { background: var(--ui-gold); height: 100%; transition: width 0.3s; }
+
+        /* Bottom Buttons */
+        #btn-container { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: center; gap: 12px; z-index: 20; }
+        .btn-pro {
+            padding: 10px 18px; border-radius: 12px; font-weight: bold; cursor: pointer;
+            border: none; color: white; text-transform: uppercase; font-size: 10px;
         }
-        #shopBtn { background: #d32f2f; box-shadow: 0 4px #7b1f1f; }
-        
-        /* শপ মেনু ডিজাইন */
-        #shopMenu {
-            display: none; position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); background: rgba(0,20,0,0.95);
-            width: 85%; border: 3px solid #ffd700; border-radius: 20px;
-            padding: 20px; text-align: center; color: white; z-index: 100;
+
+        /* Modals & Popups */
+        .modal {
+            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: linear-gradient(180deg, rgba(0, 50, 80, 0.98), rgba(0, 10, 20, 1));
+            width: 85%; max-width: 350px; border-radius: 20px; padding: 25px; 
+            text-align: center; color: white; z-index: 500; border: 2px solid var(--ui-cyan);
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.3);
         }
-        .shop-item {
-            background: #111; margin: 10px 0; padding: 15px;
-            border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid #333;
+        .pro-table { width: 100%; border-collapse: collapse; margin: 12px 0; background: rgba(0,0,0,0.3); font-size: 11px; }
+        .pro-table th { background: var(--ui-cyan); color: #000; padding: 8px; }
+        .pro-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        /* Ad Overlay */
+        #ad-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; z-index: 1000; color: white; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
         }
-        .buy-btn { background: #2e7d32; border: none; color: white; padding: 8px 15px; border-radius: 5px; }
-        #closeShop { background: #555; margin-top: 15px; width: 100%; }
     </style>
 </head>
 <body>
-    <div id="ui">
-        💰 ব্যালেন্স: $<span id="coins">0.00</span><br>
-        ⚓ লেভেল: <span id="lvl">1</span> | 📏 গভীরতা: <span id="maxD">500</span>m
+
+    <div id="ui-top-bar">
+        <div class="ui-box">💰 Bal: <span id="coins" style="color:var(--ui-gold)">0.000000</span></div>
+        <div class="ui-box">⚡ <div class="energy-bar-bg"><div id="energy-fill" class="energy-fill" style="width: 100%;"></div></div> <span id="energy-text">5/5</span></div>
     </div>
     
     <div id="btn-container">
-        <button class="btn" id="shopBtn" onclick="toggleShop(true)">🛍️ শপ / দোকান</button>
+        <button class="btn-pro" style="background: #ff4757;" onclick="openShop()">🛍️ SHOP</button>
+        <button class="btn-pro" style="background: rgba(0,242,255,0.2); border: 1px solid var(--ui-cyan);">💸 WITHDRAW</button>
     </div>
 
-    <div id="shopMenu">
-        <h2 style="color: #ffd700; margin-top: 0;">🛒 বঁড়শি দোকান</h2>
-        
-        <div class="shop-item">
-            <div>
-                <b style="display:block">লেভেল আপগ্রেড</b>
-                <small>গভীরতা +৫০০ মি.</small>
-            </div>
-            <button class="buy-btn" id="upBtnShop" onclick="doUpgrade()">$ <span id="upCost">5.00</span></button>
-        </div>
+    <div id="shopMenu" class="modal">
+        <h3 style="margin: 0; color: var(--ui-cyan);">Shop</h3>
+        <table class="pro-table">
+            <thead>
+                <tr><th>Lv</th><th>Fish</th><th>Cost</th><th>Depth</th></tr>
+            </thead>
+            <tbody id="shopBody"></tbody>
+        </table>
+        <button class="btn-pro" style="background: var(--ui-cyan); color: #000; width: 100%;" onclick="doUpgrade()">UPGRADE</button>
+        <button class="btn-pro" style="background: transparent; border: 1px solid white; margin-top: 10px; width: 100%;" onclick="toggleMenu('shopMenu', false)">CLOSE</button>
+    </div>
 
-        <div class="shop-item">
-            <div>
-                <b style="display:block">সুপার স্পিড</b>
-                <small>বঁড়শির গতি বাড়বে</small>
-            </div>
-            <button class="buy-btn" onclick="buySpeed(20, 25)">$20.00</button>
-        </div>
+    <div id="adNeeded" class="modal">
+        <h2 style="color: var(--ui-gold);">Out of Energy!</h2>
+        <p>You have used all 5 attempts.</p>
+        <p style="font-size: 12px; opacity: 0.8;">Watch a short ad to get 5 more!</p>
+        <button class="btn-pro" style="background: #2ecc71; width: 100%; margin-top: 10px;" onclick="startAd()">📺 WATCH AD</button>
+    </div>
 
-        <button class="btn" id="closeShop" onclick="toggleShop(false)">খেলায় ফেরো</button>
+    <div id="ad-overlay">
+        <h2>🎬 Advertisement</h2>
+        <p>Rewarding energy in <span id="ad-timer">5</span>...</p>
+        <div style="width: 200px; height: 10px; background: #333; border-radius: 5px;">
+            <div id="ad-progress" style="width: 0%; height: 100%; background: var(--ui-cyan);"></div>
+        </div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -75,127 +94,163 @@
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-        const coinsEl = document.getElementById("coins");
-        const lvlEl = document.getElementById("lvl");
-        const maxDEl = document.getElementById("maxD");
-        const upCostEl = document.getElementById("upCost");
-        const shopMenu = document.getElementById("shopMenu");
-
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        let totalBalance = 0.00;
+        let totalBalance = 0;
         let currentLevel = 1;
-        let costToUpgrade = 5.00;
-        let hook = { x: canvas.width / 2, y: 70, speed: 12, state: 'idle', maxDepth: 500 };
-        let moneyItems = [];
+        let energy = 5;
+        let gameTime = 0;
+        const levelCosts = [0, 3, 4, 5, 6];
+        const getFishLimit = () => currentLevel * 4;
 
-        function toggleShop(show) {
-            shopMenu.style.display = show ? "block" : "none";
-        }
+        let hook = { x: canvas.width / 2, y: 100, speed: 6, state: 'idle', maxDepth: 2000 };
+        let fishes = [];
+        let reefAssets = [];
 
-        // শপের ভেতরে লেভেল আপগ্রেড লজিক
-        function doUpgrade() {
-            if (totalBalance >= costToUpgrade) {
-                totalBalance -= costToUpgrade;
-                currentLevel++;
-                hook.maxDepth += 500;
-                costToUpgrade = parseFloat((costToUpgrade * 2.2).toFixed(2));
-                updateUI();
-                alert("লেভেল আপ! এখন আপনি " + hook.maxDepth + " মিটার গভীর পর্যন্ত যেতে পারবেন।");
-            } else {
-                alert("পর্যাপ্ত ব্যালেন্স নেই, দাদু!");
-            }
-        }
-
-        function buySpeed(price, newSpeed) {
-            if (totalBalance >= price) {
-                totalBalance -= price;
-                hook.speed = newSpeed;
-                updateUI();
-                alert("স্পিড বেড়েছে! এখন বঁড়শি দ্রুত চলবে।");
-            } else {
-                alert("টাকা লাগবে, দাদু!");
-            }
-        }
-
-        function updateUI() {
-            coinsEl.innerText = totalBalance.toFixed(2);
-            lvlEl.innerText = currentLevel;
-            maxDEl.innerText = hook.maxDepth;
-            upCostEl.innerText = costToUpgrade.toFixed(2);
-        }
-
-        function createMoney() {
-            if (moneyItems.length < 12) {
-                moneyItems.push({
-                    x: Math.random() * (canvas.width - 40) + 20,
-                    y: Math.random() * (hook.maxDepth - 150) + 150,
-                    val: 0.01,
-                    speed: Math.random() * 1.5 + 1,
-                    dir: Math.random() < 0.5 ? 1 : -1,
-                    caught: false
+        function initReef() {
+            reefAssets = [];
+            for(let i=0; i<40; i++) {
+                reefAssets.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * 10000 + 400,
+                    type: Math.floor(Math.random() * 2),
+                    color: ["#ff7f50", "#2ecc71", "#95a5a6"][Math.floor(Math.random() * 3)],
+                    size: Math.random() * 20 + 15
                 });
             }
         }
+        initReef();
+
+        function toggleMenu(id, show) { document.getElementById(id).style.display = show ? "block" : "none"; }
+        function openShop() { generateShop(); toggleMenu('shopMenu', true); }
+
+        function generateShop() {
+            const tbody = document.getElementById("shopBody");
+            tbody.innerHTML = "";
+            for (let i = 1; i <= 5; i++) {
+                let row = document.createElement("tr");
+                if(i === currentLevel) row.style.background = "rgba(0, 242, 255, 0.2)";
+                row.innerHTML = `<td>${i}</td><td>${i*4}</td><td>${i==1?'Free':'$'+levelCosts[i-1]}</td><td>${i*2000}m</td>`;
+                tbody.appendChild(row);
+            }
+        }
+
+        function doUpgrade() {
+            let cost = levelCosts[currentLevel];
+            if (totalBalance >= cost && currentLevel < 5) {
+                totalBalance -= cost; currentLevel++;
+                hook.maxDepth = currentLevel * 2000;
+                updateUI(); generateShop();
+            } else { alert("Insufficient Balance!"); }
+        }
+
+        function updateUI() {
+            document.getElementById("coins").innerText = totalBalance.toFixed(6);
+            document.getElementById("energy-text").innerText = energy + "/5";
+            document.getElementById("energy-fill").style.width = (energy/5 * 100) + "%";
+            if (energy === 0 && hook.state === 'idle') {
+                toggleMenu('adNeeded', true);
+            }
+        }
+
+        // Ad Logic
+        function startAd() {
+            toggleMenu('adNeeded', false);
+            const overlay = document.getElementById('ad-overlay');
+            const timerText = document.getElementById('ad-timer');
+            const progress = document.getElementById('ad-progress');
+            overlay.style.display = 'flex';
+            
+            let timeLeft = 5;
+            let interval = setInterval(() => {
+                timeLeft--;
+                timerText.innerText = timeLeft;
+                progress.style.width = ((5-timeLeft)/5 * 100) + "%";
+                
+                if(timeLeft <= 0) {
+                    clearInterval(interval);
+                    overlay.style.display = 'none';
+                    energy = 5;
+                    updateUI();
+                }
+            }, 1000);
+        }
+
+        function drawRealisticFish(f) {
+            ctx.save();
+            ctx.translate(f.x, f.y);
+            if(f.caught) ctx.rotate(Math.PI / 2);
+            else if (f.dir === -1) ctx.scale(-1, 1);
+            let fishGrad = ctx.createLinearGradient(-f.w, -f.h, f.w, f.h);
+            fishGrad.addColorStop(0, f.color);
+            fishGrad.addColorStop(0.5, "rgba(255,255,255,0.4)");
+            fishGrad.addColorStop(1, f.color);
+            ctx.beginPath(); ctx.fillStyle = fishGrad; ctx.moveTo(-f.w, 0);
+            ctx.bezierCurveTo(-f.w, -f.h*1.5, f.w, -f.h*1.5, f.w, 0);
+            ctx.bezierCurveTo(f.w, f.h*1.5, -f.w, f.h*1.5, -f.w, 0); ctx.fill();
+            ctx.beginPath(); ctx.fillStyle = f.color; ctx.moveTo(-f.w+5, 0);
+            ctx.quadraticCurveTo(-f.w-15, -f.h*1.8, -f.w-22, -f.h*2);
+            ctx.quadraticCurveTo(-f.w-14, 0, -f.w-22, f.h*2);
+            ctx.quadraticCurveTo(-f.w-15, f.h*1.8, -f.w+5, 0); ctx.fill();
+            ctx.beginPath(); ctx.fillStyle = "white"; ctx.arc(f.w*0.6, -f.h*0.3, 3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.fillStyle = "black"; ctx.arc(f.w*0.65, -f.h*0.3, 1.5, 0, Math.PI*2); ctx.fill();
+            ctx.restore();
+        }
 
         function draw() {
+            gameTime++;
             let cameraY = (hook.y > canvas.height / 2) ? hook.y - canvas.height / 2 : 0;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-            ctx.translate(0, -cameraY);
-
-            // সমুদ্র
-            ctx.fillStyle = "#001a00";
-            ctx.fillRect(0, 0, canvas.width, hook.maxDepth + 1000);
-
-            // হুক
-            ctx.strokeStyle = "#fff"; ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
-            ctx.font = "40px Arial"; ctx.fillText("🪝", hook.x - 20, hook.y + 25);
-
-            moneyItems.forEach((m, i) => {
-                if (m.caught) { m.x = hook.x; m.y = hook.y + 15; }
-                else {
-                    m.x += m.speed * m.dir;
-                    if (m.x > canvas.width - 20 || m.x < 20) m.dir *= -1;
-                }
-                ctx.fillStyle = "#FFD700"; ctx.beginPath();
-                ctx.arc(m.x, m.y, 15, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = "#000"; ctx.font = "bold 12px Arial";
-                ctx.fillText("$", m.x - 4, m.y + 5);
-
-                if (hook.state === 'retracting' && !m.caught) {
-                    if (Math.hypot(hook.x - m.x, hook.y - m.y) < 35) m.caught = true;
+            let waterGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            waterGrad.addColorStop(0, "#005f73"); waterGrad.addColorStop(1, "#001219");
+            ctx.fillStyle = waterGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.save(); ctx.translate(0, -cameraY);
+            reefAssets.forEach(a => {
+                if(a.y > cameraY - 200 && a.y < cameraY + canvas.height + 200) {
+                    ctx.fillStyle = a.color;
+                    if(a.type === 0) { ctx.beginPath(); ctx.arc(a.x, a.y, a.size/2, 0, Math.PI*2); ctx.fill(); }
+                    else { ctx.beginPath(); ctx.strokeStyle = a.color; ctx.lineWidth = 4; ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(a.x + Math.sin(gameTime*0.04+a.x)*12, a.y - a.size, a.x, a.y - a.size*2); ctx.stroke(); }
                 }
             });
-
-            ctx.restore();
-
-            if (hook.state === 'dropping') {
-                hook.y += hook.speed;
-                if (hook.y > hook.maxDepth) hook.state = 'retracting';
-            } else if (hook.state === 'retracting') {
-                hook.y -= hook.speed;
-                if (hook.y <= 75) {
-                    moneyItems.forEach(it => { if(it.caught) totalBalance += it.val; });
-                    moneyItems = moneyItems.filter(it => !it.caught);
-                    updateUI();
-                    hook.state = 'idle';
+            ctx.beginPath(); ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.setLineDash([10,5]);
+            ctx.moveTo(canvas.width/2, -100); ctx.lineTo(hook.x, hook.y-15); ctx.stroke(); ctx.setLineDash([]);
+            ctx.strokeStyle = "#eee"; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(hook.x, hook.y, 12, 0, Math.PI); ctx.stroke();
+            fishes.forEach((f, index) => {
+                if(f.caught) { f.x = hook.x; f.y = hook.y + 15 + (index * 12); }
+                else { f.x += f.speed * f.dir; f.y += Math.sin(gameTime * 0.02 + f.y) * 0.2;
+                    if(f.x > canvas.width - 40) { f.dir = -1; f.x = canvas.width - 40; }
+                    if(f.x < 40) { f.dir = 1; f.x = 40; }
                 }
+                drawRealisticFish(f);
+                if(hook.state === 'retracting' && !f.caught && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true;
+            });
+            ctx.restore();
+            if(hook.state === 'dropping') { hook.y += hook.speed; if(hook.y > hook.maxDepth) hook.state = 'retracting'; }
+            else if(hook.state === 'retracting') { hook.y -= hook.speed; 
+                if(hook.y <= 100) { 
+                    fishes.forEach(f => { if(f.caught) totalBalance += 0.00005; });
+                    fishes = fishes.filter(f => !f.caught); hook.state = 'idle'; updateUI(); 
+                } 
+            }
+            if(fishes.length < getFishLimit()) {
+                let spawnY, isTooClose, attempts = 0;
+                do { isTooClose = false; spawnY = 500 + Math.random() * (hook.maxDepth - 700);
+                    for(let existing of fishes) { if(Math.abs(existing.y - spawnY) < 120) { isTooClose = true; break; } }
+                    attempts++;
+                } while(isTooClose && attempts < 15);
+                let s = Math.random() * 0.4 + 0.7;
+                fishes.push({ x: Math.random() * (canvas.width - 80) + 40, y: spawnY, speed: Math.random() * 1.5 + 0.8, dir: Math.random() > 0.5 ? 1 : -1, caught: false, w: 22*s, h: 11*s, color: `hsl(${Math.random()*360}, 65%, 50%)` });
             }
             requestAnimationFrame(draw);
         }
 
-        window.addEventListener("mousedown", () => { 
-            if(hook.state === 'idle' && shopMenu.style.display !== "block") hook.state = 'dropping'; 
+        window.addEventListener("mousedown", (e) => { 
+            if(e.target.tagName !== 'BUTTON' && hook.state === 'idle' && energy > 0) { 
+                energy--; hook.state = 'dropping'; updateUI(); 
+            } 
         });
-        window.addEventListener("touchstart", (e) => { 
-            if(hook.state === 'idle' && shopMenu.style.display !== "block") hook.state = 'dropping'; 
-        });
-
-        setInterval(createMoney, 1000);
-        draw();
+        updateUI(); draw();
     </script>
 </body>
 </html>
