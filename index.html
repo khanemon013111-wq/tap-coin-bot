@@ -23,12 +23,11 @@
         
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
         .withdraw-input, .withdraw-select { width: 95%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid rgba(0,242,255,0.3); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 13px; }
-        .refer-box { background: rgba(255,255,255,0.1); padding: 10px; margin-top: 10px; border-radius: 10px; font-size: 10px; word-break: break-all; border: 1px dashed #00f2ff; color: #00f2ff; }
-
-        /* দাদুর স্পেশাল অ্যাড লক স্ক্রিন ও প্রগ্রেস বার */
+        
+        /* অ্যাড লক স্ক্রিন ও প্রগ্রেস বার */
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .progress-container { width: 80%; height: 8px; background: #333; border-radius: 10px; margin: 20px 0; overflow: hidden; border: 1px solid rgba(0, 242, 255, 0.2); }
-        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #00f2ff, #0072ff); transition: width 0.3s; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #00f2ff, #00d2ff); transition: width 0.3s; }
         #lock-timer { font-size: 80px; font-weight: bold; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.4); margin-bottom: 10px; }
         .return-btn { background: #ffd700; color: #000; border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 5px 15px rgba(255,215,0,0.3); margin-top: 10px; }
 
@@ -129,13 +128,12 @@
         let balance = 0, energy = 5, diamonds = 0, currentLvl = 1;
         let adLimits = { 1: 10, 2: 10, 3: 10 };
         let fishes = [];
-
-        // --- ৭ সেকেন্ডের স্মার্ট টাইমার লজিক ---
         let timeLeft = 7;
         let timerId = null;
         let rewardType = "";
         let rewardOpt = 0;
 
+        // --- ফিক্সড টাইমার লজিক ---
         function startVerifiedAd(type, opt = 0) {
             rewardType = type; rewardOpt = opt;
             if(type === 'dia' && adLimits[opt] <= 0) return alert("Limit reached for today!");
@@ -155,11 +153,13 @@
                     let progress = ((7 - timeLeft) / 7) * 100;
                     document.getElementById("myBar").style.width = progress + "%";
                     updateLockUI(true);
-                } else {
+                } else if (timeLeft > 0) {
                     updateLockUI(false);
                 }
+
                 if (timeLeft <= 0) {
                     clearInterval(timerId);
+                    timerId = null;
                     document.getElementById("force-lock").style.display = "none";
                     processReward();
                 }
@@ -171,7 +171,7 @@
             const title = document.getElementById("lock-title");
             if (isActive) {
                 title.innerText = "AD IS PLAYING..."; title.style.color = "#00f2ff";
-                actionArea.innerHTML = `<p style="color:#aaa;">Keep the ad tab open for 7 seconds.</p>`;
+                actionArea.innerHTML = `<p style="color:#aaa;">Verify complete in 7 seconds...</p>`;
             } else {
                 title.innerText = "⚠️ PAUSED!"; title.style.color = "#ff4757";
                 actionArea.innerHTML = `<p style="color:#ff4757; font-weight:bold;">Return to ad to continue!</p>
@@ -184,14 +184,12 @@
         function processReward() {
             if(rewardType === 'energy') {
                 energy = 5; db.ref('users/' + userId).update({ energy });
-                alert("Energy Refilled!");
             } else if(rewardType === 'dia') {
                 adLimits[rewardOpt]--; diamonds++;
                 db.ref('users/' + userId).update({ diamonds, adLimits });
-                alert("You got 1 Diamond!");
             }
+            alert("Reward added successfully!");
         }
-        // --- এন্ড টাইমার লজিক ---
 
         db.ref('users/' + userId).on('value', (snap) => {
             const val = snap.val();
