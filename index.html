@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Full Fixed Code</title>
+    <title>Fishing Pro - Fixed Everything</title>
     
+    <script src="https://alwingulla.com/88/tag.min.js" data-zone="10343752" async data-cfasync="false"></script>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -40,8 +42,15 @@
 
     <div id="ad-screen">
         <h2 style="color:#ffd700;">⚡ NO ENERGY!</h2>
-        <p>Watch an ad to get 5 more tries!</p>
         <button class="btn-action" style="width: 200px; background:#ffd700; color:black;" onclick="watchEnergyAd()">📺 WATCH AD TO REFILL</button>
+    </div>
+
+    <div id="diamond-modal" class="modal">
+        <button class="close-btn" onclick="closeAll()">×</button>
+        <h3 style="color:#ff00e6;">💎 DAILY DIAMONDS</h3>
+        <button class="btn-action" onclick="collectDiamond(1)">📺 OPTION 1 (<span id="limit-1">10</span>/10)</button>
+        <button class="btn-action" onclick="collectDiamond(2)">📺 OPTION 2 (<span id="limit-2">10</span>/10)</button>
+        <button class="btn-action" onclick="collectDiamond(3)">📺 OPTION 3 (<span id="limit-3">10</span>/10)</button>
     </div>
 
     <div id="refer-modal" class="modal">
@@ -49,15 +58,6 @@
         <h3 style="color:#00f2ff;">👥 REFERRAL</h3>
         <div class="refer-box" id="refer-link-box">Loading...</div>
         <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
-    </div>
-
-    <div id="diamond-modal" class="modal">
-        <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#ff00e6;">💎 DAILY DIAMONDS</h3>
-        <p style="font-size: 10px;">Get 30 diamonds daily (10 per option)</p>
-        <button class="btn-action" onclick="collectDiamond(1)">📺 OPTION 1 (<span id="limit-1">10</span>/10)</button>
-        <button class="btn-action" onclick="collectDiamond(2)">📺 OPTION 2 (<span id="limit-2">10</span>/10)</button>
-        <button class="btn-action" onclick="collectDiamond(3)">📺 OPTION 3 (<span id="limit-3">10</span>/10)</button>
     </div>
 
     <div id="sea-shop" class="modal">
@@ -99,7 +99,6 @@
         tg.expand();
         const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
         const BOT_USERNAME = "YourBotUsername"; 
-        const AD_LINK = "https://your-ad-link.com"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuWhesvHRa2lkq-G-PRWBQ8S5RP",
@@ -112,8 +111,13 @@
 
         let balance = 0, energy = 5, diamonds = 0, currentLvl = 1;
         let adLimits = { 1: 10, 2: 10, 3: 10 };
-        let lastRefillDate = "";
         let fishes = [];
+
+        function showRewardAd(onComplete) {
+            if (typeof show_10343752 === 'function') {
+                show_10343752().then(() => { onComplete(); }).catch(() => { alert("Ad failed to load."); });
+            } else { alert("Ad Loading... Please wait."); }
+        }
 
         db.ref('users/' + userId).on('value', (snap) => {
             const val = snap.val();
@@ -122,16 +126,9 @@
                 energy = val.energy !== undefined ? val.energy : 5;
                 diamonds = val.diamonds || 0;
                 currentLvl = val.level || 1;
-                const today = new Date().toLocaleDateString();
-                if(val.lastRefillDate !== today) {
-                    adLimits = { 1: 10, 2: 10, 3: 10 };
-                    db.ref('users/' + userId).update({ adLimits, lastRefillDate: today });
-                } else {
-                    adLimits = val.adLimits || { 1: 10, 2: 10, 3: 10 };
-                }
+                if(val.adLimits) adLimits = val.adLimits;
                 updateUI();
-                if(energy <= 0) document.getElementById('ad-screen').style.display = 'flex';
-                else document.getElementById('ad-screen').style.display = 'none';
+                document.getElementById('ad-screen').style.display = (energy <= 0) ? 'flex' : 'none';
             }
         });
 
@@ -148,41 +145,24 @@
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; if(id==='sea-shop') renderShop(); }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
 
-        function copyReferLink() {
-            const link = document.getElementById("refer-link-box").innerText;
-            navigator.clipboard.writeText(link).then(() => alert("Copied!"));
-        }
-
-        function watchEnergyAd() {
-            window.open(AD_LINK, '_blank');
-            energy = 5;
-            db.ref('users/' + userId).update({ energy });
-            alert("5 Energy Refilled!");
-        }
-
-        function collectDiamond(option) {
-            if(adLimits[option] > 0) {
-                window.open(AD_LINK, '_blank');
-                adLimits[option]--;
-                diamonds += 1;
-                db.ref('users/' + userId).update({ diamonds, adLimits });
-                alert("1 Diamond Added!");
-            } else alert("Limit reached!");
-        }
+        function watchEnergyAd() { showRewardAd(() => { energy = 5; db.ref('users/' + userId).update({ energy }); }); }
+        function collectDiamond(opt) { if(adLimits[opt] > 0) { showRewardAd(() => { adLimits[opt]--; diamonds++; db.ref('users/' + userId).update({ diamonds, adLimits }); }); } }
 
         function submitWithdraw() {
             const uid = document.getElementById('binance-id').value;
-            const usdAmt = parseInt(document.getElementById('withdraw-usd').value);
-            const diaCost = parseInt(document.getElementById('withdraw-dia').value);
-            if (!uid || !usdAmt || !diaCost) return alert("Fill all fields!");
+            const usdAmt = document.getElementById('withdraw-usd').value;
+            const diaCost = document.getElementById('withdraw-dia').value;
+            if (!uid || !usdAmt || !diaCost) return alert("Please fill all fields!");
+            if (diamonds < parseInt(diaCost)) return alert("Not enough diamonds!");
+            
             db.ref('Withdraw_Requests/' + Date.now()).set({ userId, binanceUID: uid, amountUSD: usdAmt, status: "Pending" });
-            diamonds -= diaCost;
+            diamonds -= parseInt(diaCost);
             db.ref('users/' + userId).update({ diamonds });
-            closeAll(); alert("Requested!");
+            closeAll(); alert("Withdrawal request submitted!");
         }
 
         function renderShop() {
-            const levels = [{id: 1, p: 0}, {id: 2, p: 2.0}, {id: 3, p: 3.0}, {id: 4, p: 4.0}, {id: 5, p: 5.0}];
+            const levels = [{id: 1, p: 0}, {id: 2, p: 2}, {id: 3, p: 3}, {id: 4, p: 4}, {id: 5, p: 5}];
             document.getElementById("level-list").innerHTML = levels.map(l => {
                 let status = l.id <= currentLvl ? 'OWNED' : (l.id === currentLvl + 1 ? 'BUY $'+l.p : 'LOCKED');
                 return `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; margin-bottom:8px;">
@@ -192,54 +172,22 @@
             }).join('');
         }
 
-        function buyLvl(p, id) {
-            if (balance >= p) { balance -= p; currentLvl = id; db.ref('users/' + userId).update({ balance, level: currentLvl }); alert("Success!"); } else alert("Insufficient!");
-        }
+        function buyLvl(p, id) { if (balance >= p) { balance -= p; currentLvl = id; db.ref('users/' + userId).update({ balance, level: currentLvl }); } }
 
-        // --- Game Core ---
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         let hook = { x: canvas.width / 2, y: 80, state: 'idle' };
 
-        // রিয়ালিস্টিক মাছ ড্রয়িং লজিক (মুখ ঘোরানো সহ)
         function drawFish(x, y, color, dir) {
             ctx.save();
             ctx.translate(x, y);
-            
-            // মাছের মুখ ঘোরানো: dir -1 হলে বামে, 1 হলে ডানে
             if (dir === -1) ctx.scale(-1, 1); 
-
-            // বডি
             ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // লেজ
-            ctx.beginPath();
-            ctx.moveTo(-18, 0);
-            ctx.lineTo(-28, -8);
-            ctx.lineTo(-28, 8);
-            ctx.closePath();
-            ctx.fill();
-
-            // পাখনা
-            ctx.beginPath();
-            ctx.moveTo(-5, -8);
-            ctx.quadraticCurveTo(5, -15, 10, -5);
-            ctx.fill();
-
-            // চোখ
-            ctx.fillStyle = "white";
-            ctx.beginPath();
-            ctx.arc(12, -3, 3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = "black";
-            ctx.beginPath();
-            ctx.arc(13, -3, 1.5, 0, Math.PI * 2);
-            ctx.fill();
-
+            ctx.beginPath(); ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(-18, 0); ctx.lineTo(-28, -8); ctx.lineTo(-28, 8); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(12, -3, 3, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(13, -3, 1.5, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
         }
 
@@ -252,25 +200,13 @@
             if(hook.state === 'dropping') { hook.y += 10; if(hook.y > canvas.height - 180) hook.state = 'retracting'; }
             else if(hook.state === 'retracting') { hook.y -= 10; if(hook.y <= 80) { hook.state = 'idle'; let caught = fishes.filter(f => f.caught); if(caught.length > 0) { balance += caught.length * 0.00005; db.ref('users/'+userId).update({balance}); fishes = fishes.filter(f => !f.caught); } } }
             
-            ctx.strokeStyle = "white"; ctx.lineWidth = 3;
+            ctx.strokeStyle = "white"; ctx.lineWidth = 2;
             ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
-            ctx.strokeStyle = "#ccc"; ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.arc(hook.x, hook.y + 12, 10, 0, Math.PI); ctx.stroke();
+            ctx.strokeStyle = "#ddd"; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.arc(hook.x, hook.y + 10, 10, 0, Math.PI); ctx.stroke();
             
-            while(fishes.length < (currentLvl * 4)) { 
-                fishes.push({ x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-450), speed: 1.5+Math.random()*1.5, dir: Math.random()>0.5?1:-1, caught: false, color: `hsl(${Math.random()*360}, 70%, 50%)` }); 
-            }
-            
-            fishes.forEach(f => { 
-                if(f.caught) { f.x = hook.x; f.y = hook.y + 25; } 
-                else { 
-                    f.x += f.speed * f.dir; 
-                    if(f.x > canvas.width + 30) f.dir = -1; 
-                    if(f.x < -30) f.dir = 1; 
-                    if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; 
-                } 
-                drawFish(f.x, f.y, f.color, f.dir);
-            });
+            while(fishes.length < (currentLvl * 4)) { fishes.push({ x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-450), speed: 1.5+Math.random()*1.5, dir: Math.random()>0.5?1:-1, caught: false, color: `hsl(${Math.random()*360}, 70%, 50%)` }); }
+            fishes.forEach(f => { if(f.caught) { f.x = hook.x; f.y = hook.y + 25; } else { f.x += f.speed * f.dir; if(f.x > canvas.width + 30) f.dir = -1; if(f.x < -30) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; } drawFish(f.x, f.y, f.color, f.dir); });
             requestAnimationFrame(draw);
         }
 
@@ -281,5 +217,5 @@
         draw();
     </script>
 </body>
-                </html>
-            
+</html>
+
