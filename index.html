@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Money Fishing - Pro Ad System</title>
+    <title>Money Fishing - Optimized Fish Size</title>
     <style>
         :root { --ui-cyan: #00f2ff; --ui-gold: #ffd700; }
         body { margin: 0; padding: 0; background: #001219; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; }
@@ -189,12 +189,16 @@
             ctx.beginPath(); ctx.fillStyle = fishGrad; ctx.moveTo(-f.w, 0);
             ctx.bezierCurveTo(-f.w, -f.h*1.5, f.w, -f.h*1.5, f.w, 0);
             ctx.bezierCurveTo(f.w, f.h*1.5, -f.w, f.h*1.5, -f.w, 0); ctx.fill();
-            ctx.beginPath(); ctx.fillStyle = f.color; ctx.moveTo(-f.w+5, 0);
-            ctx.quadraticCurveTo(-f.w-15, -f.h*1.8, -f.w-22, -f.h*2);
-            ctx.quadraticCurveTo(-f.w-14, 0, -f.w-22, f.h*2);
-            ctx.quadraticCurveTo(-f.w-15, f.h*1.8, -f.w+5, 0); ctx.fill();
-            ctx.beginPath(); ctx.fillStyle = "white"; ctx.arc(f.w*0.6, -f.h*0.3, 3, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.fillStyle = "black"; ctx.arc(f.w*0.65, -f.h*0.3, 1.5, 0, Math.PI*2); ctx.fill();
+            
+            // Tail - Resized
+            ctx.beginPath(); ctx.fillStyle = f.color; ctx.moveTo(-f.w+3, 0);
+            ctx.quadraticCurveTo(-f.w-8, -f.h*1.8, -f.w-12, -f.h*2);
+            ctx.quadraticCurveTo(-f.w-6, 0, -f.w-12, f.h*2);
+            ctx.quadraticCurveTo(-f.w-8, f.h*1.8, -f.w+3, 0); ctx.fill();
+            
+            // Eye - Resized
+            ctx.beginPath(); ctx.fillStyle = "white"; ctx.arc(f.w*0.6, -f.h*0.3, 1.5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.fillStyle = "black"; ctx.arc(f.w*0.65, -f.h*0.3, 0.8, 0, Math.PI*2); ctx.fill();
             ctx.restore();
         }
 
@@ -216,16 +220,18 @@
             ctx.beginPath(); ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.setLineDash([10,5]);
             ctx.moveTo(canvas.width/2, -100); ctx.lineTo(hook.x, hook.y-15); ctx.stroke(); ctx.setLineDash([]);
             ctx.strokeStyle = "#eee"; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(hook.x, hook.y, 12, 0, Math.PI); ctx.stroke();
+            
             fishes.forEach((f, index) => {
-                if(f.caught) { f.x = hook.x; f.y = hook.y + 15 + (index * 12); }
+                if(f.caught) { f.x = hook.x; f.y = hook.y + 15 + (index * 8); }
                 else { f.x += f.speed * f.dir; f.y += Math.sin(gameTime * 0.02 + f.y) * 0.2;
-                    if(f.x > canvas.width - 40) { f.dir = -1; f.x = canvas.width - 40; }
-                    if(f.x < 40) { f.dir = 1; f.x = 40; }
+                    if(f.x > canvas.width - 30) { f.dir = -1; f.x = canvas.width - 30; }
+                    if(f.x < 30) { f.dir = 1; f.x = 30; }
                 }
                 drawRealisticFish(f);
-                if(hook.state === 'retracting' && !f.caught && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true;
+                if(hook.state === 'retracting' && !f.caught && Math.hypot(hook.x-f.x, hook.y-f.y) < 20) f.caught = true;
             });
             ctx.restore();
+
             if(hook.state === 'dropping') { hook.y += hook.speed; if(hook.y > hook.maxDepth) hook.state = 'retracting'; }
             else if(hook.state === 'retracting') { hook.y -= hook.speed; 
                 if(hook.y <= 100) { 
@@ -233,14 +239,27 @@
                     fishes = fishes.filter(f => !f.caught); hook.state = 'idle'; updateUI(); 
                 } 
             }
+            
+            // Fish Spawning with smaller size logic
             if(fishes.length < getFishLimit()) {
                 let spawnY, isTooClose, attempts = 0;
                 do { isTooClose = false; spawnY = 500 + Math.random() * (hook.maxDepth - 700);
-                    for(let existing of fishes) { if(Math.abs(existing.y - spawnY) < 120) { isTooClose = true; break; } }
+                    for(let existing of fishes) { if(Math.abs(existing.y - spawnY) < 80) { isTooClose = true; break; } }
                     attempts++;
                 } while(isTooClose && attempts < 15);
-                let s = Math.random() * 0.4 + 0.7;
-                fishes.push({ x: Math.random() * (canvas.width - 80) + 40, y: spawnY, speed: Math.random() * 1.5 + 0.8, dir: Math.random() > 0.5 ? 1 : -1, caught: false, w: 22*s, h: 11*s, color: `hsl(${Math.random()*360}, 65%, 50%)` });
+                
+                // Reduced scale from 0.7-1.1 to 0.4-0.6
+                let s = Math.random() * 0.2 + 0.4; 
+                fishes.push({ 
+                    x: Math.random() * (canvas.width - 60) + 30, 
+                    y: spawnY, 
+                    speed: Math.random() * 1.5 + 0.8, 
+                    dir: Math.random() > 0.5 ? 1 : -1, 
+                    caught: false, 
+                    w: 22*s, 
+                    h: 11*s, 
+                    color: `hsl(${Math.random()*360}, 65%, 50%)` 
+                });
             }
             requestAnimationFrame(draw);
         }
