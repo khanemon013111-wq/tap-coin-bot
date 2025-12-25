@@ -3,298 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Money Fishing - Diamond Hard Mode</title>
+    <title>Fishing Pro - Step-by-Step Level</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
-        :root { --ui-cyan: #00f2ff; --ui-gold: #ffd700; --ui-pink: #ff00ff; --ui-binance: #F3BA2F; }
-        body { margin: 0; padding: 0; background: #001219; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; }
+        body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; }
+        #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
+        .stat-box { background: rgba(0, 30, 50, 0.9); backdrop-filter: blur(8px); color: #fff; padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
+        
+        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 20px; border-radius: 25px; border: 2px solid #00f2ff; color: white; z-index: 3000; width: 85%; max-width: 320px; text-align: center; }
+        .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+        
+        #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; cursor: pointer; flex: 1; }
+        .nav-text { font-size: 9px; font-weight: bold; text-transform: uppercase; margin-top: 3px; }
+        
+        .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .btn-locked { background: #333 !important; color: #777 !important; cursor: not-allowed; }
+        .btn-ad { background: linear-gradient(135deg, #ffd700, #ffa500); color: #000; }
+        
         canvas { display: block; }
-
-        /* UI Top Bar */
-        #ui-top-bar {
-            position: absolute; top: 15px; width: 100%;
-            display: flex; justify-content: space-between; padding: 0 10px; box-sizing: border-box; z-index: 100;
-        }
-        .ui-box {
-            background: rgba(0, 40, 60, 0.7); backdrop-filter: blur(8px);
-            border: 1.5px solid var(--ui-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
-            padding: 6px 12px; border-radius: 30px; color: white; font-weight: 700;
-            display: flex; align-items: center; gap: 6px; font-size: 11px;
-        }
-        .diamond-box { border-color: var(--ui-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.4); }
-        .energy-bar-bg { background: rgba(255,255,255,0.2); width: 40px; height: 7px; border-radius: 5px; overflow: hidden; }
-        .energy-fill { background: var(--ui-gold); height: 100%; transition: width 0.3s; }
-
-        /* Bottom Buttons */
-        #btn-container { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 20; flex-wrap: wrap; }
-        .btn-pro {
-            padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer;
-            border: none; color: white; text-transform: uppercase; font-size: 9px;
-        }
-
-        /* Modals */
-        .modal {
-            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: linear-gradient(180deg, rgba(0, 50, 80, 0.98), rgba(0, 10, 20, 1));
-            width: 85%; max-width: 320px; border-radius: 20px; padding: 20px; 
-            text-align: center; color: white; z-index: 500; border: 2px solid var(--ui-cyan);
-            box-shadow: 0 0 40px rgba(0, 242, 255, 0.3);
-        }
-        .diamond-modal { border-color: var(--ui-pink); box-shadow: 0 0 40px rgba(255, 0, 255, 0.3); }
-        .withdraw-modal { border-color: var(--ui-binance); box-shadow: 0 0 40px rgba(243, 186, 47, 0.2); }
-
-        .slot-card {
-            background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 12px;
-            margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid rgba(255, 0, 255, 0.2);
-        }
-        .btn-watch { background: var(--ui-pink); color: white; border: none; padding: 7px 10px; border-radius: 8px; font-size: 9px; font-weight: bold; cursor: pointer; }
-        .btn-locked { background: #444 !important; cursor: not-allowed; opacity: 0.6; }
-
-        .pro-table { width: 100%; border-collapse: collapse; margin: 12px 0; background: rgba(0,0,0,0.3); font-size: 11px; }
-        .pro-table th { background: var(--ui-cyan); color: #000; padding: 8px; }
-        .pro-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-
-        .binance-input {
-            width: 90%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--ui-binance);
-            background: rgba(0,0,0,0.5); color: white; text-align: center; font-size: 14px; outline: none;
-        }
-
-        /* Ad Overlay */
-        #ad-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; z-index: 1000; color: white; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-        }
-        #ad-progress-container { width: 200px; height: 10px; background: #333; border-radius: 5px; margin-top: 15px; }
-        #ad-progress { width: 0%; height: 100%; background: var(--ui-cyan); border-radius: 5px; }
     </style>
 </head>
 <body>
 
-    <div id="ui-top-bar">
-        <div class="ui-box">💰 Bal: $<span id="coins" style="color:var(--ui-gold)">0.000000</span></div>
-        <div class="ui-box diamond-box">💎 <span id="diamonds" style="color:var(--ui-pink)">0</span></div>
-        <div class="ui-box">⚡ <div class="energy-bar-bg"><div id="energy-fill" class="energy-fill" style="width: 100%;"></div></div> <span id="energy-text">5/5</span></div>
-    </div>
-    
-    <div id="btn-container">
-        <button class="btn-pro" style="background: #ff4757;" onclick="openShop()">🛍️ SHOP</button>
-        <button class="btn-pro" style="background: #a55eea;" onclick="toggleMenu('diamondMenu', true)">💎 FREE DIAMOND</button>
-        <button class="btn-pro" style="background: var(--ui-binance); color: #000;" onclick="toggleMenu('withdrawMenu', true)">💸 WITHDRAW</button>
+    <div id="top-ui">
+        <div class="stat-box" style="color:#00f2ff;">💰 $<span id="coins">0.000000</span></div>
+        <div class="stat-box" style="color:#ffd700;">⚡ <span id="energy-count">5</span>/5</div>
+        <div class="stat-box" style="color:#ff00e6;">💎 <span id="dia-count">0</span></div>
     </div>
 
-    <div id="diamondMenu" class="modal diamond-modal">
-        <h3 style="margin-top:0; color:var(--ui-pink)">Free Diamonds</h3>
-        <p style="font-size: 9px; margin-bottom: 15px; opacity: 0.8;">Watch Ads to earn 1 Diamond each.</p>
-        
-        <div class="slot-card">
-            <div style="text-align:left"><span style="font-size:12px; color:var(--ui-pink)">Slot 01</span><br><span style="font-size:9px; opacity:0.7">Daily: <span id="count-1">10</span>/10</span></div>
-            <button id="btn-slot-1" class="btn-watch" onclick="startAd('diamond', 1)">WATCH</button>
-        </div>
-        <div class="slot-card">
-            <div style="text-align:left"><span style="font-size:12px; color:var(--ui-pink)">Slot 02</span><br><span style="font-size:9px; opacity:0.7">Daily: <span id="count-2">10</span>/10</span></div>
-            <button id="btn-slot-2" class="btn-watch" onclick="startAd('diamond', 2)">WATCH</button>
-        </div>
-        <div class="slot-card">
-            <div style="text-align:left"><span style="font-size:12px; color:var(--ui-pink)">Slot 03</span><br><span style="font-size:9px; opacity:0.7">Daily: <span id="count-3">10</span>/10</span></div>
-            <button id="btn-slot-3" class="btn-watch" onclick="startAd('diamond', 3)">WATCH</button>
-        </div>
-        
-        <button class="btn-pro" style="background:transparent; border:1px solid white; width:100%; margin-top:5px" onclick="toggleMenu('diamondMenu', false)">CLOSE</button>
+    <div id="sea-shop" class="modal">
+        <button class="close-btn" onclick="closeAll()">×</button>
+        <h3 style="color:#00f2ff;">⚓ SEA SHOP</h3>
+        <div id="level-list"></div>
     </div>
 
-    <div id="shopMenu" class="modal">
-        <h3 style="margin: 0; color: var(--ui-cyan);">Shop</h3>
-        <table class="pro-table">
-            <thead><tr><th>Lv</th><th>Fish</th><th>Cost</th><th>Depth</th></tr></thead>
-            <tbody id="shopBody"></tbody>
-        </table>
-        <button class="btn-pro" style="background: var(--ui-cyan); color: #000; width: 100%;" onclick="doUpgrade()">UPGRADE</button>
-        <button class="btn-pro" style="background: transparent; border: 1px solid white; margin-top: 10px; width: 100%;" onclick="toggleMenu('shopMenu', false)">CLOSE</button>
+    <div id="ad-modal" class="modal">
+        <h3 style="color:#ffd700;">⚡ এনার্জি শেষ!</h3>
+        <p>নতুন ৫টি এনার্জি পেতে একটি অ্যাড দেখুন।</p>
+        <button class="btn-action btn-ad" onclick="watchAd()">📺 WATCH AD (GET 5⚡)</button>
     </div>
 
-    <div id="withdrawMenu" class="modal withdraw-modal">
-        <h3 style="margin-top:0; color:var(--ui-binance)">Binance Withdraw</h3>
-        <input type="number" id="binanceUID" class="binance-input" placeholder="Enter Binance UID">
-        <div style="font-size: 10px; color: #ff4757; margin-bottom: 5px;">Min: $5.00 | Fee: 1000 💎 per $1</div>
-        <button class="btn-pro" style="background: var(--ui-binance); color: #000; width: 100%;" onclick="processWithdraw()">SUBMIT</button>
-        <button class="btn-pro" style="background: transparent; border: 1px solid white; width: 100%; margin-top: 8px;" onclick="toggleMenu('withdrawMenu', false)">CLOSE</button>
-    </div>
-
-    <div id="adNeeded" class="modal">
-        <h2 style="color: var(--ui-gold);">Out of Energy!</h2>
-        <button class="btn-pro" style="background: #2ecc71; width: 100%;" onclick="startAd('energy')">📺 WATCH AD</button>
-    </div>
-
-    <div id="ad-overlay">
-        <h2 id="ad-title">🎬 Advertisement</h2>
-        <p>Rewarding in <span id="ad-timer">5</span>...</p>
-        <div id="ad-progress-container"><div id="ad-progress"></div></div>
+    <div id="nav-bar">
+        <div class="nav-item" onclick="alert('Coming Soon')"><span style="font-size:20px;">👥</span><span class="nav-text">Refer</span></div>
+        <div class="nav-item" onclick="openShop('sea-shop')"><span style="font-size:20px;">🛒</span><span class="nav-text">Shop</span></div>
+        <div class="nav-item" onclick="watchAd()"><span style="font-size:20px;">💎</span><span class="nav-text">Ads</span></div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
 
     <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        const user = tg.initDataUnsafe?.user;
+        const userId = user ? user.id.toString() : "test_user_88";
 
-        let totalBalance = 0, diamonds = 0, currentLevel = 1, energy = 5, gameTime = 0;
-        const levelCosts = [0, 3, 4, 5, 6];
-        let adSlots = { 1: {watched:0, limit:10}, 2: {watched:0, limit:10}, 3: {watched:0, limit:10} };
-        let hook = { x: canvas.width / 2, y: 100, speed: 6, state: 'idle', maxDepth: 2000 };
-        let fishes = [], reefAssets = [];
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-2VRyhIktuWhesvHRa2lkq-G-PRWBQ8S5RP",
+            databaseURL: "https://royaldiamondbot-default-rtdb.firebaseio.com",
+            projectId: "royaldiamondbot",
+            appId: "1:156914195366:web:e5ab56df62ecbf90550d67"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        function initReef() {
-            reefAssets = [];
-            for(let i=0; i<40; i++) {
-                reefAssets.push({ x: Math.random() * canvas.width, y: Math.random() * 10000 + 400, type: Math.floor(Math.random() * 2), color: ["#ff7f50", "#2ecc71", "#95a5a6"][Math.floor(Math.random() * 3)], size: Math.random() * 20 + 15 });
+        let balance = 0, energy = 5, diamonds = 0, currentLvl = 1;
+        let fishes = [];
+        const levels = [
+            {id: 1, fish: 4, price: 0, depth: 2000},
+            {id: 2, fish: 8, price: 2.0, depth: 3000},
+            {id: 3, fish: 12, price: 3.0, depth: 4000},
+            {id: 4, fish: 16, price: 4.0, depth: 5000},
+            {id: 5, fish: 20, price: 5.0, depth: 6000}
+        ];
+
+        db.ref('users/' + userId).once('value').then((snap) => {
+            const val = snap.val();
+            if(val) {
+                balance = val.balance || 0;
+                energy = (val.energy !== undefined) ? val.energy : 5;
+                diamonds = val.diamonds || 0;
+                currentLvl = val.level || 1;
+                updateUI();
+                if(energy <= 0) document.getElementById('ad-modal').style.display = 'block';
             }
-        }
-        initReef();
+        });
 
-        function toggleMenu(id, show) { document.getElementById(id).style.display = show ? "block" : "none"; }
-        function openShop() { generateShop(); toggleMenu('shopMenu', true); }
-
-        function generateShop() {
-            const tbody = document.getElementById("shopBody"); tbody.innerHTML = "";
-            for (let i = 1; i <= 5; i++) {
-                let row = document.createElement("tr");
-                if(i === currentLevel) row.style.background = "rgba(0, 242, 255, 0.2)";
-                row.innerHTML = `<td>${i}</td><td>${i*4}</td><td>${i==1?'Free':'$'+levelCosts[i-1]}</td><td>${i*2000}m</td>`;
-                tbody.appendChild(row);
-            }
-        }
-
-        function doUpgrade() {
-            let cost = levelCosts[currentLevel];
-            if (totalBalance >= cost && currentLevel < 5) {
-                totalBalance -= cost; currentLevel++; hook.maxDepth = currentLevel * 2000;
-                updateUI(); generateShop();
-            } else alert("Insufficient Balance!");
-        }
-
-        function processWithdraw() {
-            const uid = document.getElementById("binanceUID").value;
-            let requiredDiamonds = Math.floor(totalBalance * 1000);
-            if (!uid || uid.length < 5) return alert("Enter valid Binance UID!");
-            if (totalBalance < 5.00) return alert("Minimum $5.00 required!");
-            if (diamonds < requiredDiamonds) return alert(`Need ${requiredDiamonds} diamonds for this withdraw!`);
-            alert("Withdrawal Pending! $"+totalBalance.toFixed(2));
-            diamonds -= requiredDiamonds; totalBalance = 0; toggleMenu('withdrawMenu', false); updateUI();
+        function saveData() {
+            db.ref('users/' + userId).update({ balance, energy, diamonds, level: currentLvl });
         }
 
         function updateUI() {
-            document.getElementById("coins").innerText = totalBalance.toFixed(6);
-            document.getElementById("diamonds").innerText = diamonds;
-            document.getElementById("energy-text").innerText = energy + "/5";
-            document.getElementById("energy-fill").style.width = (energy/5 * 100) + "%";
-            
-            // Update Diamond Slots
-            for(let i=1; i<=3; i++){
-                let rem = adSlots[i].limit - adSlots[i].watched;
-                document.getElementById(`count-${i}`).innerText = rem;
-                let b = document.getElementById(`btn-slot-${i}`);
-                if(rem <= 0) {
-                    b.innerText = "LOCKED"; b.classList.add("btn-locked"); b.onclick = null;
+            document.getElementById("coins").innerText = balance.toFixed(6);
+            document.getElementById("energy-count").innerText = energy;
+            document.getElementById("dia-count").innerText = diamonds;
+        }
+
+        function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; if(id==='sea-shop') renderShop(); }
+        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
+
+        function renderShop() {
+            document.getElementById("level-list").innerHTML = levels.map(l => {
+                let statusText = "";
+                let btnClass = "btn-action";
+                let btnAction = "";
+
+                if (l.id <= currentLvl) {
+                    statusText = "OWNED";
+                    btnClass += " btn-locked"; // কেনা হয়ে গেছে
+                } else if (l.id === currentLvl + 1) {
+                    statusText = "$" + l.price.toFixed(2); // কেনা যাবে
+                    btnAction = `onclick="buyLvl(${l.price}, ${l.id})"`;
                 } else {
-                    b.innerText = "WATCH"; b.classList.remove("btn-locked");
-                    b.onclick = () => startAd('diamond', i);
+                    statusText = "LOCKED"; // এখনও সময় হয়নি
+                    btnClass += " btn-locked";
                 }
+
+                return `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px; border-radius:12px; margin-bottom:8px; border: 1px solid rgba(0,242,255,0.1);">
+                    <div style="text-align:left;"><b>Level ${l.id}</b><br><small>${l.fish} Fish | ${l.depth}m</small></div>
+                    <button class="${btnClass}" style="width:auto; padding:5px 10px;" ${btnAction}>${statusText}</button>
+                </div>`;
+            }).join('');
+        }
+
+        function buyLvl(p, id) {
+            if (balance >= p) {
+                balance -= p;
+                currentLvl = id;
+                saveData();
+                renderShop();
+                updateUI();
+                alert("Level " + id + " Unlocked!");
+            } else {
+                alert("Insufficient Balance!");
             }
-            if (energy === 0 && hook.state === 'idle') toggleMenu('adNeeded', true);
         }
 
-        function startAd(type, slotId = null) {
-            if(type === 'diamond' && adSlots[slotId].watched >= adSlots[slotId].limit) return;
-            toggleMenu('adNeeded', false); toggleMenu('diamondMenu', false);
-            const overlay = document.getElementById('ad-overlay'); overlay.style.display = 'flex';
-            let timeLeft = 5;
-            let interval = setInterval(() => {
-                timeLeft--; document.getElementById('ad-timer').innerText = timeLeft;
-                document.getElementById('ad-progress').style.width = ((5-timeLeft)/5 * 100) + "%";
-                if(timeLeft <= 0) {
-                    clearInterval(interval); overlay.style.display = 'none';
-                    if(type === 'energy') energy = 5;
-                    else { 
-                        diamonds += 1; // Now 1 Diamond per Ad
-                        adSlots[slotId].watched++; 
-                        toggleMenu('diamondMenu', true); 
-                    }
-                    updateUI();
-                }
-            }, 1000);
+        function watchAd() {
+            alert("অ্যাড দেখা সফল! ৫টি এনার্জি যোগ করা হলো।");
+            energy = 5;
+            document.getElementById('ad-modal').style.display = 'none';
+            updateUI(); saveData();
         }
 
-        function drawRealisticFish(f) {
-            ctx.save(); ctx.translate(f.x, f.y);
-            if(f.caught) ctx.rotate(Math.PI / 2); else if (f.dir === -1) ctx.scale(-1, 1);
-            ctx.beginPath(); ctx.fillStyle = f.color;
-            ctx.moveTo(-f.w, 0); ctx.bezierCurveTo(-f.w, -f.h*1.5, f.w, -f.h*1.5, f.w, 0);
-            ctx.bezierCurveTo(f.w, f.h*1.5, -f.w, f.h*1.5, -f.w, 0); ctx.fill();
-            // Tail
-            ctx.beginPath(); ctx.fillStyle = f.color; ctx.moveTo(-f.w+2, 0);
-            ctx.quadraticCurveTo(-f.w-8, -f.h*1.8, -f.w-12, -f.h*2);
-            ctx.quadraticCurveTo(-f.w-6, 0, -f.w-12, f.h*2);
-            ctx.quadraticCurveTo(-f.w-8, f.h*1.8, -f.w+2, 0); ctx.fill();
-            // Eye
-            ctx.beginPath(); ctx.fillStyle = "white"; ctx.arc(f.w*0.6, -f.h*0.3, 1.5, 0, Math.PI*2); ctx.fill();
-            ctx.restore();
-        }
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let hook = { x: canvas.width / 2, y: 80, state: 'idle' };
 
         function draw() {
-            gameTime++;
-            let cameraY = (hook.y > canvas.height / 2) ? hook.y - canvas.height / 2 : 0;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let waterGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            waterGrad.addColorStop(0, "#005f73"); waterGrad.addColorStop(1, "#001219");
-            ctx.fillStyle = waterGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.save(); ctx.translate(0, -cameraY);
-            reefAssets.forEach(a => {
-                if(a.y > cameraY - 200 && a.y < cameraY + canvas.height + 200) {
-                    ctx.fillStyle = a.color;
-                    if(a.type === 0) { ctx.beginPath(); ctx.arc(a.x, a.y, a.size/2, 0, Math.PI*2); ctx.fill(); }
-                    else { 
-                        ctx.beginPath(); ctx.strokeStyle = a.color; ctx.lineWidth = 3;
-                        ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(a.x + Math.sin(gameTime*0.04+a.x)*10, a.y - a.size, a.x, a.y - a.size*2); ctx.stroke(); 
-                    }
-                }
-            });
-            
-            ctx.beginPath(); ctx.strokeStyle = "rgba(255,255,255,0.3)";
-            ctx.moveTo(canvas.width/2, -100); ctx.lineTo(hook.x, hook.y-15); ctx.stroke();
-            ctx.strokeStyle = "#eee"; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(hook.x, hook.y, 12, 0, Math.PI); ctx.stroke();
-            
-            fishes.forEach((f, index) => {
-                if(f.caught) { f.x = hook.x; f.y = hook.y + 15 + (index * 8); }
-                else { f.x += f.speed * f.dir; f.y += Math.sin(gameTime * 0.02 + f.y) * 0.2;
-                    if(f.x > canvas.width - 30) f.dir = -1; if(f.x < 30) f.dir = 1;
-                }
-                drawRealisticFish(f);
-                if(hook.state === 'retracting' && !f.caught && fishes.filter(ff=>ff.caught).length < currentLevel*4 && Math.hypot(hook.x-f.x, hook.y-f.y) < 20) f.caught = true;
-            });
-            ctx.restore();
+            let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, "#00a8e8"); grad.addColorStop(1, "#001e30");
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            if(hook.state === 'dropping') { hook.y += hook.speed; if(hook.y > hook.maxDepth) hook.state = 'retracting'; }
-            else if(hook.state === 'retracting') { hook.y -= hook.speed; if(hook.y <= 100) { 
-                fishes.forEach(f => { if(f.caught) totalBalance += 0.00005; });
-                fishes = fishes.filter(f => !f.caught); hook.state = 'idle'; updateUI(); 
-            } }
-
-            if(fishes.length < currentLevel * 4) {
-                let s = Math.random() * 0.2 + 0.4;
-                fishes.push({ x: Math.random()*canvas.width, y: 500+Math.random()*(hook.maxDepth-700), speed: Math.random()*1.5+0.8, dir: Math.random()>0.5?1:-1, caught:false, w:22*s, h:11*s, color:`hsl(${Math.random()*360},65%,50%)` });
+            if(hook.state === 'dropping') {
+                hook.y += 10; if(hook.y > canvas.height - 180) hook.state = 'retracting';
+            } else if(hook.state === 'retracting') {
+                hook.y -= 10;
+                if(hook.y <= 80) {
+                    hook.state = 'idle';
+                    let caught = fishes.filter(f => f.caught);
+                    if(caught.length > 0) { balance += caught.length * 0.00005; saveData(); fishes = fishes.filter(f => !f.caught); updateUI(); }
+                }
             }
+
+            ctx.strokeStyle = "white"; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
+            ctx.beginPath(); ctx.arc(hook.x, hook.y + 12, 12, 0, Math.PI); ctx.stroke();
+
+            let cfg = levels[currentLvl-1];
+            while(fishes.length < cfg.fish) {
+                fishes.push({ x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-450), speed: 1.5+Math.random()*1.5, dir: Math.random()>0.5?1:-1, caught: false, color: `hsl(${Math.random()*360}, 70%, 60%)` });
+            }
+
+            fishes.forEach(f => {
+                if(f.caught) { f.x = hook.x; f.y = hook.y + 25; }
+                else {
+                    f.x += f.speed * f.dir;
+                    if(f.x > canvas.width + 20) f.dir = -1; if(f.x < -20) f.dir = 1;
+                    if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 35) f.caught = true;
+                }
+                ctx.fillStyle = f.color; ctx.beginPath(); ctx.ellipse(f.x, f.y, 18, 9, 0, 0, Math.PI*2); ctx.fill();
+            });
             requestAnimationFrame(draw);
         }
 
-        window.addEventListener("mousedown", (e) => { 
-            if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && hook.state === 'idle' && energy > 0) { energy--; hook.state = 'dropping'; updateUI(); } 
-        });
-        updateUI(); draw();
+        window.onclick = (e) => {
+            if(document.getElementById('ad-modal').style.display === 'block' || document.getElementById('sea-shop').style.display === 'block' || e.target.closest('#nav-bar')) return;
+            if(hook.state === 'idle') {
+                if(energy > 0) { hook.state = 'dropping'; energy--; updateUI(); saveData(); }
+                else { document.getElementById('ad-modal').style.display = 'block'; }
+            }
+        };
+        draw();
     </script>
 </body>
-    </html>
+</html>
 
