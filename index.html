@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Adsterra Integrated</title>
+    <title>Fishing Pro - High Speed Ad</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -23,8 +23,8 @@
         
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
         .withdraw-input, .withdraw-select { width: 95%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid rgba(0,242,255,0.3); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 13px; }
-        
-        /* অ্যাড লক স্ক্রিন ও প্রগ্রেস বার */
+
+        /* দাদুর স্পেশাল অ্যাড লক স্ক্রিন ও প্রগ্রেস বার */
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .progress-container { width: 80%; height: 8px; background: #333; border-radius: 10px; margin: 20px 0; overflow: hidden; border: 1px solid rgba(0, 242, 255, 0.2); }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #00f2ff, #00d2ff); transition: width 0.3s; }
@@ -38,14 +38,12 @@
 <body>
 
     <div id="force-lock">
-        <h2 id="lock-title" style="color:#00f2ff; margin:0;">LOADING REWARD...</h2>
+        <h2 id="lock-title" style="color:#00f2ff; margin:0;">VERIFYING AD...</h2>
         <div class="progress-container">
             <div id="myBar" class="progress-bar"></div>
         </div>
         <div id="lock-timer">7</div>
-        <div id="action-area">
-            <p style="color:#aaa;">Watching the ad for 7 seconds...</p>
-        </div>
+        <div id="action-area"></div>
         <small onclick="cancelAd()" style="color:#444; text-decoration:underline; margin-top: 40px; cursor:pointer;">Cancel Reward</small>
     </div>
 
@@ -128,58 +126,72 @@
         let balance = 0, energy = 5, diamonds = 0, currentLvl = 1;
         let adLimits = { 1: 10, 2: 10, 3: 10 };
         let fishes = [];
-        let timeLeft = 7;
-        let timerId = null;
+
+        // --- স্মার্ট অ্যাড ভেরিফিকেশন লজিক ---
         let rewardType = "";
         let rewardOpt = 0;
+        let adStartTime = 0;
+        let timerRunning = false;
+        const AD_DURATION = 7; 
 
-        // --- ফিক্সড টাইমার লজিক ---
         function startVerifiedAd(type, opt = 0) {
             rewardType = type; rewardOpt = opt;
-            if(type === 'dia' && adLimits[opt] <= 0) return alert("Limit reached for today!");
+            if(type === 'dia' && adLimits[opt] <= 0) return alert("Limit reached!");
 
             window.open(ADSTERRA_SMARTLINK, '_blank');
-            timeLeft = 7;
+            adStartTime = Date.now();
+            timerRunning = true;
             document.getElementById("force-lock").style.display = "flex";
-            document.getElementById("lock-timer").innerText = timeLeft;
-            document.getElementById("myBar").style.width = "0%";
-            updateLockUI(true);
-
-            if(timerId) clearInterval(timerId);
-            timerId = setInterval(() => {
-                if (document.visibilityState === 'hidden') {
-                    timeLeft--;
-                    document.getElementById("lock-timer").innerText = timeLeft;
-                    let progress = ((7 - timeLeft) / 7) * 100;
-                    document.getElementById("myBar").style.width = progress + "%";
-                    updateLockUI(true);
-                } else if (timeLeft > 0) {
-                    updateLockUI(false);
-                }
-
-                if (timeLeft <= 0) {
-                    clearInterval(timerId);
-                    timerId = null;
-                    document.getElementById("force-lock").style.display = "none";
-                    processReward();
-                }
-            }, 1000);
+            updateAdUI(AD_DURATION);
         }
 
-        function updateLockUI(isActive) {
-            const actionArea = document.getElementById("action-area");
-            const title = document.getElementById("lock-title");
-            if (isActive) {
-                title.innerText = "AD IS PLAYING..."; title.style.color = "#00f2ff";
-                actionArea.innerHTML = `<p style="color:#aaa;">Verify complete in 7 seconds...</p>`;
+        // গেমের মেইন লুপে বা ইন্টারভালে টাইমার চেক
+        setInterval(() => {
+            if (!timerRunning) return;
+
+            let elapsed = Math.floor((Date.now() - adStartTime) / 1000);
+            let remaining = AD_DURATION - elapsed;
+
+            if (document.visibilityState === 'visible' && remaining > 0) {
+                // ইউজার ফিরে এসেছে কিন্তু সময় বাকি - রিটার্ন বাটন দেখাবে
+                showReturnUI();
+            } else if (remaining <= 0) {
+                // ৭ সেকেন্ড পূর্ণ হয়েছে
+                completeAd();
             } else {
-                title.innerText = "⚠️ PAUSED!"; title.style.color = "#ff4757";
-                actionArea.innerHTML = `<p style="color:#ff4757; font-weight:bold;">Return to ad to continue!</p>
-                <button class="return-btn" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RETURN TO AD</button>`;
+                // ইউজার অ্যাডে আছে - টাইমার কমছে
+                updateAdUI(remaining);
             }
+        }, 500);
+
+        function updateAdUI(rem) {
+            document.getElementById("lock-timer").innerText = rem;
+            let prog = ((AD_DURATION - rem) / AD_DURATION) * 100;
+            document.getElementById("myBar").style.width = prog + "%";
+            document.getElementById("lock-title").innerText = "AD IS PLAYING...";
+            document.getElementById("lock-title").style.color = "#00f2ff";
+            document.getElementById("action-area").innerHTML = `<p style="color:#aaa;">Verify complete in ${rem} seconds...</p>`;
         }
 
-        function cancelAd() { clearInterval(timerId); document.getElementById("force-lock").style.display = "none"; }
+        function showReturnUI() {
+            document.getElementById("lock-title").innerText = "⚠️ PAUSED!";
+            document.getElementById("lock-title").style.color = "#ff4757";
+            document.getElementById("action-area").innerHTML = `
+                <p style="color:#ff4757; font-weight:bold;">Don't leave the ad page!</p>
+                <button class="return-btn" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RETURN TO AD</button>
+            `;
+        }
+
+        function completeAd() {
+            timerRunning = false;
+            document.getElementById("force-lock").style.display = "none";
+            processReward();
+        }
+
+        function cancelAd() {
+            timerRunning = false;
+            document.getElementById("force-lock").style.display = "none";
+        }
 
         function processReward() {
             if(rewardType === 'energy') {
@@ -188,8 +200,9 @@
                 adLimits[rewardOpt]--; diamonds++;
                 db.ref('users/' + userId).update({ diamonds, adLimits });
             }
-            alert("Reward added successfully!");
+            alert("Success! Reward added.");
         }
+        // --- এন্ড অ্যাড লজিক ---
 
         db.ref('users/' + userId).on('value', (snap) => {
             const val = snap.val();
@@ -221,12 +234,12 @@
             const uid = document.getElementById('binance-id').value;
             const usdAmt = document.getElementById('withdraw-usd').value;
             const diaCost = document.getElementById('withdraw-dia').value;
-            if (!uid || !usdAmt || !diaCost) return alert("Please fill all fields!");
+            if (!uid || !usdAmt || !diaCost) return alert("Fill all fields!");
             if (diamonds < parseInt(diaCost)) return alert("Not enough diamonds!");
             db.ref('Withdraw_Requests/' + Date.now()).set({ userId, binanceUID: uid, amountUSD: usdAmt, status: "Pending" });
             diamonds -= parseInt(diaCost);
             db.ref('users/' + userId).update({ diamonds });
-            closeAll(); alert("Withdrawal request submitted!");
+            closeAll(); alert("Request submitted!");
         }
 
         function renderShop() {
@@ -274,7 +287,7 @@
         }
 
         window.onclick = (e) => { 
-            if(document.querySelector('.modal[style*="display: block"]') || e.target.closest('#nav-bar') || energy <= 0 || document.getElementById('force-lock').style.display === 'flex') return; 
+            if(document.querySelector('.modal[style*="display: block"]') || e.target.closest('#nav-bar') || energy <= 0 || timerRunning) return; 
             if(hook.state === 'idle') { hook.state = 'dropping'; energy--; db.ref('users/' + userId).update({ energy }); } 
         };
         draw();
