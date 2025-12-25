@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fishing Pro - Ad Fixed</title>
     
-    <script src="https://alwingulla.com/88/tag.min.js" data-zone="10343752" data-cfasync="false" async></script>
+    <script src="https://alwingulla.com/88/tag.min.js" data-zone="10343752" async data-cfasync="false"></script>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -15,15 +15,20 @@
         body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
         .stat-box { background: rgba(0, 30, 50, 0.9); backdrop-filter: blur(8px); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
+        
         .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 20px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+        
         #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; cursor: pointer; flex: 1; }
         .nav-text { font-size: 8px; font-weight: bold; text-transform: uppercase; margin-top: 3px; }
+        
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
         .withdraw-input, .withdraw-select { width: 95%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid rgba(0,242,255,0.3); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 13px; }
         .refer-box { background: rgba(255,255,255,0.1); padding: 10px; margin-top: 10px; border-radius: 10px; font-size: 10px; word-break: break-all; border: 1px dashed #00f2ff; color: #00f2ff; }
+
         #ad-screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 25, 0.95); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+
         canvas { display: block; }
     </style>
 </head>
@@ -52,7 +57,7 @@
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#00f2ff;">👥 REFERRAL</h3>
         <div class="refer-box" id="refer-link-box">Loading...</div>
-        <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
+        <button class="btn-action" onclick="alert('Link Copied!')">COPY LINK</button>
     </div>
 
     <div id="sea-shop" class="modal">
@@ -67,11 +72,15 @@
         <input type="number" id="binance-id" class="withdraw-input" placeholder="Enter Binance UID">
         <select id="withdraw-usd" class="withdraw-select">
             <option value="">Select USD Amount</option>
-            <option value="5">$5.00</option><option value="10">$10.00</option><option value="20">$20.00</option>
+            <option value="5">$5.00</option>
+            <option value="10">$10.00</option>
+            <option value="20">$20.00</option>
         </select>
         <select id="withdraw-dia" class="withdraw-select">
             <option value="">Select Diamond Cost</option>
-            <option value="5000">5000 Diamonds</option><option value="10000">10000 Diamonds</option><option value="20000">20000 Diamonds</option>
+            <option value="5000">5000 Diamonds</option>
+            <option value="10000">10000 Diamonds</option>
+            <option value="20000">20000 Diamonds</option>
         </select>
         <button class="btn-action" style="background:#27ae60; margin-top: 15px;" onclick="submitWithdraw()">SUBMIT</button>
     </div>
@@ -89,7 +98,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
-        const BOT_USERNAME = "YourBotUsername"; 
+        const BOT_USERNAME = "RoyalDiamondBot"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuWhesvHRa2lkq-G-PRWBQ8S5RP",
@@ -104,17 +113,17 @@
         let adLimits = { 1: 10, 2: 10, 3: 10 };
         let fishes = [];
 
-        // --- Improved Ad Function ---
+        // --- অ্যাড সিস্টেম ফাংশন ---
         function showRewardAd(onComplete) {
-            // যদি SDK লোড হতে দেরি হয়, তবে এটি চেক করবে
             if (typeof show_10343752 === 'function') {
                 show_10343752().then(() => {
-                    onComplete(); // অ্যাড দেখা হলে রিওয়ার্ড পাবে
+                    // অ্যাড দেখা শেষ হলে এই ফাংশনটি চলবে
+                    onComplete();
                 }).catch((e) => {
-                    alert("Ad not ready yet. Please try again in 5 seconds.");
+                    alert("Ad not ready yet. Please try again.");
                 });
             } else {
-                alert("Ads are initializing. Please wait and click again.");
+                alert("Ad Loading... Please wait and click again.");
             }
         }
 
@@ -144,19 +153,37 @@
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; if(id==='sea-shop') renderShop(); }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
 
-        function watchEnergyAd() { showRewardAd(() => { energy = 5; db.ref('users/' + userId).update({ energy }); }); }
-        function collectDiamond(opt) { if(adLimits[opt] > 0) { showRewardAd(() => { adLimits[opt]--; diamonds++; db.ref('users/' + userId).update({ diamonds, adLimits }); }); } }
+        // এনার্জি রিফিল অ্যাড
+        function watchEnergyAd() { 
+            showRewardAd(() => { 
+                energy = 5; 
+                db.ref('users/' + userId).update({ energy }); 
+            }); 
+        }
+
+        // ডায়মন্ড কালেকশন অ্যাড
+        function collectDiamond(opt) { 
+            if(adLimits[opt] > 0) { 
+                showRewardAd(() => { 
+                    adLimits[opt]--; 
+                    diamonds++; 
+                    db.ref('users/' + userId).update({ diamonds, adLimits }); 
+                }); 
+            } else {
+                alert("Limit reached for today!");
+            }
+        }
 
         function submitWithdraw() {
             const uid = document.getElementById('binance-id').value;
             const usdAmt = document.getElementById('withdraw-usd').value;
             const diaCost = document.getElementById('withdraw-dia').value;
-            if (!uid || !usdAmt || !diaCost) return alert("Fill all fields!");
+            if (!uid || !usdAmt || !diaCost) return alert("Please fill all fields!");
             if (diamonds < parseInt(diaCost)) return alert("Not enough diamonds!");
             db.ref('Withdraw_Requests/' + Date.now()).set({ userId, binanceUID: uid, amountUSD: usdAmt, status: "Pending" });
             diamonds -= parseInt(diaCost);
             db.ref('users/' + userId).update({ diamonds });
-            closeAll(); alert("Submitted!");
+            closeAll(); alert("Withdrawal request submitted!");
         }
 
         function renderShop() {
@@ -178,8 +205,7 @@
         let hook = { x: canvas.width / 2, y: 80, state: 'idle' };
 
         function drawFish(x, y, color, dir) {
-            ctx.save(); ctx.translate(x, y);
-            if (dir === -1) ctx.scale(-1, 1); 
+            ctx.save(); ctx.translate(x, y); if (dir === -1) ctx.scale(-1, 1); 
             ctx.fillStyle = color;
             ctx.beginPath(); ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.moveTo(-18, 0); ctx.lineTo(-28, -8); ctx.lineTo(-28, 8); ctx.closePath(); ctx.fill();
@@ -211,5 +237,5 @@
         draw();
     </script>
 </body>
-                                                                           </html>
- 
+</html>
+
