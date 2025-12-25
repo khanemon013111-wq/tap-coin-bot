@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Refer Fixed</title>
+    <title>Fishing Pro - Link Fixed</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -68,7 +68,7 @@
     <div id="refer-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#00f2ff;">👥 REFERRAL</h3>
-        <div class="refer-box" id="refer-link-box" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; font-size: 10px; margin-bottom: 10px; word-break: break-all;">Loading...</div>
+        <div id="refer-link-box" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; font-size: 10px; margin-bottom: 10px; word-break: break-all;">Loading...</div>
         <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
     </div>
 
@@ -111,7 +111,9 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
-        const BOT_USERNAME = "RoyalDiamondBot"; 
+        
+        // দাদু, আপনার বটের ইউজারনেম এখানে আপডেট করে দিয়েছি
+        const BOT_USERNAME = "Referralincamebd01311_bot"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuWhesvHRa2lkq-G-PRWBQ8S5RP",
@@ -194,19 +196,19 @@
             alert("Success! Reward added.");
         }
 
-        // --- রেফার লিঙ্ক কপি করার ফিক্সড ফাংশন ---
+        // --- রেফারেল লিঙ্ক কপি করার ফিক্সড ফাংশন ---
         function copyReferLink() {
-            const link = `https://t.me/${BOT_USERNAME}?start=${userId}`;
+            // দাদু, এখানে সরাসরি আপনার বটের লিঙ্ক এবং আপনার GitHub-এর WebApp ওপেন হওয়ার লিঙ্ক দিয়েছি
+            const appLink = `https://t.me/${BOT_USERNAME}/play?startapp=${userId}`;
             
-            // আধুনিক ব্রাউজারের জন্য
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(link).then(() => {
-                    alert('Refer link copied!');
+                navigator.clipboard.writeText(appLink).then(() => {
+                    alert('Direct App Link Copied!');
                 }).catch(() => {
-                    fallbackCopy(link);
+                    fallbackCopy(appLink);
                 });
             } else {
-                fallbackCopy(link);
+                fallbackCopy(appLink);
             }
         }
 
@@ -219,7 +221,7 @@
                 document.execCommand('copy');
                 alert('Refer link copied!');
             } catch (err) {
-                alert('Failed to copy. Please manually copy the link.');
+                alert('Copy failed. Manual copy needed.');
             }
             document.body.removeChild(textArea);
         }
@@ -244,7 +246,9 @@
             document.getElementById("limit-1").innerText = adLimits[1];
             document.getElementById("limit-2").innerText = adLimits[2];
             document.getElementById("limit-3").innerText = adLimits[3];
-            document.getElementById("refer-link-box").innerText = `https://t.me/${BOT_USERNAME}?start=${userId}`;
+            
+            // UI তেও সরাসরি লিঙ্কটি দেখা যাবে
+            document.getElementById("refer-link-box").innerText = `https://t.me/${BOT_USERNAME}/play?startapp=${userId}`;
         }
 
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; if(id==='sea-shop') renderShop(); }
