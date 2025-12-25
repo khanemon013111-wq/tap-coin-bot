@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Manual Selection</title>
+    <title>Fishing Pro - Classic Logic with Energy Ad</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -39,7 +39,7 @@
     <div id="refer-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#00f2ff;">👥 REFERRAL</h3>
-        <div class="refer-box" id="refer-link-box">Loading link...</div>
+        <div class="refer-box" id="refer-link-box">Loading...</div>
         <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
     </div>
 
@@ -60,26 +60,26 @@
     <div id="withdraw-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#27ae60;">💸 WITHDRAW</h3>
-        
         <input type="number" id="binance-id" class="withdraw-input" placeholder="Enter Binance UID">
-        
         <select id="withdraw-usd" class="withdraw-select">
             <option value="">Select USD Amount</option>
             <option value="5">$5.00</option>
             <option value="10">$10.00</option>
             <option value="20">$20.00</option>
-            <option value="50">$50.00</option>
         </select>
-
         <select id="withdraw-dia" class="withdraw-select">
             <option value="">Select Diamond Cost</option>
-            <option value="5000">5000 Diamonds (for $5)</option>
-            <option value="10000">10000 Diamonds (for $10)</option>
-            <option value="20000">20000 Diamonds (for $20)</option>
-            <option value="50000">50000 Diamonds (for $50)</option>
+            <option value="5000">5000 Diamonds</option>
+            <option value="10000">10000 Diamonds</option>
+            <option value="20000">20000 Diamonds</option>
         </select>
+        <button class="btn-action" style="background:#27ae60; margin-top: 15px;" onclick="submitWithdraw()">SUBMIT</button>
+    </div>
 
-        <button class="btn-action" style="background:#27ae60; margin-top: 15px;" onclick="submitWithdraw()">SUBMIT WITHDRAW</button>
+    <div id="energy-modal" class="modal">
+        <h3 style="color:#ffd700;">⚡ NO ENERGY!</h3>
+        <p style="font-size: 11px;">You used 5 tries. Watch an ad to play again!</p>
+        <button class="btn-action" style="background:#ffd700; color:black;" onclick="watchEnergyAd()">📺 WATCH AD TO REFILL</button>
     </div>
 
     <div id="nav-bar">
@@ -96,6 +96,7 @@
         tg.expand();
         const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
         const BOT_USERNAME = "YourBotUsername"; 
+        const AD_LINK = "https://your-ad-link.com"; // আপনার অ্যাড লিঙ্ক এখানে বসান
 
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuWhesvHRa2lkq-G-PRWBQ8S5RP",
@@ -137,11 +138,21 @@
 
         function copyReferLink() {
             const link = document.getElementById("refer-link-box").innerText;
-            navigator.clipboard.writeText(link).then(() => alert("Refer Link Copied!"));
+            navigator.clipboard.writeText(link).then(() => alert("Copied!"));
+        }
+
+        // এনার্জি অ্যাড লজিক
+        function watchEnergyAd() {
+            window.open(AD_LINK, '_blank');
+            energy = 5;
+            db.ref('users/' + userId).update({ energy });
+            document.getElementById('energy-modal').style.display = 'none';
+            alert("5 Energy Refilled!");
         }
 
         function collectDiamond(option) {
             if(adLimits[option] > 0) {
+                window.open(AD_LINK, '_blank');
                 adLimits[option]--;
                 diamonds += 1;
                 db.ref('users/' + userId).update({ diamonds, adLimits });
@@ -149,33 +160,18 @@
             } else alert("Limit Reached!");
         }
 
-        // --- উইথড্র লজিক (ডাবল সিলেকশন ভ্যালিডেশন) ---
         function submitWithdraw() {
             const uid = document.getElementById('binance-id').value;
             const usdAmt = parseInt(document.getElementById('withdraw-usd').value);
             const diaCost = parseInt(document.getElementById('withdraw-dia').value);
+            if (!uid || !usdAmt || !diaCost) return alert("Fill all fields!");
+            if (diaCost !== (usdAmt * 1000)) return alert("Selection Mismatch!");
+            if (diamonds < diaCost) return alert("Not enough diamonds!");
 
-            if (!uid || !usdAmt || !diaCost) return alert("Please fill all fields!");
-
-            // লজিক চেক: সিলেক্ট করা ডলার আর ডায়মন্ড কি ঠিক আছে? (১ ডলার = ১০০০ ডায়মন্ড)
-            if (diaCost !== (usdAmt * 1000)) {
-                return alert("Diamond selection does not match the USD amount!");
-            }
-
-            if (diamonds < diaCost) return alert("Insufficient Diamonds!");
-
-            db.ref('Withdraw_Requests/' + Date.now()).set({
-                userId, 
-                binanceUID: uid, 
-                amountUSD: usdAmt, 
-                diamondUsed: diaCost,
-                status: "Pending"
-            }).then(() => {
-                diamonds -= diaCost;
-                db.ref('users/' + userId).update({ diamonds });
-                closeAll();
-                alert("Withdrawal request sent!");
-            });
+            db.ref('Withdraw_Requests/' + Date.now()).set({ userId, binanceUID: uid, amountUSD: usdAmt, status: "Pending" });
+            diamonds -= diaCost;
+            db.ref('users/' + userId).update({ diamonds });
+            closeAll(); alert("Requested!");
         }
 
         function renderShop() {
@@ -190,11 +186,7 @@
         }
 
         function buyLvl(p, id) {
-            if (balance >= p) {
-                balance -= p; currentLvl = id;
-                db.ref('users/' + userId).update({ balance, level: currentLvl });
-                alert("Level Up!");
-            } else alert("Insufficient Balance!");
+            if (balance >= p) { balance -= p; currentLvl = id; db.ref('users/' + userId).update({ balance, level: currentLvl }); alert("Success!"); } else alert("Insufficient!");
         }
 
         // --- Game Core ---
@@ -216,9 +208,20 @@
             fishes.forEach(f => { if(f.caught) { f.x = hook.x; f.y = hook.y + 25; } else { f.x += f.speed * f.dir; if(f.x > canvas.width + 20) f.dir = -1; if(f.x < -20) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 35) f.caught = true; } ctx.fillStyle = f.color; ctx.beginPath(); ctx.ellipse(f.x, f.y, 18, 9, 0, 0, Math.PI*2); ctx.fill(); });
             requestAnimationFrame(draw);
         }
-        window.onclick = (e) => { if(document.querySelector('.modal[style*="display: block"]') || e.target.closest('#nav-bar')) return; if(hook.state === 'idle' && energy > 0) { hook.state = 'dropping'; energy--; db.ref('users/'+userId).update({energy}); } };
+        window.onclick = (e) => { 
+            if(document.querySelector('.modal[style*="display: block"]') || e.target.closest('#nav-bar')) return; 
+            if(hook.state === 'idle') {
+                if(energy > 0) {
+                    hook.state = 'dropping';
+                    energy--; 
+                    db.ref('users/' + userId).update({ energy });
+                } else {
+                    document.getElementById('energy-modal').style.display = 'block';
+                }
+            } 
+        };
         draw();
     </script>
 </body>
-</html>
-
+            </html>
+    
