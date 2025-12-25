@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Step-by-Step Level</title>
+    <title>Fishing Pro - Manual Selection</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; }
+        body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
-        .stat-box { background: rgba(0, 30, 50, 0.9); backdrop-filter: blur(8px); color: #fff; padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
+        .stat-box { background: rgba(0, 30, 50, 0.9); backdrop-filter: blur(8px); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
         
-        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 20px; border-radius: 25px; border: 2px solid #00f2ff; color: white; z-index: 3000; width: 85%; max-width: 320px; text-align: center; }
+        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 20px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
         
         #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; cursor: pointer; flex: 1; }
-        .nav-text { font-size: 9px; font-weight: bold; text-transform: uppercase; margin-top: 3px; }
+        .nav-text { font-size: 8px; font-weight: bold; text-transform: uppercase; margin-top: 3px; }
         
-        .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-locked { background: #333 !important; color: #777 !important; cursor: not-allowed; }
-        .btn-ad { background: linear-gradient(135deg, #ffd700, #ffa500); color: #000; }
-        
+        .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
+        .withdraw-input, .withdraw-select { width: 95%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid rgba(0,242,255,0.3); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 13px; }
+        .refer-box { background: rgba(255,255,255,0.1); padding: 10px; margin-top: 10px; border-radius: 10px; font-size: 10px; word-break: break-all; border: 1px dashed #00f2ff; color: #00f2ff; }
+
         canvas { display: block; }
     </style>
 </head>
@@ -36,22 +36,57 @@
         <div class="stat-box" style="color:#ff00e6;">💎 <span id="dia-count">0</span></div>
     </div>
 
+    <div id="refer-modal" class="modal">
+        <button class="close-btn" onclick="closeAll()">×</button>
+        <h3 style="color:#00f2ff;">👥 REFERRAL</h3>
+        <div class="refer-box" id="refer-link-box">Loading link...</div>
+        <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
+    </div>
+
+    <div id="diamond-modal" class="modal">
+        <button class="close-btn" onclick="closeAll()">×</button>
+        <h3 style="color:#ff00e6;">💎 FREE DIAMONDS</h3>
+        <button class="btn-action" onclick="collectDiamond(1)">📺 OPTION 1 (<span id="limit-1">10</span>/10)</button>
+        <button class="btn-action" onclick="collectDiamond(2)">📺 OPTION 2 (<span id="limit-2">10</span>/10)</button>
+        <button class="btn-action" onclick="collectDiamond(3)">📺 OPTION 3 (<span id="limit-3">10</span>/10)</button>
+    </div>
+
     <div id="sea-shop" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#00f2ff;">⚓ SEA SHOP</h3>
         <div id="level-list"></div>
     </div>
 
-    <div id="ad-modal" class="modal">
-        <h3 style="color:#ffd700;">⚡ এনার্জি শেষ!</h3>
-        <p>নতুন ৫টি এনার্জি পেতে একটি অ্যাড দেখুন।</p>
-        <button class="btn-action btn-ad" onclick="watchAd()">📺 WATCH AD (GET 5⚡)</button>
+    <div id="withdraw-modal" class="modal">
+        <button class="close-btn" onclick="closeAll()">×</button>
+        <h3 style="color:#27ae60;">💸 WITHDRAW</h3>
+        
+        <input type="number" id="binance-id" class="withdraw-input" placeholder="Enter Binance UID">
+        
+        <select id="withdraw-usd" class="withdraw-select">
+            <option value="">Select USD Amount</option>
+            <option value="5">$5.00</option>
+            <option value="10">$10.00</option>
+            <option value="20">$20.00</option>
+            <option value="50">$50.00</option>
+        </select>
+
+        <select id="withdraw-dia" class="withdraw-select">
+            <option value="">Select Diamond Cost</option>
+            <option value="5000">5000 Diamonds (for $5)</option>
+            <option value="10000">10000 Diamonds (for $10)</option>
+            <option value="20000">20000 Diamonds (for $20)</option>
+            <option value="50000">50000 Diamonds (for $50)</option>
+        </select>
+
+        <button class="btn-action" style="background:#27ae60; margin-top: 15px;" onclick="submitWithdraw()">SUBMIT WITHDRAW</button>
     </div>
 
     <div id="nav-bar">
-        <div class="nav-item" onclick="alert('Coming Soon')"><span style="font-size:20px;">👥</span><span class="nav-text">Refer</span></div>
-        <div class="nav-item" onclick="openShop('sea-shop')"><span style="font-size:20px;">🛒</span><span class="nav-text">Shop</span></div>
-        <div class="nav-item" onclick="watchAd()"><span style="font-size:20px;">💎</span><span class="nav-text">Ads</span></div>
+        <div class="nav-item" onclick="openShop('refer-modal')"><span>👥</span><span class="nav-text">Refer</span></div>
+        <div class="nav-item" onclick="openShop('sea-shop')"><span>🛒</span><span class="nav-text">Shop</span></div>
+        <div class="nav-item" onclick="openShop('withdraw-modal')"><span>💰</span><span class="nav-text">Withdraw</span></div>
+        <div class="nav-item" onclick="openShop('diamond-modal')"><span>💎</span><span class="nav-text">Diamond</span></div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -59,8 +94,8 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        const user = tg.initDataUnsafe?.user;
-        const userId = user ? user.id.toString() : "test_user_88";
+        const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
+        const BOT_USERNAME = "YourBotUsername"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuWhesvHRa2lkq-G-PRWBQ8S5RP",
@@ -72,85 +107,97 @@
         const db = firebase.database();
 
         let balance = 0, energy = 5, diamonds = 0, currentLvl = 1;
+        let adLimits = { 1: 10, 2: 10, 3: 10 };
         let fishes = [];
-        const levels = [
-            {id: 1, fish: 4, price: 0, depth: 2000},
-            {id: 2, fish: 8, price: 2.0, depth: 3000},
-            {id: 3, fish: 12, price: 3.0, depth: 4000},
-            {id: 4, fish: 16, price: 4.0, depth: 5000},
-            {id: 5, fish: 20, price: 5.0, depth: 6000}
-        ];
 
-        db.ref('users/' + userId).once('value').then((snap) => {
+        db.ref('users/' + userId).on('value', (snap) => {
             const val = snap.val();
             if(val) {
                 balance = val.balance || 0;
-                energy = (val.energy !== undefined) ? val.energy : 5;
+                energy = val.energy !== undefined ? val.energy : 5;
                 diamonds = val.diamonds || 0;
                 currentLvl = val.level || 1;
+                if(val.adLimits) adLimits = val.adLimits;
                 updateUI();
-                if(energy <= 0) document.getElementById('ad-modal').style.display = 'block';
             }
         });
-
-        function saveData() {
-            db.ref('users/' + userId).update({ balance, energy, diamonds, level: currentLvl });
-        }
 
         function updateUI() {
             document.getElementById("coins").innerText = balance.toFixed(6);
             document.getElementById("energy-count").innerText = energy;
             document.getElementById("dia-count").innerText = diamonds;
+            document.getElementById("limit-1").innerText = adLimits[1];
+            document.getElementById("limit-2").innerText = adLimits[2];
+            document.getElementById("limit-3").innerText = adLimits[3];
+            document.getElementById("refer-link-box").innerText = `https://t.me/${BOT_USERNAME}?start=${userId}`;
         }
 
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; if(id==='sea-shop') renderShop(); }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
 
+        function copyReferLink() {
+            const link = document.getElementById("refer-link-box").innerText;
+            navigator.clipboard.writeText(link).then(() => alert("Refer Link Copied!"));
+        }
+
+        function collectDiamond(option) {
+            if(adLimits[option] > 0) {
+                adLimits[option]--;
+                diamonds += 1;
+                db.ref('users/' + userId).update({ diamonds, adLimits });
+                alert("1 Diamond Added!");
+            } else alert("Limit Reached!");
+        }
+
+        // --- উইথড্র লজিক (ডাবল সিলেকশন ভ্যালিডেশন) ---
+        function submitWithdraw() {
+            const uid = document.getElementById('binance-id').value;
+            const usdAmt = parseInt(document.getElementById('withdraw-usd').value);
+            const diaCost = parseInt(document.getElementById('withdraw-dia').value);
+
+            if (!uid || !usdAmt || !diaCost) return alert("Please fill all fields!");
+
+            // লজিক চেক: সিলেক্ট করা ডলার আর ডায়মন্ড কি ঠিক আছে? (১ ডলার = ১০০০ ডায়মন্ড)
+            if (diaCost !== (usdAmt * 1000)) {
+                return alert("Diamond selection does not match the USD amount!");
+            }
+
+            if (diamonds < diaCost) return alert("Insufficient Diamonds!");
+
+            db.ref('Withdraw_Requests/' + Date.now()).set({
+                userId, 
+                binanceUID: uid, 
+                amountUSD: usdAmt, 
+                diamondUsed: diaCost,
+                status: "Pending"
+            }).then(() => {
+                diamonds -= diaCost;
+                db.ref('users/' + userId).update({ diamonds });
+                closeAll();
+                alert("Withdrawal request sent!");
+            });
+        }
+
         function renderShop() {
+            const levels = [{id: 1, p: 0}, {id: 2, p: 2.0}, {id: 3, p: 3.0}, {id: 4, p: 4.0}, {id: 5, p: 5.0}];
             document.getElementById("level-list").innerHTML = levels.map(l => {
-                let statusText = "";
-                let btnClass = "btn-action";
-                let btnAction = "";
-
-                if (l.id <= currentLvl) {
-                    statusText = "OWNED";
-                    btnClass += " btn-locked"; // কেনা হয়ে গেছে
-                } else if (l.id === currentLvl + 1) {
-                    statusText = "$" + l.price.toFixed(2); // কেনা যাবে
-                    btnAction = `onclick="buyLvl(${l.price}, ${l.id})"`;
-                } else {
-                    statusText = "LOCKED"; // এখনও সময় হয়নি
-                    btnClass += " btn-locked";
-                }
-
-                return `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px; border-radius:12px; margin-bottom:8px; border: 1px solid rgba(0,242,255,0.1);">
-                    <div style="text-align:left;"><b>Level ${l.id}</b><br><small>${l.fish} Fish | ${l.depth}m</small></div>
-                    <button class="${btnClass}" style="width:auto; padding:5px 10px;" ${btnAction}>${statusText}</button>
+                let status = l.id <= currentLvl ? 'OWNED' : (l.id === currentLvl + 1 ? 'BUY $'+l.p : 'LOCKED');
+                return `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; margin-bottom:8px;">
+                    <b>Level ${l.id}</b>
+                    <button class="btn-action" style="width:auto; padding:5px 12px;" onclick="${l.id === currentLvl + 1 ? `buyLvl(${l.p},${l.id})` : ''}">${status}</button>
                 </div>`;
             }).join('');
         }
 
         function buyLvl(p, id) {
             if (balance >= p) {
-                balance -= p;
-                currentLvl = id;
-                saveData();
-                renderShop();
-                updateUI();
-                alert("Level " + id + " Unlocked!");
-            } else {
-                alert("Insufficient Balance!");
-            }
+                balance -= p; currentLvl = id;
+                db.ref('users/' + userId).update({ balance, level: currentLvl });
+                alert("Level Up!");
+            } else alert("Insufficient Balance!");
         }
 
-        function watchAd() {
-            alert("অ্যাড দেখা সফল! ৫টি এনার্জি যোগ করা হলো।");
-            energy = 5;
-            document.getElementById('ad-modal').style.display = 'none';
-            updateUI(); saveData();
-        }
-
+        // --- Game Core ---
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -160,46 +207,16 @@
             let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
             grad.addColorStop(0, "#00a8e8"); grad.addColorStop(1, "#001e30");
             ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            if(hook.state === 'dropping') {
-                hook.y += 10; if(hook.y > canvas.height - 180) hook.state = 'retracting';
-            } else if(hook.state === 'retracting') {
-                hook.y -= 10;
-                if(hook.y <= 80) {
-                    hook.state = 'idle';
-                    let caught = fishes.filter(f => f.caught);
-                    if(caught.length > 0) { balance += caught.length * 0.00005; saveData(); fishes = fishes.filter(f => !f.caught); updateUI(); }
-                }
-            }
-
+            if(hook.state === 'dropping') { hook.y += 10; if(hook.y > canvas.height - 180) hook.state = 'retracting'; }
+            else if(hook.state === 'retracting') { hook.y -= 10; if(hook.y <= 80) { hook.state = 'idle'; let caught = fishes.filter(f => f.caught); if(caught.length > 0) { balance += caught.length * 0.00005; db.ref('users/'+userId).update({balance}); fishes = fishes.filter(f => !f.caught); } } }
             ctx.strokeStyle = "white"; ctx.lineWidth = 4;
             ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
             ctx.beginPath(); ctx.arc(hook.x, hook.y + 12, 12, 0, Math.PI); ctx.stroke();
-
-            let cfg = levels[currentLvl-1];
-            while(fishes.length < cfg.fish) {
-                fishes.push({ x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-450), speed: 1.5+Math.random()*1.5, dir: Math.random()>0.5?1:-1, caught: false, color: `hsl(${Math.random()*360}, 70%, 60%)` });
-            }
-
-            fishes.forEach(f => {
-                if(f.caught) { f.x = hook.x; f.y = hook.y + 25; }
-                else {
-                    f.x += f.speed * f.dir;
-                    if(f.x > canvas.width + 20) f.dir = -1; if(f.x < -20) f.dir = 1;
-                    if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 35) f.caught = true;
-                }
-                ctx.fillStyle = f.color; ctx.beginPath(); ctx.ellipse(f.x, f.y, 18, 9, 0, 0, Math.PI*2); ctx.fill();
-            });
+            while(fishes.length < (currentLvl * 4)) { fishes.push({ x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-450), speed: 1.5+Math.random()*1.5, dir: Math.random()>0.5?1:-1, caught: false, color: `hsl(${Math.random()*360}, 70%, 60%)` }); }
+            fishes.forEach(f => { if(f.caught) { f.x = hook.x; f.y = hook.y + 25; } else { f.x += f.speed * f.dir; if(f.x > canvas.width + 20) f.dir = -1; if(f.x < -20) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 35) f.caught = true; } ctx.fillStyle = f.color; ctx.beginPath(); ctx.ellipse(f.x, f.y, 18, 9, 0, 0, Math.PI*2); ctx.fill(); });
             requestAnimationFrame(draw);
         }
-
-        window.onclick = (e) => {
-            if(document.getElementById('ad-modal').style.display === 'block' || document.getElementById('sea-shop').style.display === 'block' || e.target.closest('#nav-bar')) return;
-            if(hook.state === 'idle') {
-                if(energy > 0) { hook.state = 'dropping'; energy--; updateUI(); saveData(); }
-                else { document.getElementById('ad-modal').style.display = 'block'; }
-            }
-        };
+        window.onclick = (e) => { if(document.querySelector('.modal[style*="display: block"]') || e.target.closest('#nav-bar')) return; if(hook.state === 'idle' && energy > 0) { hook.state = 'dropping'; energy--; db.ref('users/'+userId).update({energy}); } };
         draw();
     </script>
 </body>
