@@ -3,28 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Professional Timer Version</title>
+    <title>Fishing Pro - Adsterra Integrated</title>
     
     <script>
         const ADSTERRA_SMARTLINK = "https://www.effectivegatecpm.com/rarb5qds06?key=79349eb6a9357e2e416a3ef19425a5c1";
         
-        // টাইমার ফাংশন যা আপনার ইনকাম বাড়াবে
-        function openAdWithTimer(onComplete, btnElement) {
+        function openAdsterraAd() {
             window.open(ADSTERRA_SMARTLINK, '_blank');
-            let seconds = 15;
-            const originalText = btnElement.innerText;
-            btnElement.disabled = true;
-
-            const timer = setInterval(() => {
-                btnElement.innerText = `WAIT ${seconds}s...`;
-                seconds--;
-                if (seconds < 0) {
-                    clearInterval(timer);
-                    btnElement.innerText = originalText;
-                    btnElement.disabled = false;
-                    onComplete();
-                }
-            }, 1000);
         }
     </script>
 
@@ -36,16 +21,20 @@
         body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
         .stat-box { background: rgba(0, 30, 50, 0.9); backdrop-filter: blur(8px); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
+        
         .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 20px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+        
         #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; cursor: pointer; flex: 1; }
         .nav-text { font-size: 8px; font-weight: bold; text-transform: uppercase; margin-top: 3px; }
+        
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
-        .btn-action:disabled { background: #555 !important; color: #aaa; cursor: not-allowed; }
         .withdraw-input, .withdraw-select { width: 95%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid rgba(0,242,255,0.3); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 13px; }
         .refer-box { background: rgba(255,255,255,0.1); padding: 10px; margin-top: 10px; border-radius: 10px; font-size: 10px; word-break: break-all; border: 1px dashed #00f2ff; color: #00f2ff; }
+
         #ad-screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 25, 0.95); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+
         canvas { display: block; }
     </style>
 </head>
@@ -59,16 +48,15 @@
 
     <div id="ad-screen">
         <h2 style="color:#ffd700;">⚡ NO ENERGY!</h2>
-        <button class="btn-action" style="width: 200px; background:#ffd700; color:black;" onclick="watchEnergyAd(this)">📺 WATCH AD (15s)</button>
+        <button class="btn-action" style="width: 200px; background:#ffd700; color:black;" onclick="watchEnergyAd()">📺 WATCH AD TO REFILL</button>
     </div>
 
     <div id="diamond-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#ff00e6;">💎 DAILY DIAMONDS</h3>
-        <p style="font-size: 10px; margin-bottom: 5px;">অ্যাড দেখে ১৫ সেকেন্ড অপেক্ষা করুন</p>
-        <button class="btn-action" onclick="collectDiamond(1, this)">📺 OPTION 1 (<span id="limit-1">10</span>/10)</button>
-        <button class="btn-action" onclick="collectDiamond(2, this)">📺 OPTION 2 (<span id="limit-2">10</span>/10)</button>
-        <button class="btn-action" onclick="collectDiamond(3, this)">📺 OPTION 3 (<span id="limit-3">10</span>/10)</button>
+        <button class="btn-action" onclick="collectDiamond(1)">📺 OPTION 1 (<span id="limit-1">10</span>/10)</button>
+        <button class="btn-action" onclick="collectDiamond(2)">📺 OPTION 2 (<span id="limit-2">10</span>/10)</button>
+        <button class="btn-action" onclick="collectDiamond(3)">📺 OPTION 3 (<span id="limit-3">10</span>/10)</button>
     </div>
 
     <div id="refer-modal" class="modal">
@@ -92,6 +80,13 @@
             <option value="">Select USD Amount</option>
             <option value="5">$5.00</option>
             <option value="10">$10.00</option>
+            <option value="20">$20.00</option>
+        </select>
+        <select id="withdraw-dia" class="withdraw-select">
+            <option value="">Select Diamond Cost</option>
+            <option value="5000">5000 Diamonds</option>
+            <option value="10000">10000 Diamonds</option>
+            <option value="20000">20000 Diamonds</option>
         </select>
         <button class="btn-action" style="background:#27ae60; margin-top: 15px;" onclick="submitWithdraw()">SUBMIT</button>
     </div>
@@ -150,23 +145,35 @@
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; if(id==='sea-shop') renderShop(); }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
 
-        function watchEnergyAd(btn) { 
-            openAdWithTimer(() => { 
-                energy = 5; 
-                db.ref('users/' + userId).update({ energy }); 
-            }, btn); 
+        // এনার্জি রিফিল অ্যাড - Adsterra লিঙ্ক কাজ করবে
+        function watchEnergyAd() { 
+            openAdsterraAd(); // অ্যাড ওপেন হবে
+            energy = 5; 
+            db.ref('users/' + userId).update({ energy }); 
         }
 
-        function collectDiamond(opt, btn) { 
+        // ডায়মন্ড কালেকশন অ্যাড - Adsterra লিঙ্ক কাজ করবে
+        function collectDiamond(opt) { 
             if(adLimits[opt] > 0) { 
-                openAdWithTimer(() => { 
-                    adLimits[opt]--; 
-                    diamonds++; 
-                    db.ref('users/' + userId).update({ diamonds, adLimits }); 
-                }, btn); 
+                openAdsterraAd(); // অ্যাড ওপেন হবে
+                adLimits[opt]--; 
+                diamonds++; 
+                db.ref('users/' + userId).update({ diamonds, adLimits }); 
             } else {
-                alert("Limit reached!");
+                alert("Limit reached for today!");
             }
+        }
+
+        function submitWithdraw() {
+            const uid = document.getElementById('binance-id').value;
+            const usdAmt = document.getElementById('withdraw-usd').value;
+            const diaCost = document.getElementById('withdraw-dia').value;
+            if (!uid || !usdAmt || !diaCost) return alert("Please fill all fields!");
+            if (diamonds < parseInt(diaCost)) return alert("Not enough diamonds!");
+            db.ref('Withdraw_Requests/' + Date.now()).set({ userId, binanceUID: uid, amountUSD: usdAmt, status: "Pending" });
+            diamonds -= parseInt(diaCost);
+            db.ref('users/' + userId).update({ diamonds });
+            closeAll(); alert("Withdrawal request submitted!");
         }
 
         function renderShop() {
@@ -220,7 +227,5 @@
         draw();
     </script>
 </body>
-</html>
-
-
-    
+            </html>
+                                                                       
