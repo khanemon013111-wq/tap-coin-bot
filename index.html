@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Deep & Slow</title>
+    <title>Fishing Pro - Smart Notify</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -14,36 +14,40 @@
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
         .stat-box { background: rgba(0, 30, 50, 0.9); backdrop-filter: blur(8px); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
         
-        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 20px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; }
-        .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
-        
-        #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; cursor: pointer; flex: 1; }
-        .nav-text { font-size: 8px; font-weight: bold; text-transform: uppercase; margin-top: 3px; }
-        
-        .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
-        .withdraw-input, .withdraw-select { width: 95%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid rgba(0,242,255,0.3); background: rgba(255,255,255,0.05); color: white; outline: none; font-size: 13px; }
-
+        /* Security Overlay */
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .progress-container { width: 80%; height: 8px; background: #333; border-radius: 10px; margin: 20px 0; overflow: hidden; border: 1px solid rgba(0, 242, 255, 0.2); }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #00f2ff, #00d2ff); transition: width 0.3s; }
-        #lock-timer { font-size: 80px; font-weight: bold; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.4); margin-bottom: 10px; }
-        .return-btn { background: #ffd700; color: #000; border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 5px 15px rgba(255,215,0,0.3); margin-top: 10px; }
-
-        #ad-screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 25, 0.95); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        #lock-timer { font-size: 80px; font-weight: bold; color: #ffd700; }
+        .reward-card { background: linear-gradient(145deg, #1b4d3e, #0a2a1f); border: 2px solid #2ecc71; padding: 30px; border-radius: 20px; display: none; flex-direction: column; align-items: center; box-shadow: 0 0 20px rgba(46, 204, 113, 0.4); }
+        
+        .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
+        .return-btn { background: #ffd700; color: #000; border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 20px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; }
+        #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; cursor: pointer; flex: 1; }
+        .nav-text { font-size: 8px; font-weight: bold; text-transform: uppercase; margin-top: 3px; }
         canvas { display: block; }
     </style>
 </head>
 <body>
 
     <div id="force-lock">
-        <h2 id="lock-title" style="color:#00f2ff; margin:0;">VERIFYING AD...</h2>
-        <div class="progress-container">
-            <div id="myBar" class="progress-bar"></div>
+        <div id="lock-content">
+            <h2 id="lock-title" style="color:#00f2ff; margin:0;">WATCHING AD...</h2>
+            <div class="progress-container">
+                <div id="myBar" class="progress-bar"></div>
+            </div>
+            <div id="lock-timer">10</div>
+            <div id="action-area"></div>
         </div>
-        <div id="lock-timer">10</div>
-        <div id="action-area"></div>
-        <small onclick="cancelAd()" style="color:#444; text-decoration:underline; margin-top: 40px; cursor:pointer;">Cancel Reward</small>
+
+        <div id="reward-content" class="reward-card">
+            <h1 style="color: #2ecc71; margin: 0;">🎉 READY!</h1>
+            <p style="color: #eee;">Task Complete. Claim your reward.</p>
+            <button class="return-btn" style="background: #2ecc71; color: white;" onclick="collectReward()">COLLECT NOW</button>
+        </div>
+        <small id="cancel-link" onclick="cancelAd()" style="color:#444; text-decoration:underline; margin-top: 30px; cursor:pointer;">Cancel Task</small>
     </div>
 
     <div id="top-ui">
@@ -52,43 +56,29 @@
         <div class="stat-box" style="color:#ff00e6;">💎 <span id="dia-count">0</span></div>
     </div>
 
-    <div id="ad-screen">
+    <div id="ad-screen" style="display:none; position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,15,25,0.95); z-index:5000; flex-direction:column; justify-content:center; align-items:center;">
         <h2 style="color:#ffd700;">⚡ NO ENERGY!</h2>
         <button class="btn-action" style="width: 200px; background:#ffd700; color:black;" onclick="startVerifiedAd('energy')">📺 WATCH AD TO REFILL</button>
     </div>
 
     <div id="diamond-modal" class="modal">
-        <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#ff00e6;">💎 DAILY DIAMONDS</h3>
-        <button class="btn-action" onclick="startVerifiedAd('dia', 1)">📺 OPTION 1 (<span id="limit-1">10</span>/10)</button>
-        <button class="btn-action" onclick="startVerifiedAd('dia', 2)">📺 OPTION 2 (<span id="limit-2">10</span>/10)</button>
-        <button class="btn-action" onclick="startVerifiedAd('dia', 3)">📺 OPTION 3 (<span id="limit-3">10</span>/10)</button>
-    </div>
-
-    <div id="refer-modal" class="modal">
-        <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#00f2ff;">👥 REFERRAL</h3>
-        <div id="refer-link-box" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; font-size: 10px; margin-bottom: 10px; word-break: break-all;">Loading...</div>
-        <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
+        <button onclick="closeAll()" style="position:absolute;top:10px;right:15px;background:red;color:white;border:none;border-radius:50%;width:25px;height:25px;">×</button>
+        <h3 style="color:#ff00e6;">💎 DIAMOND TASK</h3>
+        <div id="dia-ad-status" style="margin: 10px 0; font-weight: bold; color:#00f2ff;">Step: <span id="ads-watched">0</span> / 3</div>
+        <button id="dia-ad-btn" class="btn-action" onclick="startVerifiedAd('dia')">📺 WATCH AD</button>
+        <div id="wait-timer" style="display:none; color: #ffd700; margin-top: 12px; font-weight: bold;">Wait: <span id="timer-display">05:00</span></div>
     </div>
 
     <div id="withdraw-modal" class="modal">
-        <button class="close-btn" onclick="closeAll()">×</button>
+        <button onclick="closeAll()" style="position:absolute;top:10px;right:15px;background:red;color:white;border:none;border-radius:50%;width:25px;height:25px;">×</button>
         <h3 style="color:#27ae60;">💸 WITHDRAW</h3>
-        <input type="number" id="binance-id" class="withdraw-input" placeholder="Enter Binance UID">
-        <select id="withdraw-usd" class="withdraw-select">
-            <option value="">Select USD Amount</option>
-            <option value="5">$5.00</option>
-            <option value="10">$10.00</option>
-            <option value="20">$20.00</option>
+        <input type="number" id="binance-id" style="width:90%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #333;" placeholder="Binance UID">
+        <select id="withdraw-usd" style="width:95%; padding:12px; border-radius:8px;">
+            <option value="5">$5.00 (5000 💎)</option>
+            <option value="10">$10.00 (10000 💎)</option>
+            <option value="20">$20.00 (20000 💎)</option>
         </select>
-        <select id="withdraw-dia" class="withdraw-select">
-            <option value="">Select Diamond Cost</option>
-            <option value="5000">5000 Diamonds</option>
-            <option value="10000">10000 Diamonds</option>
-            <option value="20000">20000 Diamonds</option>
-        </select>
-        <button class="btn-action" style="background:#27ae60; margin-top: 15px;" onclick="submitWithdraw()">SUBMIT</button>
+        <button class="btn-action" style="background:#27ae60; margin-top: 15px;" onclick="submitWithdraw()">SUBMIT REQUEST</button>
     </div>
 
     <div id="nav-bar">
@@ -104,7 +94,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
-        const BOT_USERNAME = "Referralincamebd01311_bot"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuWhesvHRa2lkq-G-PRWBQ8S5RP",
@@ -116,138 +105,90 @@
         const db = firebase.database();
 
         let balance = 0, energy = 15, diamonds = 0;
-        let adLimits = { 1: 10, 2: 10, 3: 10 };
+        let diaAdsWatched = 0, lastDiaTime = 0;
+        let rewardType = "", timerRunning = false, remainingTime = 10;
         let fishes = [];
 
-        let rewardType = "";
-        let rewardOpt = 0;
-        let adStartTime = 0;
-        let timerRunning = false;
-        const AD_DURATION = 10; 
+        // --- Notification Audio ---
+        function notifySuccess() {
+            // সাউন্ড বাজানো
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.frequency.value = 880; gain.gain.value = 0.1;
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            
+            // ভাইব্রেশন (মোবাইলের জন্য)
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            
+            // ট্যাব টাইটেল পরিবর্তন
+            document.title = "✅ REWARD READY!";
+            setTimeout(() => { document.title = "Fishing Pro"; }, 5000);
+        }
 
-        function startVerifiedAd(type, opt = 0) {
-            rewardType = type; rewardOpt = opt;
-            if(type === 'dia' && adLimits[opt] <= 0) return alert("Limit reached!");
-            window.open(ADSTERRA_SMARTLINK, '_blank');
-            adStartTime = Date.now();
-            timerRunning = true;
+        function startVerifiedAd(type) {
+            if(type === 'dia' && Date.now() < lastDiaTime) return;
+            rewardType = type; remainingTime = 10; timerRunning = true;
+            document.getElementById("lock-content").style.display = "block";
+            document.getElementById("reward-content").style.display = "none";
             document.getElementById("force-lock").style.display = "flex";
-            updateAdUI(AD_DURATION);
+            window.open(ADSTERRA_SMARTLINK, '_blank');
         }
 
         setInterval(() => {
             if (!timerRunning) return;
-            let elapsed = Math.floor((Date.now() - adStartTime) / 1000);
-            let remaining = AD_DURATION - elapsed;
-            if (document.visibilityState === 'visible' && remaining > 0) {
-                showReturnUI();
-            } else if (remaining <= 0) {
-                completeAd();
+            if (!document.hidden && document.visibilityState === 'visible') {
+                if (remainingTime > 0) {
+                    document.getElementById("lock-title").innerText = "⚠️ PAUSED!";
+                    document.getElementById("action-area").innerHTML = `<button class="return-btn" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 BACK TO AD</button>`;
+                }
             } else {
-                updateAdUI(remaining);
+                remainingTime -= 0.5;
+                if (remainingTime <= 0) {
+                    notifySuccess(); // সাউন্ড এবং ভাইব্রেশন
+                    document.getElementById("lock-content").style.display = "none";
+                    document.getElementById("reward-content").style.display = "flex";
+                } else {
+                    document.getElementById("lock-title").innerText = "WATCHING AD...";
+                    document.getElementById("lock-timer").innerText = Math.ceil(remainingTime);
+                    document.getElementById("myBar").style.width = ((10 - remainingTime) / 10) * 100 + "%";
+                }
             }
         }, 500);
 
-        function updateAdUI(rem) {
-            document.getElementById("lock-timer").innerText = rem;
-            let prog = ((AD_DURATION - rem) / AD_DURATION) * 100;
-            document.getElementById("myBar").style.width = prog + "%";
-            document.getElementById("lock-title").innerText = "AD IS PLAYING...";
-            document.getElementById("lock-title").style.color = "#00f2ff";
-            document.getElementById("action-area").innerHTML = `<p style="color:#aaa;">Verify complete in ${rem} seconds...</p>`;
-        }
-
-        function showReturnUI() {
-            document.getElementById("lock-title").innerText = "⚠️ PAUSED!";
-            document.getElementById("lock-title").style.color = "#ff4757";
-            document.getElementById("action-area").innerHTML = `
-                <p style="color:#ff4757; font-weight:bold;">Don't leave the ad page!</p>
-                <button class="return-btn" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RETURN TO AD</button>
-            `;
-        }
-
-        function completeAd() {
+        function collectReward() {
             timerRunning = false;
             document.getElementById("force-lock").style.display = "none";
-            processReward();
-        }
-
-        function cancelAd() {
-            timerRunning = false;
-            document.getElementById("force-lock").style.display = "none";
-        }
-
-        function processReward() {
-            if(rewardType === 'energy') {
-                energy = 15;
-                db.ref('users/' + userId).update({ energy });
-            } else if(rewardType === 'dia') {
-                adLimits[rewardOpt]--; diamonds++;
-                db.ref('users/' + userId).update({ diamonds, adLimits });
+            if(rewardType === 'energy') energy = 15;
+            else if(rewardType === 'dia') {
+                diamonds++; diaAdsWatched++;
+                if(diaAdsWatched >= 3) { diaAdsWatched = 0; lastDiaTime = Date.now() + (5 * 60 * 1000); }
             }
-            alert("Success! Reward added.");
+            db.ref('users/' + userId).update({ diamonds, energy, diaAdsWatched, lastDiaTime });
         }
 
-        function copyReferLink() {
-            const appLink = `https://t.me/${BOT_USERNAME}/play?startapp=${userId}`;
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(appLink).then(() => {
-                    alert('Link Copied!');
-                }).catch(() => fallbackCopy(appLink));
-            } else { fallbackCopy(appLink); }
-        }
+        function cancelAd() { timerRunning = false; document.getElementById("force-lock").style.display = "none"; }
+        function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
+        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
+        function submitWithdraw() { const uid = document.getElementById('binance-id').value; const amount = document.getElementById('withdraw-usd').value; if(!uid) return alert("Enter UID"); db.ref('Withdraw_Requests/' + Date.now()).set({ userId, binanceUID: uid, amount: amount + " USD", status: "Pending" }); alert("Success!"); closeAll(); }
 
-        function fallbackCopy(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert('Refer link copied!');
-        }
-
+        // Firebase Sync
         db.ref('users/' + userId).on('value', (snap) => {
-            const val = snap.val();
-            if(val) {
-                balance = val.balance || 0;
-                energy = val.energy !== undefined ? val.energy : 15;
-                diamonds = val.diamonds || 0;
-                if(val.adLimits) adLimits = val.adLimits;
-                updateUI();
-                document.getElementById('ad-screen').style.display = (energy <= 0) ? 'flex' : 'none';
-            }
-        });
-
-        function updateUI() {
+            const val = snap.val() || {};
+            balance = val.balance || 0; energy = val.energy !== undefined ? val.energy : 15;
+            diamonds = val.diamonds || 0; diaAdsWatched = val.diaAdsWatched || 0; lastDiaTime = val.lastDiaTime || 0;
             document.getElementById("coins").innerText = balance.toFixed(6);
             document.getElementById("energy-count").innerText = energy;
             document.getElementById("dia-count").innerText = diamonds;
-            document.getElementById("limit-1").innerText = adLimits[1];
-            document.getElementById("limit-2").innerText = adLimits[2];
-            document.getElementById("limit-3").innerText = adLimits[3];
-            document.getElementById("refer-link-box").innerText = `https://t.me/${BOT_USERNAME}/play?startapp=${userId}`;
-        }
+            document.getElementById("ads-watched").innerText = diaAdsWatched;
+            document.getElementById('ad-screen').style.display = (energy <= 0) ? 'flex' : 'none';
+        });
 
-        function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
-        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
-
-        function submitWithdraw() {
-            const uid = document.getElementById('binance-id').value;
-            const usdAmt = document.getElementById('withdraw-usd').value;
-            const diaCost = document.getElementById('withdraw-dia').value;
-            if (!uid || !usdAmt || !diaCost) return alert("Fill all fields!");
-            if (diamonds < parseInt(diaCost)) return alert("Not enough diamonds!");
-            db.ref('Withdraw_Requests/' + Date.now()).set({ userId, binanceUID: uid, amountUSD: usdAmt, status: "Pending" });
-            diamonds -= parseInt(diaCost);
-            db.ref('users/' + userId).update({ diamonds });
-            closeAll(); alert("Request submitted!");
-        }
-
+        // --- GAME ENGINE ---
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        
         let hook = { x: canvas.width / 2, y: 80, state: 'idle' };
 
         function drawFish(x, y, color, dir) {
@@ -256,79 +197,50 @@
             ctx.beginPath(); ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.moveTo(-18, 0); ctx.lineTo(-28, -8); ctx.lineTo(-28, 8); ctx.closePath(); ctx.fill();
             ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(12, -3, 3, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(13, -3, 1.5, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
         }
 
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            
             let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            grad.addColorStop(0, "#00a8e8"); 
-            grad.addColorStop(0.3, "#005c97"); 
-            grad.addColorStop(1, "#00050a"); 
+            grad.addColorStop(0, "#00a8e8"); grad.addColorStop(1, "#00050a");
             ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // --- ছিপের গতি ধীরে করা হয়েছে (৫ সেট করা হয়েছে) ---
-            if(hook.state === 'dropping') { 
-                hook.y += 5; 
-                if(hook.y > canvas.height - 80) hook.state = 'retracting'; 
-            }
+            if(hook.state === 'dropping') { hook.y += 6; if(hook.y > canvas.height - 100) hook.state = 'retracting'; }
             else if(hook.state === 'retracting') { 
-                hook.y -= 5; 
+                hook.y -= 6; 
                 if(hook.y <= 80) { 
                     hook.state = 'idle'; 
                     let caught = fishes.filter(f => f.caught); 
-                    if(caught.length > 0) { 
-                        balance += caught.length * 0.00005; 
-                        db.ref('users/'+userId).update({balance}); 
-                        fishes = fishes.filter(f => !f.caught); 
-                    } 
+                    if(caught.length > 0) { balance += caught.length * 0.00005; db.ref('users/'+userId).update({balance}); fishes = fishes.filter(f => !f.caught); } 
                 } 
             }
-
-            ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 1.5;
-            ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
             
-            ctx.strokeStyle = "silver"; ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.arc(hook.x, hook.y + 10, 8, 0, Math.PI); ctx.stroke();
+            ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
+            ctx.strokeStyle = "silver"; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.arc(hook.x, hook.y + 10, 10, 0.2 * Math.PI, 0.8 * Math.PI); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(hook.x, hook.y); ctx.lineTo(hook.x, hook.y + 10); ctx.stroke();
 
-            while(fishes.length < 12) { 
-                fishes.push({ 
-                    x: Math.random()*canvas.width, 
-                    y: 150 + Math.random()*(canvas.height-250),
-                    speed: 1 + Math.random()*2, 
-                    dir: Math.random()>0.5?1:-1, 
-                    caught: false, 
-                    color: `hsl(${Math.random()*360}, 60%, 40%)` 
-                }); 
-            }
-
+            while(fishes.length < 12) { fishes.push({ x: Math.random()*canvas.width, y: 150+Math.random()*(canvas.height-250), speed: 1.5+Math.random()*2, dir: Math.random()>0.5?1:-1, caught: false, color: `hsl(${Math.random()*360}, 60%, 45%)` }); }
             fishes.forEach(f => { 
-                if(f.caught) { 
-                    f.x = hook.x; f.y = hook.y + 20; 
-                } else { 
+                if(f.caught) { f.x = hook.x; f.y = hook.y + 25; } 
+                else { 
                     f.x += f.speed * f.dir; 
-                    if(f.x > canvas.width + 50) f.dir = -1; 
-                    if(f.x < -50) f.dir = 1; 
-                    if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; 
+                    if(f.x > canvas.width + 50) f.dir = -1; if(f.x < -50) f.dir = 1; 
+                    if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, (hook.y+15)-f.y) < 25) f.caught = true; 
                 } 
                 drawFish(f.x, f.y, f.color, f.dir); 
             });
-
             requestAnimationFrame(draw);
         }
 
         window.onclick = (e) => { 
             if(document.querySelector('.modal[style*="display: block"]') || e.target.closest('#nav-bar') || energy <= 0 || timerRunning) return; 
-            if(hook.state === 'idle') { 
-                hook.state = 'dropping'; 
-                energy--; 
-                db.ref('users/' + userId).update({ energy }); 
-            } 
+            if(hook.state === 'idle') { hook.state = 'dropping'; energy--; db.ref('users/' + userId).update({ energy }); } 
         };
         draw();
     </script>
 </body>
-    </html>
-                                                                              
+</html>
+
