@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Link Fixed</title>
+    <title>Fishing Pro - Deep & Slow</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
+        body { margin: 0; padding: 0; background: #000a12; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
         .stat-box { background: rgba(0, 30, 50, 0.9); backdrop-filter: blur(8px); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
         
@@ -48,7 +48,7 @@
 
     <div id="top-ui">
         <div class="stat-box" style="color:#00f2ff;">💰 $<span id="coins">0.000000</span></div>
-        <div class="stat-box" style="color:#ffd700;">⚡ <span id="energy-count">5</span>/5</div>
+        <div class="stat-box" style="color:#ffd700;">⚡ <span id="energy-count">15</span>/15</div>
         <div class="stat-box" style="color:#ff00e6;">💎 <span id="dia-count">0</span></div>
     </div>
 
@@ -72,12 +72,6 @@
         <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
     </div>
 
-    <div id="sea-shop" class="modal">
-        <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#00f2ff;">⚓ SEA SHOP</h3>
-        <div id="level-list"></div>
-    </div>
-
     <div id="withdraw-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#27ae60;">💸 WITHDRAW</h3>
@@ -99,7 +93,6 @@
 
     <div id="nav-bar">
         <div class="nav-item" onclick="openShop('refer-modal')"><span>👥</span><span class="nav-text">Refer</span></div>
-        <div class="nav-item" onclick="openShop('sea-shop')"><span>🛒</span><span class="nav-text">Shop</span></div>
         <div class="nav-item" onclick="openShop('withdraw-modal')"><span>💰</span><span class="nav-text">Withdraw</span></div>
         <div class="nav-item" onclick="openShop('diamond-modal')"><span>💎</span><span class="nav-text">Diamond</span></div>
     </div>
@@ -111,8 +104,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
-        
-        // দাদু, আপনার বটের ইউজারনেম এখানে আপডেট করে দিয়েছি
         const BOT_USERNAME = "Referralincamebd01311_bot"; 
 
         const firebaseConfig = {
@@ -124,7 +115,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let balance = 0, energy = 5, diamonds = 0, currentLvl = 1;
+        let balance = 0, energy = 15, diamonds = 0;
         let adLimits = { 1: 10, 2: 10, 3: 10 };
         let fishes = [];
 
@@ -188,7 +179,8 @@
 
         function processReward() {
             if(rewardType === 'energy') {
-                energy = 5; db.ref('users/' + userId).update({ energy });
+                energy = 15;
+                db.ref('users/' + userId).update({ energy });
             } else if(rewardType === 'dia') {
                 adLimits[rewardOpt]--; diamonds++;
                 db.ref('users/' + userId).update({ diamonds, adLimits });
@@ -196,20 +188,13 @@
             alert("Success! Reward added.");
         }
 
-        // --- রেফারেল লিঙ্ক কপি করার ফিক্সড ফাংশন ---
         function copyReferLink() {
-            // দাদু, এখানে সরাসরি আপনার বটের লিঙ্ক এবং আপনার GitHub-এর WebApp ওপেন হওয়ার লিঙ্ক দিয়েছি
             const appLink = `https://t.me/${BOT_USERNAME}/play?startapp=${userId}`;
-            
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(appLink).then(() => {
-                    alert('Direct App Link Copied!');
-                }).catch(() => {
-                    fallbackCopy(appLink);
-                });
-            } else {
-                fallbackCopy(appLink);
-            }
+                    alert('Link Copied!');
+                }).catch(() => fallbackCopy(appLink));
+            } else { fallbackCopy(appLink); }
         }
 
         function fallbackCopy(text) {
@@ -217,22 +202,17 @@
             textArea.value = text;
             document.body.appendChild(textArea);
             textArea.select();
-            try {
-                document.execCommand('copy');
-                alert('Refer link copied!');
-            } catch (err) {
-                alert('Copy failed. Manual copy needed.');
-            }
+            document.execCommand('copy');
             document.body.removeChild(textArea);
+            alert('Refer link copied!');
         }
 
         db.ref('users/' + userId).on('value', (snap) => {
             const val = snap.val();
             if(val) {
                 balance = val.balance || 0;
-                energy = val.energy !== undefined ? val.energy : 5;
+                energy = val.energy !== undefined ? val.energy : 15;
                 diamonds = val.diamonds || 0;
-                currentLvl = val.level || 1;
                 if(val.adLimits) adLimits = val.adLimits;
                 updateUI();
                 document.getElementById('ad-screen').style.display = (energy <= 0) ? 'flex' : 'none';
@@ -246,12 +226,10 @@
             document.getElementById("limit-1").innerText = adLimits[1];
             document.getElementById("limit-2").innerText = adLimits[2];
             document.getElementById("limit-3").innerText = adLimits[3];
-            
-            // UI তেও সরাসরি লিঙ্কটি দেখা যাবে
             document.getElementById("refer-link-box").innerText = `https://t.me/${BOT_USERNAME}/play?startapp=${userId}`;
         }
 
-        function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; if(id==='sea-shop') renderShop(); }
+        function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
 
         function submitWithdraw() {
@@ -266,22 +244,10 @@
             closeAll(); alert("Request submitted!");
         }
 
-        function renderShop() {
-            const levels = [{id: 1, p: 0}, {id: 2, p: 2}, {id: 3, p: 3}, {id: 4, p: 4}, {id: 5, p: 5}];
-            document.getElementById("level-list").innerHTML = levels.map(l => {
-                let status = l.id <= currentLvl ? 'OWNED' : (l.id === currentLvl + 1 ? 'BUY $'+l.p : 'LOCKED');
-                return `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; margin-bottom:8px;">
-                    <b>Level ${l.id}</b>
-                    <button class="btn-action" style="width:auto; padding:5px 12px;" onclick="${l.id === currentLvl + 1 ? `buyLvl(${l.p},${l.id})` : ''}">${status}</button>
-                </div>`;
-            }).join('');
-        }
-
-        function buyLvl(p, id) { if (balance >= p) { balance -= p; currentLvl = id; db.ref('users/' + userId).update({ balance, level: currentLvl }); } }
-
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        
         let hook = { x: canvas.width / 2, y: 80, state: 'idle' };
 
         function drawFish(x, y, color, dir) {
@@ -296,26 +262,73 @@
 
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
+            
             let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            grad.addColorStop(0, "#00a8e8"); grad.addColorStop(1, "#001e30");
+            grad.addColorStop(0, "#00a8e8"); 
+            grad.addColorStop(0.3, "#005c97"); 
+            grad.addColorStop(1, "#00050a"); 
             ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            if(hook.state === 'dropping') { hook.y += 10; if(hook.y > canvas.height - 180) hook.state = 'retracting'; }
-            else if(hook.state === 'retracting') { hook.y -= 10; if(hook.y <= 80) { hook.state = 'idle'; let caught = fishes.filter(f => f.caught); if(caught.length > 0) { balance += caught.length * 0.00005; db.ref('users/'+userId).update({balance}); fishes = fishes.filter(f => !f.caught); } } }
-            ctx.strokeStyle = "white"; ctx.lineWidth = 2;
+
+            // --- ছিপের গতি ধীরে করা হয়েছে (৫ সেট করা হয়েছে) ---
+            if(hook.state === 'dropping') { 
+                hook.y += 5; 
+                if(hook.y > canvas.height - 80) hook.state = 'retracting'; 
+            }
+            else if(hook.state === 'retracting') { 
+                hook.y -= 5; 
+                if(hook.y <= 80) { 
+                    hook.state = 'idle'; 
+                    let caught = fishes.filter(f => f.caught); 
+                    if(caught.length > 0) { 
+                        balance += caught.length * 0.00005; 
+                        db.ref('users/'+userId).update({balance}); 
+                        fishes = fishes.filter(f => !f.caught); 
+                    } 
+                } 
+            }
+
+            ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 1.5;
             ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
-            ctx.strokeStyle = "#ddd"; ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.arc(hook.x, hook.y + 10, 10, 0, Math.PI); ctx.stroke();
-            while(fishes.length < (currentLvl * 4)) { fishes.push({ x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-450), speed: 1.5+Math.random()*1.5, dir: Math.random()>0.5?1:-1, caught: false, color: `hsl(${Math.random()*360}, 70%, 50%)` }); }
-            fishes.forEach(f => { if(f.caught) { f.x = hook.x; f.y = hook.y + 25; } else { f.x += f.speed * f.dir; if(f.x > canvas.width + 30) f.dir = -1; if(f.x < -30) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; } drawFish(f.x, f.y, f.color, f.dir); });
+            
+            ctx.strokeStyle = "silver"; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(hook.x, hook.y + 10, 8, 0, Math.PI); ctx.stroke();
+
+            while(fishes.length < 12) { 
+                fishes.push({ 
+                    x: Math.random()*canvas.width, 
+                    y: 150 + Math.random()*(canvas.height-250),
+                    speed: 1 + Math.random()*2, 
+                    dir: Math.random()>0.5?1:-1, 
+                    caught: false, 
+                    color: `hsl(${Math.random()*360}, 60%, 40%)` 
+                }); 
+            }
+
+            fishes.forEach(f => { 
+                if(f.caught) { 
+                    f.x = hook.x; f.y = hook.y + 20; 
+                } else { 
+                    f.x += f.speed * f.dir; 
+                    if(f.x > canvas.width + 50) f.dir = -1; 
+                    if(f.x < -50) f.dir = 1; 
+                    if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; 
+                } 
+                drawFish(f.x, f.y, f.color, f.dir); 
+            });
+
             requestAnimationFrame(draw);
         }
 
         window.onclick = (e) => { 
             if(document.querySelector('.modal[style*="display: block"]') || e.target.closest('#nav-bar') || energy <= 0 || timerRunning) return; 
-            if(hook.state === 'idle') { hook.state = 'dropping'; energy--; db.ref('users/' + userId).update({ energy }); } 
+            if(hook.state === 'idle') { 
+                hook.state = 'dropping'; 
+                energy--; 
+                db.ref('users/' + userId).update({ energy }); 
+            } 
         };
         draw();
     </script>
 </body>
-</html>
-
+    </html>
+                                                                              
