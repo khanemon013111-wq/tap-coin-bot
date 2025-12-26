@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Diamond Task Fixed</title>
+    <title>Fishing Pro - Fixed Direction</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -14,19 +14,15 @@
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
         .stat-box { background: rgba(0, 30, 50, 0.9); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
         
-        /* Verification Lock */
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        .progress-container { width: 80%; height: 10px; background: #333; border-radius: 10px; margin: 20px 0; overflow: hidden; border: 1px solid #00f2ff; }
-        .progress-bar { width: 0%; height: 100%; background: #00f2ff; transition: width 0.3s linear; }
-        #lock-timer { font-size: 70px; font-weight: bold; color: #ffd700; }
+        .progress-container, #lock-title, #lock-timer { display: none; } 
+        #lock-info-text { font-size: 20px; font-weight: bold; color: #ffd700; margin-bottom: 25px; }
 
-        /* Modals */
         .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
-        .btn-action:disabled { background: #333 !important; color: #777; cursor: not-allowed; }
 
-        input, select { width: 95%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #00f2ff; background: #001525; color: white; }
+        input, select { width: 95%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; }
         
         #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #00f2ff; cursor: pointer; flex: 1; }
@@ -37,10 +33,8 @@
 <body>
 
     <div id="force-lock">
-        <h2 id="lock-title" style="color:#00f2ff; margin:0;">VERIFYING...</h2>
-        <div class="progress-container"><div id="myBar" class="progress-bar"></div></div>
-        <div id="lock-timer">10</div>
-        <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 BACK TO AD PAGE</button>
+        <div id="lock-info-text">Watch ad for 10 seconds</div>
+        <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RE-OPEN AD PAGE</button>
     </div>
 
     <div id="top-ui">
@@ -53,9 +47,7 @@
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#ff00e6;">💎 DIAMOND TASK</h3>
         <p style="font-size:12px; color:#aaa;">1 Ad = 1 Diamond (Max 3 turns)</p>
-        
         <button id="dia-ad-btn" class="btn-action" onclick="startVerifiedAd('dia')">📺 WATCH AD (<span id="task-count">3</span>/3)</button>
-        
         <div id="cooldown-area" style="display:none; margin-top:15px;">
             <p style="color:#ffd700; font-size:13px; font-weight:bold;">LIMIT REACHED!</p>
             <p id="cooldown-timer" style="color:#00f2ff; font-size:22px; font-weight:bold;">05:00</p>
@@ -103,18 +95,16 @@
         const db = firebase.database();
 
         let balance = 0, energy = 15, diamonds = 0, tasksDone = 0, nextResetTime = 0;
-        let adStartTime = 0, timerActive = false, rewardType = "";
-        let fishes = [];
+        let adStartTime = 0, timerActive = false, fishes = [];
 
         function startVerifiedAd(type) {
             if (tasksDone >= 3) return;
-            rewardType = type; adStartTime = Date.now(); timerActive = true;
+            adStartTime = Date.now(); timerActive = true;
             window.open(ADSTERRA_SMARTLINK, '_blank');
             document.getElementById("force-lock").style.display = "flex";
         }
 
         setInterval(() => {
-            // 5 Minute Cooldown Logic
             if (nextResetTime > 0) {
                 let diff = Math.floor((nextResetTime - Date.now()) / 1000);
                 if (diff <= 0) {
@@ -128,45 +118,57 @@
                     document.getElementById("dia-ad-btn").style.display = "none";
                 }
             }
-
-            if (!timerActive) return;
-            let elapsed = (Date.now() - adStartTime) / 1000;
-            let remaining = 10 - elapsed;
-            if (document.visibilityState === 'visible' && remaining > 0) adStartTime += 450;
-            
-            if (remaining > 0) {
-                document.getElementById("lock-timer").innerText = Math.ceil(remaining);
-                document.getElementById("myBar").style.width = (elapsed / 10 * 100) + "%";
-            } else {
-                completeAdTask();
+            if (timerActive) {
+                let elapsed = (Date.now() - adStartTime) / 1000;
+                if (elapsed >= 5) {
+                    timerActive = false;
+                    document.getElementById("force-lock").style.display = "none";
+                    tasksDone++; diamonds++;
+                    if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000);
+                    saveData();
+                }
             }
         }, 500);
 
-        function completeAdTask() {
-            timerActive = false;
-            document.getElementById("force-lock").style.display = "none";
-            
-            tasksDone++;
-            diamonds += 1; // প্রতি অ্যাডে ১ ডায়মন্ড
-            
-            if(tasksDone >= 3) {
-                nextResetTime = Date.now() + (5 * 60 * 1000); // ৩টা শেষ হলে ৫ মিনিট টাইমার
-            }
-            saveData();
-        }
-
-        // --- Realistic Fish Drawing ---
+        // --- মাছের মুখ এবং ডিজাইনের ফিক্সড ফাংশন ---
         function drawRealisticFish(ctx, f) {
             ctx.save();
             ctx.translate(f.x, f.y);
-            if (f.dir === 1) ctx.scale(-1, 1);
+            
+            // দিক সংশোধন: f.dir যদি -১ হয় তবে বামে, ১ হলে ডানে মুখ থাকবে
+            if (f.dir === -1) {
+                ctx.scale(-1, 1);
+            }
+
             ctx.fillStyle = f.color;
-            ctx.beginPath(); ctx.moveTo(18, 0); ctx.quadraticCurveTo(5, -14, -15, -2);
-            ctx.quadraticCurveTo(-15, 2, 5, 14); ctx.quadraticCurveTo(18, 0, 18, 0); ctx.fill();
-            let tailW = Math.sin(Date.now() * 0.01 + f.x) * 4;
-            ctx.beginPath(); ctx.moveTo(-14, 0); ctx.lineTo(-26, -12 + tailW); ctx.lineTo(-22, 0); ctx.lineTo(-26, 12 - tailW); ctx.fill();
-            ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(10, -4, 3, 0, 6.28); ctx.fill();
-            ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(11, -4, 1.5, 0, 6.28); ctx.fill();
+            
+            // বডি শেপ
+            ctx.beginPath();
+            ctx.moveTo(22, 0); // মুখ
+            ctx.quadraticCurveTo(5, -16, -15, -6);
+            ctx.quadraticCurveTo(-22, 0, -15, 6);
+            ctx.quadraticCurveTo(5, 16, 22, 0);
+            ctx.fill();
+
+            // লেজ (Tail)
+            let tailMove = Math.sin(Date.now() * 0.01 + f.x) * 5;
+            ctx.beginPath();
+            ctx.moveTo(-15, 0);
+            ctx.lineTo(-28, -14 + tailMove);
+            ctx.lineTo(-24, 0);
+            ctx.lineTo(-28, 14 - tailMove);
+            ctx.fill();
+
+            // পাখনা
+            ctx.beginPath();
+            ctx.moveTo(0, -8); ctx.lineTo(-10, -18); ctx.lineTo(-12, -4); ctx.fill();
+
+            // চোখ
+            ctx.fillStyle = "white";
+            ctx.beginPath(); ctx.arc(14, -4, 3.5, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "black";
+            ctx.beginPath(); ctx.arc(15, -4, 1.8, 0, Math.PI * 2); ctx.fill();
+
             ctx.restore();
         }
 
@@ -176,13 +178,21 @@
         let hook = { x: canvas.width/2, y: 80, state: 'idle' };
 
         function createFish() {
-            return { x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-350), speed: 0.8+Math.random(), dir: Math.random()>0.5?1:-1, color: `hsl(${Math.random()*360}, 65%, 45%)`, caught: false };
+            return { 
+                x: Math.random()*canvas.width, 
+                y: 250+Math.random()*(canvas.height-350), 
+                speed: 0.7+Math.random()*0.9, 
+                dir: Math.random()>0.5?1:-1, 
+                color: `hsl(${Math.random()*360}, 75%, 45%)`, 
+                caught: false 
+            };
         }
         for(let i=0; i<12; i++) fishes.push(createFish());
 
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            let bg = ctx.createLinearGradient(0,0,0,canvas.height); bg.addColorStop(0,"#00a8e8"); bg.addColorStop(1,"#001e30");
+            let bg = ctx.createLinearGradient(0,0,0,canvas.height);
+            bg.addColorStop(0,"#00a8e8"); bg.addColorStop(1,"#001e30");
             ctx.fillStyle = bg; ctx.fillRect(0,0,canvas.width, canvas.height);
 
             if(hook.state === 'dropping') { hook.y += 10; if(hook.y > canvas.height-120) hook.state = 'retracting'; }
@@ -195,7 +205,10 @@
                 if(f.caught) { f.x = hook.x; f.y = hook.y + 15; }
                 else {
                     f.x += f.speed * f.dir;
-                    if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1;
+                    // বাউন্ডারি চেক এবং মুখ ঘুরানো
+                    if(f.x > canvas.width+50) { f.dir = -1; } 
+                    if(f.x < -50) { f.dir = 1; }
+                    
                     if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true;
                 }
                 drawRealisticFish(ctx, f);
@@ -239,5 +252,5 @@
         draw();
     </script>
 </body>
-</html>
+    </html>
 
