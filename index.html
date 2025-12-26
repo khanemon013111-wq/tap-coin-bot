@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Fixed Ad Timer</title>
+    <title>Fishing Pro - 20s Ad Logic with English Text</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -15,7 +15,7 @@
         .stat-box { background: rgba(0, 30, 50, 0.9); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
         
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        #lock-info-text { font-size: 20px; font-weight: bold; color: #ffd700; margin-bottom: 25px; }
+        #lock-info-text { font-size: 18px; font-weight: bold; color: #ffd700; margin-bottom: 25px; line-height: 1.5; }
 
         .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
@@ -32,7 +32,7 @@
 <body>
 
     <div id="force-lock">
-        <div id="lock-info-text">অ্যাডটি ১০ সেকেন্ড দেখুন...</div>
+        <div id="lock-info-text">Please watch the ad for 10 seconds</div>
         <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RE-OPEN AD PAGE</button>
     </div>
 
@@ -123,7 +123,8 @@
             }
             if (timerActive) {
                 let elapsed = (Date.now() - adStartTime) / 1000;
-                if (elapsed >= 10) { // এখানে ১০ সেকেন্ড করা হয়েছে
+                // লজিক ২০ সেকেন্ডই রাখা হলো (২০.৫ সেকেন্ড কড়া চেক)
+                if (elapsed >= 20.5) { 
                     timerActive = false;
                     document.getElementById("force-lock").style.display = "none";
                     if(rewardType === 'dia') { diamonds++; tasksDone++; if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); }
@@ -131,7 +132,7 @@
                     saveData();
                 }
             }
-        }, 1000);
+        }, 500);
 
         function drawRealisticFish(ctx, f) {
             ctx.save();
@@ -224,5 +225,5 @@
         draw();
     </script>
 </body>
-                                                                                  </html>
+    </html>
     
