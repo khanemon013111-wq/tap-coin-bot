@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Alert Logic</title>
+    <title>Fishing Pro - Smart Timer</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -12,7 +12,7 @@
     <style>
         body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
-        .stat-box { background: rgba(0, 30, 50, 0.9); backdrop-filter: blur(8px); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
+        .stat-box { background: rgba(0, 30, 50, 0.9); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
         
         .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 20px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
@@ -22,26 +22,28 @@
         .nav-text { font-size: 8px; font-weight: bold; text-transform: uppercase; margin-top: 3px; }
         
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
-        
+
+        /* Anti-Cheat Lock UI */
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        .progress-container { width: 80%; height: 10px; background: #333; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        .progress-container { width: 80%; height: 10px; background: #333; border-radius: 10px; margin: 20px 0; overflow: hidden; border: 1px solid #00f2ff; }
         .progress-bar { width: 0%; height: 100%; background: #00f2ff; transition: width 0.5s linear; }
-        #lock-timer { font-size: 80px; font-weight: bold; color: #ffd700; }
-        .return-btn { background: #ffd700; color: #000; border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; display: none; }
+        #lock-timer { font-size: 70px; font-weight: bold; color: #ffd700; }
+        .resume-btn { background: #ffd700; color: #000; border: none; padding: 15px 30px; border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         #ad-screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 25, 0.95); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         canvas { display: block; }
+        input, select { width: 90%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: none; }
     </style>
 </head>
 <body>
 
     <div id="force-lock">
-        <h2 id="lock-title" style="color:#00f2ff; margin:0;">VERIFYING...</h2>
+        <h2 id="lock-title" style="color:#00f2ff; margin:0;">WATCHING AD...</h2>
         <div class="progress-container"><div id="myBar" class="progress-bar"></div></div>
         <div id="lock-timer">10</div>
-        <button id="resume-ad-btn" class="return-btn" onclick="openAdLink()">🚀 BACK TO AD</button>
-        <p id="status-msg" style="color:#aaa;">Keep the ad page active</p>
-        <small onclick="cancelAd()" style="color:#444; text-decoration:underline; margin-top: 30px; cursor:pointer;">Cancel</small>
+        <button class="resume-btn" onclick="openAdLink()">🚀 BACK TO AD PAGE</button>
+        <p style="color:#888; font-size: 12px; margin-top: 15px;">Success message will pop-up after 10s</p>
     </div>
 
     <div id="top-ui">
@@ -51,16 +53,31 @@
     </div>
 
     <div id="ad-screen">
-        <h2 style="color:#ffd700;">⚡ NO ENERGY!</h2>
-        <button class="btn-action" style="width: 200px; background:#ffd700; color:black;" onclick="startVerifiedAd('energy')">📺 REFILL (10s AD)</button>
+        <h2 style="color:#ffd700;">⚡ NO ENERGY</h2>
+        <button class="btn-action" style="width: 200px; background:#ffd700; color:000;" onclick="startVerifiedAd('energy')">📺 REFILL ENERGY (AD)</button>
+    </div>
+
+    <div id="withdraw-modal" class="modal">
+        <button class="close-btn" onclick="closeAll()">×</button>
+        <h3 style="color:#27ae60;">💸 WITHDRAW</h3>
+        <input type="number" id="binance-uid" placeholder="Binance UID">
+        <select id="wd-amount">
+            <option value="5">5.00 USD (5,000 Diamonds)</option>
+            <option value="10">10.00 USD (10,000 Diamonds)</option>
+            <option value="15">15.00 USD (15,000 Diamonds)</option>
+            <option value="20">20.00 USD (20,000 Diamonds)</option>
+        </select>
+        <button class="btn-action" style="background:#27ae60;" onclick="submitWithdraw()">SUBMIT REQUEST</button>
     </div>
 
     <div id="diamond-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#ff00e6;">💎 DIAMOND</h3>
+        <h3 style="color:#ff00e6;">💎 DIAMOND TASK</h3>
         <button id="dia-ad-btn" class="btn-action" onclick="startVerifiedAd('dia')">📺 WATCH AD (<span id="ad-count-view">3</span>/3)</button>
         <div id="timer-display" style="display:none; margin-top:15px; font-weight:bold; color:#ffd700;">Wait: <span id="wait-time">05:00</span></div>
     </div>
+
+    <div id="refer-modal" class="modal"><button class="close-btn" onclick="closeAll()">×</button><h3>👥 REFERRAL</h3><div id="refer-link-box" style="font-size:10px; background:rgba(255,255,255,0.1); padding:10px; border-radius:8px; word-break:break-all;">Loading...</div><button class="btn-action" onclick="copyReferLink()">COPY LINK</button></div>
 
     <div id="nav-bar">
         <div class="nav-item" onclick="openShop('refer-modal')"><span>👥</span><span class="nav-text">Refer</span></div>
@@ -68,14 +85,10 @@
         <div class="nav-item" onclick="openShop('diamond-modal')"><span>💎</span><span class="nav-text">Diamond</span></div>
     </div>
 
-    <div id="refer-modal" class="modal"><button class="close-btn" onclick="closeAll()">×</button><h3 style="color:#00f2ff;">👥 REFERRAL</h3><div id="refer-link-box" style="word-break: break-all; font-size: 10px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px;">Loading...</div><button class="btn-action" onclick="copyReferLink()">COPY LINK</button></div>
-    <div id="withdraw-modal" class="modal"><button class="close-btn" onclick="closeAll()">×</button><h3 style="color:#27ae60;">💸 WITHDRAW</h3><input type="number" id="binance-uid" style="width:90%; padding:10px; margin-bottom:10px; border-radius:8px; border:none;" placeholder="Binance UID"><button class="btn-action" style="background:#27ae60;" onclick="submitWithdraw()">SUBMIT</button></div>
-
     <canvas id="gameCanvas"></canvas>
 
     <script>
         const ADSTERRA_SMARTLINK = "https://www.effectivegatecpm.com/rarb5qds06?key=79349eb6a9357e2e416a3ef19425a5c1";
-        
         const tg = window.Telegram.WebApp; tg.expand();
         const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
         const BOT_USERNAME = "Referralincamebd01311_bot";
@@ -109,38 +122,43 @@
 
         setInterval(() => {
             if (!timerActive) return;
-
             if (document.visibilityState === 'visible') {
-                if (adTimeRemaining > 0) {
-                    document.getElementById("resume-ad-btn").style.display = "block";
-                    document.getElementById("lock-title").innerText = "⚠️ PAUSED";
-                }
+                document.getElementById("lock-title").innerText = "⚠️ AD PAUSED";
             } else {
-                document.getElementById("resume-ad-btn").style.display = "none";
-                document.getElementById("lock-title").innerText = "WAITING...";
+                document.getElementById("lock-title").innerText = "WATCHING...";
                 adTimeRemaining -= 0.5;
             }
-
             let disp = Math.max(0, Math.ceil(adTimeRemaining));
             document.getElementById("lock-timer").innerText = disp;
             document.getElementById("myBar").style.width = ((10 - adTimeRemaining) / 10 * 100) + "%";
 
             if (adTimeRemaining <= 0) {
                 timerActive = false;
-                
-                // আপনার চাহিদা মতো অ্যালার্ট মেসেজ যা অ্যাড পেজের ওপর দেখাবে
-                alert("Reward Added! Success");
-                
                 document.getElementById("force-lock").style.display = "none";
+                
                 if(rewardType === 'energy') energy = 15;
                 else if(rewardType === 'dia') {
-                    diamonds++; adCount++;
+                    diamonds += 10; adCount++;
                     if(adCount >= 3) { adCount = 0; nextClaimTime = Date.now() + (5 * 60 * 1000); }
                 }
                 saveData();
+                
+                // ইউজার অন্য ট্যাবে থাকলেও এই মেসেজটি পপ-আপ হবে
+                alert("Task Complete! Reward Added. You can return now.");
             }
         }, 500);
 
+        function submitWithdraw() {
+            const uid = document.getElementById('binance-uid').value;
+            const amt = parseInt(document.getElementById('wd-amount').value);
+            const cost = amt * 1000;
+            if(!uid) return alert("Enter Binance ID!");
+            if(diamonds < cost) return alert("Need more Diamonds!");
+            db.ref('Withdraw_Requests/' + Date.now()).set({ userId, binanceID: uid, amount: amt + " USD", status: "Pending" });
+            diamonds -= cost; saveData(); closeAll(); alert("Requested!");
+        }
+
+        // Fish Game Drawing (Full Code Included)
         function drawFish(x, y, color, dir) {
             ctx.save(); ctx.translate(x, y); if (dir === -1) ctx.scale(-1, 1);
             ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
@@ -177,16 +195,14 @@
             if(caught > 0) { balance += caught * 0.00005; fishes = fishes.filter(f => !f.caught); saveData(); }
         }
 
-        window.onclick = (e) => {
+        window.onclick = () => {
             if(document.querySelector('.modal[style*="block"]') || energy <= 0 || hook.state !== 'idle' || timerActive) return;
             hook.state = 'dropping'; energy--; saveData();
         };
 
         function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, adCount, nextClaimTime }); }
-
         db.ref('users/' + userId).on('value', (snap) => {
-            const val = snap.val();
-            if(val) {
+            const val = snap.val(); if(val) {
                 balance = val.balance || 0; energy = val.energy !== undefined ? val.energy : 15;
                 diamonds = val.diamonds || 0; adCount = val.adCount || 0; nextClaimTime = val.nextClaimTime || 0;
                 document.getElementById("coins").innerText = balance.toFixed(6);
@@ -200,22 +216,18 @@
 
         function updateDiamondTimer() {
             const btn = document.getElementById("dia-ad-btn");
-            const timerDiv = document.getElementById("timer-display");
             const timeLeft = nextClaimTime - Date.now();
             if(timeLeft > 0) {
-                btn.disabled = true; timerDiv.style.display = "block";
+                btn.disabled = true; document.getElementById("timer-display").style.display = "block";
                 let mins = Math.floor(timeLeft / 60000), secs = Math.floor((timeLeft % 60000) / 1000);
                 document.getElementById("wait-time").innerText = `${mins}:${secs < 10 ? '0'+secs : secs}`;
-                document.getElementById("ad-count-view").innerText = "0";
             } else {
-                btn.disabled = false; timerDiv.style.display = "none";
-                document.getElementById("ad-count-view").innerText = 3 - adCount;
+                btn.disabled = false; document.getElementById("timer-display").style.display = "none";
             }
         }
         setInterval(updateDiamondTimer, 1000);
 
-        function copyReferLink() { navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}/play?startapp=${userId}`).then(() => alert('Copied!')); }
-        function submitWithdraw() { alert("Request Sent!"); closeAll(); }
+        function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert('Copied!')); }
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
         function cancelAd() { timerActive = false; document.getElementById("force-lock").style.display = "none"; }
@@ -223,5 +235,5 @@
         draw();
     </script>
 </body>
-</html>
-
+    </html>
+        
