@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Classic UI Realistic Fish</title>
+    <title>Fishing Pro - Fixed Ad Timer</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -17,14 +17,12 @@
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         #lock-info-text { font-size: 20px; font-weight: bold; color: #ffd700; margin-bottom: 25px; }
 
-        /* আগের সেই সুন্দর মোডাল ডিজাইন */
         .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
 
         input, select { width: 95%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; }
         
-        /* নেভ বার অপশনসমূহ */
         #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #00f2ff; cursor: pointer; flex: 1; }
         .nav-text { font-size: 10px; font-weight: bold; margin-top: 4px; }
@@ -34,7 +32,7 @@
 <body>
 
     <div id="force-lock">
-        <div id="lock-info-text">Watch ad for 10 seconds</div>
+        <div id="lock-info-text">অ্যাডটি ১০ সেকেন্ড দেখুন...</div>
         <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RE-OPEN AD PAGE</button>
     </div>
 
@@ -116,17 +114,16 @@
         setInterval(() => {
             if (nextResetTime > 0) {
                 let diff = Math.floor((nextResetTime - Date.now()) / 1000);
-                if (diff <= 0) { tasksDone = 0; nextResetTime = 0; saveData(); document.getElementById("cooldown-area").style.display = "none"; document.getElementById("dia-ad-btn").style.display = "block"; }
+                if (diff <= 0) { tasksDone = 0; nextResetTime = 0; saveData(); document.getElementById("cooldown-area").style.display = "none"; }
                 else {
                     let m = Math.floor(diff/60); let s = diff%60;
                     document.getElementById("cooldown-timer").innerText = `${m}:${s.toString().padStart(2,'0')}`;
                     document.getElementById("cooldown-area").style.display = "block";
-                    document.getElementById("dia-ad-btn").style.display = "none";
                 }
             }
             if (timerActive) {
                 let elapsed = (Date.now() - adStartTime) / 1000;
-                if (elapsed >= 5) {
+                if (elapsed >= 10) { // এখানে ১০ সেকেন্ড করা হয়েছে
                     timerActive = false;
                     document.getElementById("force-lock").style.display = "none";
                     if(rewardType === 'dia') { diamonds++; tasksDone++; if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); }
@@ -136,32 +133,22 @@
             }
         }, 1000);
 
-        // --- অরিজিনাল মাছের ডিজাইন এবং দিক সংশোধন ---
         function drawRealisticFish(ctx, f) {
             ctx.save();
             ctx.translate(f.x, f.y);
-            // দিক সংশোধন (f.dir ১ হলে ডানে মুখ, -১ হলে বামে)
             if (f.dir === -1) ctx.scale(-1, 1);
-
             let g = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
             g.addColorStop(0, f.color); g.addColorStop(1, "rgba(0,0,0,0.5)");
             ctx.fillStyle = g;
-
-            // বডি শেপ
             ctx.beginPath();
-            ctx.moveTo(25, 0); 
-            ctx.quadraticCurveTo(10, -18, -15, -8); 
+            ctx.moveTo(25, 0); ctx.quadraticCurveTo(10, -18, -15, -8); 
             ctx.lineTo(-20, -12); ctx.lineTo(-15, -5); 
             ctx.quadraticCurveTo(-25, 0, -15, 5); 
             ctx.lineTo(-20, 12); ctx.lineTo(-15, 8); 
             ctx.quadraticCurveTo(10, 18, 25, 0);
             ctx.fill();
-
-            // লেজ অ্যানিমেশন
             let w = Math.sin(Date.now() * 0.01 + f.x) * 6;
             ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(-35, -15+w); ctx.lineTo(-30, 0); ctx.lineTo(-35, 15-w); ctx.fill();
-
-            // চোখ
             ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(16, -4, 4, 0, 7); ctx.fill();
             ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(18, -4, 2, 0, 7); ctx.fill();
             ctx.restore();
@@ -237,5 +224,5 @@
         draw();
     </script>
 </body>
-</html>
-
+                                                                                  </html>
+    
