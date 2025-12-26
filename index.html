@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Anti-Cheat Edition</title>
+    <title>Fishing Pro - Fish Movement Fixed</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -14,35 +14,31 @@
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
         .stat-box { background: rgba(0, 30, 50, 0.9); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
         
-        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 20px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; }
-        .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
-        
-        #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; cursor: pointer; flex: 1; }
-        .nav-text { font-size: 8px; font-weight: bold; text-transform: uppercase; margin-top: 3px; }
-        
-        .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
-
-        /* Anti-Cheat Lock UI */
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .progress-container { width: 80%; height: 10px; background: #333; border-radius: 10px; margin: 20px 0; overflow: hidden; border: 1px solid #00f2ff; }
-        .progress-bar { width: 0%; height: 100%; background: #00f2ff; }
+        .progress-bar { width: 0%; height: 100%; background: #00f2ff; transition: width 0.3s linear; }
         #lock-timer { font-size: 70px; font-weight: bold; color: #ffd700; }
-        .warning-text { color: #ff4757; font-weight: bold; font-size: 14px; margin-top: 10px; display: none; }
+
+        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
+        .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+        .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
+        .btn-action:disabled { background: #333 !important; color: #777; cursor: not-allowed; }
+
+        input, select { width: 95%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #00f2ff; background: #001525; color: white; }
         
-        #ad-screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 15, 25, 0.95); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #00f2ff; cursor: pointer; flex: 1; }
+        .nav-text { font-size: 10px; font-weight: bold; margin-top: 4px; }
         canvas { display: block; }
-        input, select { width: 90%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: none; }
     </style>
 </head>
 <body>
 
     <div id="force-lock">
         <h2 id="lock-title" style="color:#00f2ff; margin:0;">VERIFYING...</h2>
-        <div id="cheat-warn" class="warning-text">⚠️ DON'T COME BACK! STAY ON AD PAGE</div>
         <div class="progress-container"><div id="myBar" class="progress-bar"></div></div>
         <div id="lock-timer">10</div>
-        <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 GO BACK TO AD PAGE</button>
+        <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 BACK TO AD PAGE</button>
     </div>
 
     <div id="top-ui">
@@ -51,33 +47,33 @@
         <div class="stat-box">💎 <span id="dia-count">0</span></div>
     </div>
 
-    <div id="ad-screen">
-        <h2 style="color:#ffd700;">⚡ NO ENERGY</h2>
-        <button class="btn-action" style="width: 200px; background:#ffd700; color:000;" onclick="startVerifiedAd('energy')">📺 REFILL ENERGY (AD)</button>
+    <div id="diamond-modal" class="modal">
+        <button class="close-btn" onclick="closeAll()">×</button>
+        <h3 style="color:#ff00e6;">💎 DIAMOND TASK</h3>
+        <p style="font-size:12px; color:#aaa;">1 Ad = 1 Diamond (Max 3 turns)</p>
+        <button id="dia-ad-btn" class="btn-action" onclick="startVerifiedAd('dia')">📺 WATCH AD (<span id="task-count">3</span>/3)</button>
+        <div id="cooldown-area" style="display:none; margin-top:15px;">
+            <p style="color:#ffd700; font-size:13px; font-weight:bold;">LIMIT REACHED!</p>
+            <p id="cooldown-timer" style="color:#00f2ff; font-size:22px; font-weight:bold;">05:00</p>
+        </div>
+    </div>
+
+    <div id="refer-modal" class="modal">
+        <button class="close-btn" onclick="closeAll()">×</button>
+        <h3 style="color:#ffd700;">👥 REFERRAL</h3>
+        <div id="refer-link-box" style="font-size:11px; padding:15px; border:1px dashed #00f2ff; color:#00f2ff; word-break:break-all; border-radius:10px;">Loading...</div>
+        <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
     </div>
 
     <div id="withdraw-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#27ae60;">💸 WITHDRAW</h3>
         <input type="number" id="binance-uid" placeholder="Binance UID">
-        <select id="wd-amount">
-            <option value="5">5.00 USD (5,000 Diamonds)</option>
-            <option value="10">10.00 USD (10,000 Diamonds)</option>
+        <select id="withdraw-amount">
+            <option value="5000">5.00 USD (5k Diamonds)</option>
+            <option value="10000">10.00 USD (10k Diamonds)</option>
         </select>
-        <button class="btn-action" style="background:#27ae60;" onclick="submitWithdraw()">SUBMIT REQUEST</button>
-    </div>
-
-    <div id="diamond-modal" class="modal">
-        <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#ff00e6;">💎 DIAMOND TASK</h3>
-        <button id="dia-ad-btn" class="btn-action" onclick="startVerifiedAd('dia')">📺 WATCH AD (<span id="ad-count-view">3</span>/3)</button>
-    </div>
-
-    <div id="refer-modal" class="modal">
-        <button class="close-btn" onclick="closeAll()">×</button>
-        <h3>👥 REFERRAL</h3>
-        <div id="refer-link-box" style="font-size:12px; background:rgba(0,242,255,0.1); border:1px dashed #00f2ff; padding:15px; border-radius:12px; word-break:break-all; color:#00f2ff; cursor:pointer;" onclick="copyReferLink()">Loading...</div>
-        <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
+        <button class="btn-action" style="background: #27ae60;" onclick="submitWithdraw()">SUBMIT REQUEST</button>
     </div>
 
     <div id="nav-bar">
@@ -90,9 +86,8 @@
 
     <script>
         const ADSTERRA_SMARTLINK = "https://www.effectivegatecpm.com/rarb5qds06?key=79349eb6a9357e2e416a3ef19425a5c1";
-        const tg = window.Telegram.WebApp; tg.expand();
+        const tg = window.Telegram.WebApp;
         const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
-        const BOT_USERNAME = "Referralincamebd01311_bot";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuWhesvHRa2lkq-G-PRWBQ8S5RP",
@@ -103,45 +98,38 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let balance = 0, energy = 15, diamonds = 0, adCount = 0;
-        let adStartTime = 0, elapsedWhileHidden = 0, timerActive = false, rewardType = "";
+        let balance = 0, energy = 15, diamonds = 0, tasksDone = 0, nextResetTime = 0;
+        let adStartTime = 0, timerActive = false, rewardType = "";
         let fishes = [];
 
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let hook = { x: canvas.width / 2, y: 80, state: 'idle' };
-
-        // --- Improved Anti-Cheat Timer ---
         function startVerifiedAd(type) {
-            rewardType = type;
-            adStartTime = Date.now();
-            elapsedWhileHidden = 0;
-            timerActive = true;
+            if (tasksDone >= 3) return;
+            rewardType = type; adStartTime = Date.now(); timerActive = true;
             window.open(ADSTERRA_SMARTLINK, '_blank');
             document.getElementById("force-lock").style.display = "flex";
         }
 
         setInterval(() => {
-            if (!timerActive) return;
-
-            if (document.visibilityState === 'visible') {
-                // ইউজার অ্যাপে থাকলে টাইমার পজ এবং ওয়ার্নিং
-                document.getElementById("lock-title").innerText = "⚠️ PAUSED";
-                document.getElementById("cheat-warn").style.display = "block";
-            } else {
-                // ইউজার ব্যাকগ্রাউন্ডে থাকলে টাইমার চলবে
-                document.getElementById("lock-title").innerText = "VERIFYING...";
-                document.getElementById("cheat-warn").style.display = "none";
-                
-                let now = Date.now();
-                elapsedWhileHidden = (now - adStartTime) / 1000;
+            if (nextResetTime > 0) {
+                let diff = Math.floor((nextResetTime - Date.now()) / 1000);
+                if (diff <= 0) {
+                    tasksDone = 0; nextResetTime = 0; saveData();
+                    document.getElementById("cooldown-area").style.display = "none";
+                    document.getElementById("dia-ad-btn").style.display = "block";
+                } else {
+                    let m = Math.floor(diff/60); let s = diff%60;
+                    document.getElementById("cooldown-timer").innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                    document.getElementById("cooldown-area").style.display = "block";
+                    document.getElementById("dia-ad-btn").style.display = "none";
+                }
             }
-
-            let remaining = 10 - elapsedWhileHidden;
+            if (!timerActive) return;
+            let elapsed = (Date.now() - adStartTime) / 1000;
+            let remaining = 10 - elapsed;
+            if (document.visibilityState === 'visible' && remaining > 0) adStartTime += 450;
             if (remaining > 0) {
                 document.getElementById("lock-timer").innerText = Math.ceil(remaining);
-                document.getElementById("myBar").style.width = (Math.min(elapsedWhileHidden, 10) / 10 * 100) + "%";
+                document.getElementById("myBar").style.width = (elapsed / 10 * 100) + "%";
             } else {
                 completeAdTask();
             }
@@ -150,87 +138,121 @@
         function completeAdTask() {
             timerActive = false;
             document.getElementById("force-lock").style.display = "none";
-            
-            if(rewardType === 'energy') energy = 15;
-            else if(rewardType === 'dia') {
-                diamonds += 10; adCount++;
-                if(adCount >= 3) adCount = 0;
-            }
+            tasksDone++;
+            diamonds += 1;
+            if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000);
             saveData();
-            setTimeout(() => alert("Verified! Reward Added Successfully."), 200);
         }
 
-        function submitWithdraw() {
-            const uid = document.getElementById('binance-uid').value;
-            const amt = parseInt(document.getElementById('wd-amount').value);
-            const cost = amt * 1000;
-            if(!uid) return alert("Enter Binance ID!");
-            if(diamonds < cost) return alert(`Need ${cost} Diamonds!`);
-            db.ref('Withdraw_Requests/' + Date.now()).set({ userId, binanceID: uid, amount: amt + " USD", status: "Pending" });
-            diamonds -= cost; saveData(); closeAll(); alert("Requested!");
-        }
+        // --- Realistic Fish Drawing (Fixed Direction) ---
+        function drawRealisticFish(ctx, f) {
+            ctx.save();
+            ctx.translate(f.x, f.y);
+            // Direction 1 means right, -1 means left. Scale handles the flip.
+            if (f.dir === -1) ctx.scale(-1, 1);
+            
+            ctx.fillStyle = f.color;
+            ctx.beginPath(); 
+            ctx.moveTo(18, 0); 
+            ctx.quadraticCurveTo(5, -14, -15, -2);
+            ctx.quadraticCurveTo(-15, 2, 5, 14); 
+            ctx.quadraticCurveTo(18, 0, 18, 0); 
+            ctx.fill();
 
-        // --- Fishing Gameplay Logic ---
-        function drawFish(x, y, color, dir) {
-            ctx.save(); ctx.translate(x, y); if (dir === -1) ctx.scale(-1, 1);
-            ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.moveTo(-18, 0); ctx.lineTo(-28, -8); ctx.lineTo(-28, 8); ctx.closePath(); ctx.fill();
+            let tailW = Math.sin(Date.now() * 0.01 + f.x) * 4;
+            ctx.beginPath(); 
+            ctx.moveTo(-14, 0); 
+            ctx.lineTo(-26, -12 + tailW); 
+            ctx.lineTo(-22, 0); 
+            ctx.lineTo(-26, 12 - tailW); 
+            ctx.fill();
+
+            ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(10, -4, 3, 0, 6.28); ctx.fill();
+            ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(11, -4, 1.5, 0, 6.28); ctx.fill();
             ctx.restore();
+        }
+
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let hook = { x: canvas.width/2, y: 80, state: 'idle' };
+
+        function createFish() {
+            let dir = Math.random() > 0.5 ? 1 : -1;
+            return { 
+                x: dir === 1 ? -50 : canvas.width + 50, 
+                y: 250 + Math.random() * (canvas.height - 350), 
+                speed: 0.8 + Math.random(), 
+                dir: dir, 
+                color: `hsl(${Math.random() * 360}, 65%, 45%)`, 
+                caught: false 
+            };
+        }
+        for(let i=0; i<12; i++) {
+            let f = createFish();
+            f.x = Math.random() * canvas.width;
+            fishes.push(f);
         }
 
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            let grad = ctx.createLinearGradient(0,0,0,canvas.height); grad.addColorStop(0,"#00a8e8"); grad.addColorStop(1,"#001e30");
-            ctx.fillStyle = grad; ctx.fillRect(0,0,canvas.width, canvas.height);
+            let bg = ctx.createLinearGradient(0,0,0,canvas.height); 
+            bg.addColorStop(0,"#00a8e8"); bg.addColorStop(1,"#001e30");
+            ctx.fillStyle = bg; ctx.fillRect(0,0,canvas.width, canvas.height);
 
-            if(hook.state === 'dropping') { hook.y += 12; if(hook.y > canvas.height - 100) hook.state = 'retracting'; }
-            else if(hook.state === 'retracting') { hook.y -= 12; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
+            if(hook.state === 'dropping') { hook.y += 10; if(hook.y > canvas.height-120) hook.state = 'retracting'; }
+            else if(hook.state === 'retracting') { hook.y -= 10; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
 
-            ctx.strokeStyle = "white"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
-            ctx.strokeStyle = "#ddd"; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(hook.x, hook.y + 10, 10, 0, Math.PI); ctx.stroke();
+            ctx.strokeStyle = "white"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
+            ctx.beginPath(); ctx.arc(hook.x, hook.y+5, 10, 0, Math.PI); ctx.stroke();
 
-            while(fishes.length < 15) { fishes.push({ x: Math.random()*canvas.width, y: 200+Math.random()*(canvas.height-300), speed: 1.5, dir: Math.random()>0.5?1:-1, caught: false, color: `hsl(${Math.random()*360}, 70%, 50%)` }); }
             fishes.forEach(f => {
-                if(f.caught) { f.x = hook.x; f.y = hook.y + 25; }
+                if(f.caught) { f.x = hook.x; f.y = hook.y + 15; }
                 else {
                     f.x += f.speed * f.dir;
-                    if(f.x > canvas.width+30) f.dir = -1; if(f.x < -30) f.dir = 1;
+                    if(f.dir === 1 && f.x > canvas.width + 60) { f.x = -60; f.y = 250 + Math.random() * (canvas.height - 350); }
+                    if(f.dir === -1 && f.x < -60) { f.x = canvas.width + 60; f.y = 250 + Math.random() * (canvas.height - 350); }
                     if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true;
                 }
-                drawFish(f.x, f.y, f.color, f.dir);
+                drawRealisticFish(ctx, f);
             });
             requestAnimationFrame(draw);
         }
 
-        function checkCatch() { 
-            let caught = fishes.filter(f => f.caught).length;
-            if(caught > 0) { balance += caught * 0.00005; fishes = fishes.filter(f => !f.caught); saveData(); }
+        function checkCatch() {
+            let count = fishes.filter(f => f.caught).length;
+            if(count > 0) { balance += count * 0.00005; fishes = fishes.filter(f => !f.caught); while(fishes.length < 12) fishes.push(createFish()); saveData(); }
         }
 
-        window.onclick = () => {
-            if(document.querySelector('.modal[style*="block"]') || energy <= 0 || hook.state !== 'idle' || timerActive) return;
+        window.onclick = (e) => {
+            if(e.target.tagName !== 'CANVAS' || energy <= 0 || hook.state !== 'idle' || timerActive) return;
             hook.state = 'dropping'; energy--; saveData();
         };
 
-        function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, adCount }); }
-        db.ref('users/' + userId).on('value', (snap) => {
-            const val = snap.val(); if(val) {
-                balance = val.balance || 0; energy = val.energy !== undefined ? val.energy : 15;
-                diamonds = val.diamonds || 0; adCount = val.adCount || 0;
+        function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime }); }
+        db.ref('users/' + userId).on('value', snap => {
+            const v = snap.val(); if(v) {
+                balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0; tasksDone = v.tasksDone || 0; nextResetTime = v.nextResetTime || 0;
                 document.getElementById("coins").innerText = balance.toFixed(6);
                 document.getElementById("energy-count").innerText = energy;
                 document.getElementById("dia-count").innerText = diamonds;
-                document.getElementById("ad-count-view").innerText = 3 - adCount;
-                document.getElementById("ad-screen").style.display = (energy <= 0) ? 'flex' : 'none';
-                document.getElementById("refer-link-box").innerText = `https://t.me/${BOT_USERNAME}/play?startapp=${userId}`;
+                document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
+                document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
             }
         });
 
-        function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert('Copied!')); }
+        function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert("Copied!")); }
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
-        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display="none"); }
+        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
+        function submitWithdraw() {
+            const uid = document.getElementById('binance-uid').value;
+            const amt = parseInt(document.getElementById('withdraw-amount').value);
+            if(!uid || diamonds < amt) return alert("Check UID/Balance!");
+            db.ref('Withdraw_Requests').push({userId, binanceUID: uid, diamondAmount: amt, status: "Pending", timestamp: Date.now()});
+            diamonds -= amt; saveData(); closeAll(); alert("Requested!");
+        }
         draw();
     </script>
 </body>
-    </html>
-    
+</html>
+
