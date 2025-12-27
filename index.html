@@ -17,9 +17,13 @@
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         #lock-info-text { font-size: 18px; font-weight: bold; color: #ffd700; margin-bottom: 25px; line-height: 1.5; }
 
-        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
+        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); max-height: 70vh; overflow-y: auto; }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
+
+        /* ধূসর বাটন স্টাইল */
+        .btn-gray { background: #444 !important; color: #888 !important; cursor: not-allowed; }
+        .task-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(0,242,255,0.1); }
 
         input, select { width: 95%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; }
         
@@ -42,6 +46,28 @@
         <div class="stat-box">💎 <span id="dia-count">0</span></div>
     </div>
 
+    <div id="tasks-modal" class="modal">
+        <button class="close-btn" onclick="closeAll()">×</button>
+        <h3 style="color:#00f2ff;">🚀 EARN TASKS</h3>
+        <div class="task-card">
+            <p style="font-size:12px; margin:0;">Task 1: Join Telegram ($0.20)</p>
+            <button id="btn-t1" class="btn-action" onclick="doLinkTask('t1', 'https://t.me/FishingProCommunity')">JOIN CHANNEL</button>
+        </div>
+        <div class="task-card">
+            <p style="font-size:12px; margin:0;">Task 2: Subscribe YouTube ($0.20)</p>
+            <button id="btn-t2" class="btn-action" onclick="doLinkTask('t2', 'https://www.youtube.com/@MdEmon-y9n1u')">SUBSCRIBE NOW</button>
+        </div>
+        <div class="task-card">
+            <p style="font-size:12px; margin:0;">Task 3: Watch Video ($0.05)</p>
+            <div id="t3-ui">
+                <button class="btn-action" style="background:#ff4757;" onclick="window.open('https://www.youtube.com/@MdEmon-y9n1u', '_blank')">WATCH VIDEO</button>
+                <input type="text" id="v-code-input" placeholder="Enter 5 Digit Code" style="margin-top:10px;">
+                <button class="btn-action" onclick="verifyVideoCode()">SUBMIT CODE</button>
+            </div>
+            <p id="t3-wait" style="display:none; color:#ffd700; font-size:11px;">⏳ নতুন ভিডিওর জন্য অপেক্ষা করুন...</p>
+        </div>
+    </div>
+
     <div id="energy-modal" class="modal">
         <h3 style="color:#ffd700;">⚡ এনার্জি শেষ!</h3>
         <p style="font-size:12px; color:#aaa;">অ্যাড দেখে ১৫ এনার্জি রিফিল করুন।</p>
@@ -54,7 +80,6 @@
         <p style="font-size:12px; color:#aaa;">1 Ad = 10 Diamonds (Max 3 turns)</p>
         <button id="dia-ad-btn" class="btn-action" onclick="startAd('dia')">📺 WATCH AD (<span id="task-count">3</span>/3)</button>
         <div id="cooldown-area" style="display:none; margin-top:15px;">
-            <p style="color:#ffd700; font-size:13px; font-weight:bold;">LIMIT REACHED!</p>
             <p id="cooldown-timer" style="color:#00f2ff; font-size:22px; font-weight:bold;">05:00</p>
         </div>
     </div>
@@ -78,6 +103,7 @@
     </div>
 
     <div id="nav-bar">
+        <div class="nav-item" onclick="openShop('tasks-modal')"><span>🚀</span><span class="nav-text">Tasks</span></div>
         <div class="nav-item" onclick="openShop('refer-modal')"><span>👥</span><span class="nav-text">Refer</span></div>
         <div class="nav-item" onclick="openShop('withdraw-modal')"><span>💰</span><span class="nav-text">Wallet</span></div>
         <div class="nav-item" onclick="openShop('diamond-modal')"><span>💎</span><span class="nav-text">Diamond</span></div>
@@ -100,6 +126,7 @@
         const db = firebase.database();
 
         let balance = 0, energy = 15, diamonds = 0, tasksDone = 0, nextResetTime = 0;
+        let t1_done = false, t2_done = false, t3_done = false;
         let adStartTime = 0, timerActive = false, rewardType = "";
         let fishes = [];
 
@@ -126,11 +153,7 @@
                 if (elapsed >= 20.5) { 
                     timerActive = false;
                     document.getElementById("force-lock").style.display = "none";
-                    if(rewardType === 'dia') { 
-                        diamonds += 10; // এখানে ১০টি ডায়মন্ড সেট করা হয়েছে
-                        tasksDone++; 
-                        if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); 
-                    }
+                    if(rewardType === 'dia') { diamonds += 10; tasksDone++; if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); }
                     else if(rewardType === 'energy') { energy = 15; }
                     saveData();
                 }
@@ -202,16 +225,41 @@
             hook.state = 'dropping'; energy--; saveData();
         };
 
-        function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime }); }
+        // দাদুর নতুন টাক্স ফাংশন
+        function doLinkTask(type, link) {
+            window.open(link, '_blank');
+            setTimeout(() => {
+                if(type === 't1' && !t1_done) { balance += 0.20; t1_done = true; }
+                if(type === 't2' && !t2_done) { balance += 0.20; t2_done = true; }
+                saveData();
+                alert("Success! $0.20 added.");
+            }, 3000);
+        }
+
+        function verifyVideoCode() {
+            let input = document.getElementById("v-code-input").value;
+            if(input === "12345") { // এখানে আপনার ভিডিওর কোড দিন
+                balance += 0.05; t3_done = true; saveData(); alert("Correct! $0.05 added.");
+            } else { alert("Wrong Code দাদু!"); }
+        }
+
+        function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); }
         
         db.ref('users/' + userId).on('value', snap => {
             const v = snap.val(); if(v) {
                 balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0; tasksDone = v.tasksDone || 0; nextResetTime = v.nextResetTime || 0;
+                t1_done = v.t1_done || false; t2_done = v.t2_done || false; t3_done = v.t3_done || false;
+                
                 document.getElementById("coins").innerText = balance.toFixed(6);
                 document.getElementById("energy-count").innerText = energy;
                 document.getElementById("dia-count").innerText = diamonds;
                 document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
                 document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
+                
+                // বাটন আপডেট
+                if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
+                if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
+                if(t3_done) { document.getElementById("t3-ui").style.display="none"; document.getElementById("t3-wait").style.display="block"; }
             }
         });
 
@@ -228,5 +276,5 @@
         draw();
     </script>
 </body>
-    </html>
-    
+</html>
+
