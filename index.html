@@ -21,6 +21,7 @@
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
 
+        /* ধূসর বাটন স্টাইল */
         .btn-gray { background: #444 !important; color: #888 !important; cursor: not-allowed; }
         .task-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(0,242,255,0.1); }
 
@@ -35,7 +36,7 @@
 <body>
 
     <div id="force-lock">
-        <div id="lock-info-text">Please watch the ad for 15 seconds</div>
+        <div id="lock-info-text">Please watch the ad for 10 seconds</div>
         <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RE-OPEN AD PAGE</button>
     </div>
 
@@ -131,9 +132,7 @@
 
         function startAd(type) {
             if (type === 'dia' && tasksDone >= 3) return;
-            rewardType = type; 
-            adStartTime = Date.now(); 
-            timerActive = true;
+            rewardType = type; adStartTime = Date.now(); timerActive = true;
             window.open(ADSTERRA_SMARTLINK, '_blank');
             closeAll();
             document.getElementById("force-lock").style.display = "flex";
@@ -151,24 +150,15 @@
             }
             if (timerActive) {
                 let elapsed = (Date.now() - adStartTime) / 1000;
-                let remaining = Math.max(0, 15 - Math.floor(elapsed));
-                document.getElementById("lock-info-text").innerText = "Please wait " + remaining + " seconds...";
-
-                if (elapsed >= 15.5) { 
+                if (elapsed >= 20.5) { 
                     timerActive = false;
                     document.getElementById("force-lock").style.display = "none";
-                    if(rewardType === 'dia') { 
-                        diamonds = parseInt(diamonds) + 10; 
-                        tasksDone++; 
-                        if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); 
-                    }
-                    else if(rewardType === 'energy') { 
-                        energy = 15; 
-                    }
+                    if(rewardType === 'dia') { diamonds += 10; tasksDone++; if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); }
+                    else if(rewardType === 'energy') { energy = 15; }
                     saveData();
                 }
             }
-        }, 1000);
+        }, 500);
 
         function drawRealisticFish(ctx, f) {
             ctx.save();
@@ -225,21 +215,14 @@
         }
 
         function checkCatch() {
-            let caughtCount = fishes.filter(f => f.caught).length;
-            if(caughtCount > 0) { 
-                balance += caughtCount * 0.00005; 
-                fishes = fishes.filter(f => !f.caught); 
-                while(fishes.length < 12) fishes.push(createFish()); 
-                saveData(); 
-            }
+            let c = fishes.filter(f => f.caught).length;
+            if(c > 0) { balance += c * 0.00005; fishes = fishes.filter(f => !f.caught); while(fishes.length < 12) fishes.push(createFish()); saveData(); }
         }
 
         window.onclick = (e) => {
             if(e.target.tagName !== 'CANVAS' || hook.state !== 'idle' || timerActive) return;
             if(energy <= 0) { openShop('energy-modal'); return; }
-            hook.state = 'dropping'; 
-            energy--; 
-            saveData();
+            hook.state = 'dropping'; energy--; saveData();
         };
 
         function doLinkTask(type, link) {
@@ -248,31 +231,23 @@
                 if(type === 't1' && !t1_done) { balance += 0.20; t1_done = true; }
                 if(type === 't2' && !t2_done) { balance += 0.20; t2_done = true; }
                 saveData();
-                alert("Task Verified! Reward Added.");
-            }, 5000);
+                alert("Success! $0.20 added.");
+            }, 3000);
         }
 
         function verifyVideoCode() {
             let input = document.getElementById("v-code-input").value;
             if(input === "12345") { 
-                balance += 0.05; t3_done = true; saveData(); alert("Correct Code!");
-            } else { alert("Wrong Code!"); }
+                balance += 0.05; t3_done = true; saveData(); alert("Correct! $0.05 added.");
+            } else { alert("Wrong Code দাদু!"); }
         }
 
-        function saveData() { 
-            db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); 
-        }
+        function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); }
         
         db.ref('users/' + userId).on('value', snap => {
             const v = snap.val(); if(v) {
-                balance = v.balance || 0; 
-                energy = v.energy ?? 15; 
-                diamonds = v.diamonds || 0; 
-                tasksDone = v.tasksDone || 0; 
-                nextResetTime = v.nextResetTime || 0;
-                t1_done = v.t1_done || false; 
-                t2_done = v.t2_done || false; 
-                t3_done = v.t3_done || false;
+                balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0; tasksDone = v.tasksDone || 0; nextResetTime = v.nextResetTime || 0;
+                t1_done = v.t1_done || false; t2_done = v.t2_done || false; t3_done = v.t3_done || false;
                 
                 document.getElementById("coins").innerText = balance.toFixed(6);
                 document.getElementById("energy-count").innerText = energy;
@@ -289,20 +264,15 @@
         function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert("Copied!")); }
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
-        
         function submitWithdraw() {
             const u = document.getElementById('binance-uid').value;
             const a = parseInt(document.getElementById('withdraw-amount').value);
             if(!u || diamonds < a) return alert("Check UID/Balance!");
             db.ref('Withdraw_Requests').push({userId, binanceUID: u, diamondAmount: a, status: "Pending", timestamp: Date.now()});
-            diamonds -= a; 
-            saveData(); 
-            closeAll(); 
-            alert("Withdraw Request Submitted!");
+            diamonds -= a; saveData(); closeAll(); alert("Requested!");
         }
         draw();
     </script>
 </body>
-</html>
-
-
+                                                            </html>
+    
