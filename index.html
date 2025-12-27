@@ -55,12 +55,12 @@
         </div>
         <div class="task-card">
             <p style="font-size:12px; margin:0;">Task 2: Subscribe YouTube ($0.20)</p>
-            <button id="btn-t2" class="btn-action" onclick="doLinkTask('t2', 'https://www.youtube.com/@MdEmon-y9n1u')">SUBSCRIBE NOW</button>
+            <button id="btn-t2" class="btn-action" onclick="doLinkTask('t2', 'https://www.youtube.com/@FishProZoneYT')">SUBSCRIBE NOW</button>
         </div>
         <div class="task-card">
             <p style="font-size:12px; margin:0;">Task 3: Watch Video ($0.05)</p>
             <div id="t3-ui">
-                <button class="btn-action" style="background:#ff4757;" onclick="window.open('https://www.youtube.com/@MdEmon-y9n1u', '_blank')">WATCH VIDEO</button>
+                <button class="btn-action" style="background:#ff4757;" onclick="window.open('https://www.youtube.com/@FishProZoneYT', '_blank')">WATCH VIDEO</button>
                 <input type="text" id="v-code-input" placeholder="Enter 5 Digit Code" style="margin-top:10px;">
                 <button class="btn-action" onclick="verifyVideoCode()">SUBMIT CODE</button>
             </div>
@@ -225,7 +225,6 @@
             hook.state = 'dropping'; energy--; saveData();
         };
 
-        // দাদুর নতুন টাক্স ফাংশন
         function doLinkTask(type, link) {
             window.open(link, '_blank');
             setTimeout(() => {
@@ -238,7 +237,7 @@
 
         function verifyVideoCode() {
             let input = document.getElementById("v-code-input").value;
-            if(input === "12345") { // এখানে আপনার ভিডিওর কোড দিন
+            if(input === "12345") { 
                 balance += 0.05; t3_done = true; saveData(); alert("Correct! $0.05 added.");
             } else { alert("Wrong Code দাদু!"); }
         }
@@ -256,7 +255,6 @@
                 document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
                 document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
                 
-                // বাটন আপডেট
                 if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
                 if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
                 if(t3_done) { document.getElementById("t3-ui").style.display="none"; document.getElementById("t3-wait").style.display="block"; }
@@ -276,5 +274,5 @@
         draw();
     </script>
 </body>
-</html>
-
+                                                            </html>
+                                                                                                                   
