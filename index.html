@@ -177,7 +177,6 @@
                     document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
                     document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
 
-                    // Auto Gray-out Task Buttons
                     if(t1_done) lockBtn("btn-t1");
                     if(t2_done) lockBtn("btn-t2");
                     if(t3_done) { 
@@ -197,9 +196,11 @@
 
         function lockBtn(id) {
             const el = document.getElementById(id);
-            el.classList.add("btn-gray");
-            el.innerText = "COMPLETED";
-            el.onclick = null;
+            if(el) {
+                el.classList.add("btn-gray");
+                el.innerText = "COMPLETED";
+                el.onclick = null;
+            }
         }
 
         function startAd(type) {
@@ -237,7 +238,7 @@
             }
         }, 500);
 
-        // Graphics Engine
+        // --- UPDATED GRAPHICS ENGINE (REALISTIC FISH & HOOK) ---
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -245,40 +246,98 @@
 
         function drawHook(ctx, x, y) {
             ctx.save();
-            ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1;
+            // Fishing Line
+            ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 1;
             ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(x, y); ctx.stroke();
-            ctx.strokeStyle = "#ecf0f1"; ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.arc(x, y + 10, 8, 0, Math.PI, false); ctx.stroke();
+            
+            // Realistic Metal Hook
+            ctx.translate(x, y);
+            ctx.strokeStyle = "#95a5a6"; ctx.lineWidth = 3; ctx.lineCap = "round";
+            ctx.beginPath();
+            ctx.arc(0, 10, 8, 0, Math.PI, false); // Hook Curve
+            ctx.stroke();
+            // Sharp point
+            ctx.beginPath();
+            ctx.moveTo(-8, 10); ctx.lineTo(-12, 5);
+            ctx.stroke();
             ctx.restore();
         }
 
         function drawFish(ctx, f) {
-            ctx.save(); ctx.translate(f.x, f.y); if (f.dir === -1) ctx.scale(-1, 1);
+            ctx.save();
+            ctx.translate(f.x, f.y);
+            if (f.dir === -1) ctx.scale(-1, 1);
+            
+            // Body Tail Animation
+            let tailWag = Math.sin(Date.now() * 0.005 + f.speed) * 0.4;
+            
+            // Fish Body (Gradient)
+            let fishGrad = ctx.createRadialGradient(5, -5, 5, 0, 0, 25);
+            fishGrad.addColorStop(0, "rgba(255,255,255,0.3)");
+            fishGrad.addColorStop(1, f.color);
+            ctx.fillStyle = fishGrad;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 25, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Fins
             ctx.fillStyle = f.color;
-            ctx.beginPath(); ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.moveTo(-15, 0); ctx.lineTo(-28, -10); ctx.lineTo(-28, 10); ctx.closePath(); ctx.fill();
-            ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(10, -3, 3, 0, 7); ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(0, -10); ctx.quadraticCurveTo(5, -18, 12, -10);
+            ctx.fill();
+
+            // Tail with Wag
+            ctx.save();
+            ctx.translate(-22, 0);
+            ctx.rotate(tailWag);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(-15, -12);
+            ctx.lineTo(-10, 0);
+            ctx.lineTo(-15, 12);
+            ctx.fill();
+            ctx.restore();
+
+            // Eye
+            ctx.fillStyle = "white";
+            ctx.beginPath(); ctx.arc(15, -4, 4, 0, 7); ctx.fill();
+            ctx.fillStyle = "black";
+            ctx.beginPath(); ctx.arc(17, -4, 2, 0, 7); ctx.fill();
+            
             ctx.restore();
         }
 
         function createFish() {
-            return { x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-400), speed: 1+Math.random(), dir: Math.random()>0.5?1:-1, color: `hsl(${Math.random()*360}, 70%, 50%)`, caught: false };
+            return { 
+                x: Math.random()*canvas.width, 
+                y: 250+Math.random()*(canvas.height-400), 
+                speed: 1+Math.random()*1.5, 
+                dir: Math.random()>0.5?1:-1, 
+                color: `hsl(${Math.random()*360}, 60%, 50%)`, 
+                caught: false 
+            };
         }
         for(let i=0; i<10; i++) fishes.push(createFish());
 
         function draw() {
             if(!isUserLoggedIn) { requestAnimationFrame(draw); return; }
-            let grad = ctx.createLinearGradient(0,0,0,canvas.height);
-            grad.addColorStop(0, "#005c97"); grad.addColorStop(1, "#001e30");
-            ctx.fillStyle = grad; ctx.fillRect(0,0,canvas.width, canvas.height);
+            let bg = ctx.createLinearGradient(0,0,0,canvas.height);
+            bg.addColorStop(0, "#005c97"); bg.addColorStop(1, "#001e30");
+            ctx.fillStyle = bg; ctx.fillRect(0,0,canvas.width, canvas.height);
 
             if(hook.state === 'dropping') { hook.y += 12; if(hook.y > canvas.height-120) hook.state = 'retracting'; }
             else if(hook.state === 'retracting') { hook.y -= 12; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
 
             drawHook(ctx, hook.x, hook.y);
             fishes.forEach(f => {
-                if(f.caught) { f.x = hook.x; f.y = hook.y + 15; }
-                else { f.x += f.speed * f.dir; if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 25) f.caught = true; }
+                if(f.caught) { 
+                    f.x = hook.x; f.y = hook.y + 15; 
+                } else { 
+                    f.x += f.speed * f.dir; 
+                    if(f.x > canvas.width+50) f.dir = -1; 
+                    if(f.x < -50) f.dir = 1; 
+                    if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; 
+                }
                 drawFish(ctx, f);
             });
             requestAnimationFrame(draw);
@@ -300,6 +359,7 @@
             hook.state = 'dropping'; energy--; saveData();
         };
 
+        // --- Rest of the logic (unchanged) ---
         function doLinkTask(type, link) {
             window.open(link, '_blank');
             setTimeout(() => {
@@ -311,30 +371,5 @@
 
         function verifyVideoCode() {
             if(document.getElementById("v-code-input").value === "22330") { 
-                balance += 0.05; t3_done = true; saveData(); 
-                alert("Task Verified!"); 
-            } else alert("Wrong Code!");
-        }
-
-        function copyReferLink() {
-            const link = document.getElementById("refer-link-box").innerText;
-            navigator.clipboard.writeText(link).then(() => alert("Referral Link Copied!"));
-        }
-
-        function submitWithdraw() {
-            const u = document.getElementById('binance-uid').value;
-            const dia = parseInt(document.getElementById('withdraw-amount').value);
-            if(!u || diamonds < dia) return alert("Low Balance or ID missing!");
-            db.ref('Withdraw_Requests').push({ userId, binanceUID: u, diamondAmount: dia, status: "Pending", timestamp: Date.now() });
-            diamonds -= dia; balance -= (dia/1000);
-            saveData(); closeAll(); alert("Request Sent!");
-        }
-
-        function saveData() { if(isUserLoggedIn) db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); }
-        function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
-        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
-        draw();
-    </script>
-</body>
-            </html>
-            
+                balance += 0.05; t3_done = true; saveData(); alert("Task Verified!"); 
+            } else a
