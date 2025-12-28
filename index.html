@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - 10 Diamonds per Ad</title>
+    <title>Fishing Pro - Security Updated</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -11,6 +11,12 @@
 
     <style>
         body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
+        
+        /* দাদু, এটি নতুন লগইন স্ক্রিন */
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #001e30; z-index: 30000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .auth-box { background: rgba(0, 30, 50, 0.98); padding: 30px; border-radius: 25px; border: 2px solid #00f2ff; width: 85%; max-width: 320px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.3); }
+        .auth-input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; font-size: 16px; text-align: center; }
+
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
         .stat-box { background: rgba(0, 30, 50, 0.9); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
         
@@ -33,6 +39,17 @@
     </style>
 </head>
 <body>
+
+    <div id="auth-screen">
+        <div class="auth-box">
+            <h2 style="color:#00f2ff; margin:0;">FISHING PRO</h2>
+            <p style="font-size:12px; color:#aaa; margin:10px 0 20px;">আপনার নম্বর ও পাসওয়ার্ড দিয়ে লগইন করুন</p>
+            <input type="number" id="reg-phone" class="auth-input" placeholder="মোবাইল নম্বর">
+            <input type="password" id="reg-pass" class="auth-input" placeholder="৬ সংখ্যার পাসওয়ার্ড" maxlength="6">
+            <button class="btn-action" onclick="processLogin()">প্রবেশ করুন</button>
+            <p id="auth-error" style="color:#ff4757; font-size:11px; margin-top:10px;"></p>
+        </div>
+    </div>
 
     <div id="force-lock">
         <div id="lock-info-text">Please watch the ad for 10 seconds</div>
@@ -128,6 +145,51 @@
         let t1_done = false, t2_done = false, t3_done = false;
         let adStartTime = 0, timerActive = false, rewardType = "";
         let fishes = [];
+        let isUserLoggedIn = false; // লগইন ট্র্যাক করবে
+
+        // --- লগইন হ্যান্ডলিং ---
+        function processLogin() {
+            const phone = document.getElementById('reg-phone').value;
+            const pass = document.getElementById('reg-pass').value;
+            const errorText = document.getElementById('auth-error');
+
+            if(phone.length < 10 || pass.length < 4) {
+                errorText.innerText = "দাদু, সঠিক নম্বর ও পাসওয়ার্ড দিন!";
+                return;
+            }
+
+            db.ref('users/' + userId + '/security').once('value', snap => {
+                const data = snap.val();
+                if(data) {
+                    if(data.password === pass) {
+                        startTheGame();
+                    } else {
+                        errorText.innerText = "ভুল পাসওয়ার্ড দাদু!";
+                    }
+                } else {
+                    db.ref('users/' + userId + '/security').set({ phone, password: pass })
+                    .then(() => startTheGame());
+                }
+            });
+        }
+
+        function startTheGame() {
+            localStorage.setItem('fish_logged_' + userId, 'true');
+            document.getElementById('auth-screen').style.display = 'none';
+            isUserLoggedIn = true;
+            initUserData();
+        }
+
+        // পেজ খুললেই চেক করবে
+        window.onload = () => {
+            if(localStorage.getItem('fish_logged_' + userId) === 'true') {
+                document.getElementById('auth-screen').style.display = 'none';
+                isUserLoggedIn = true;
+                initUserData();
+            }
+        };
+
+        // --- তোমার আগের সব ফাংশন ---
 
         function startAd(type) {
             if (type === 'dia' && tasksDone >= 3) return;
@@ -138,6 +200,7 @@
         }
 
         setInterval(() => {
+            if (!isUserLoggedIn) return;
             if (nextResetTime > 0) {
                 let diff = Math.floor((nextResetTime - Date.now()) / 1000);
                 if (diff <= 0) { tasksDone = 0; nextResetTime = 0; saveData(); document.getElementById("cooldown-area").style.display = "none"; }
@@ -159,6 +222,7 @@
             }
         }, 500);
 
+        // তোমার ফিশ ড্রয়িং কোড
         function drawRealisticFish(ctx, f) {
             ctx.save();
             ctx.translate(f.x, f.y);
@@ -191,6 +255,7 @@
         for(let i=0; i<12; i++) fishes.push(createFish());
 
         function draw() {
+            if(!isUserLoggedIn) { requestAnimationFrame(draw); return; }
             ctx.clearRect(0,0,canvas.width, canvas.height);
             let b = ctx.createLinearGradient(0,0,0,canvas.height); b.addColorStop(0,"#00a8e8"); b.addColorStop(1,"#001e30");
             ctx.fillStyle = b; ctx.fillRect(0,0,canvas.width, canvas.height);
@@ -219,7 +284,7 @@
         }
 
         window.onclick = (e) => {
-            if(e.target.tagName !== 'CANVAS' || hook.state !== 'idle' || timerActive) return;
+            if(!isUserLoggedIn || e.target.tagName !== 'CANVAS' || hook.state !== 'idle' || timerActive) return;
             if(energy <= 0) { openShop('energy-modal'); return; }
             hook.state = 'dropping'; energy--; saveData();
         };
@@ -236,30 +301,33 @@
 
         function verifyVideoCode() {
             let input = document.getElementById("v-code-input").value;
-            // দাদু এখানে আপনার কোডটা বসিয়ে দিয়েছি
             if(input === "22330") { 
                 balance += 0.05; t3_done = true; saveData(); alert("Correct! $0.05 added.");
             } else { alert("Wrong Code দাদু!"); }
         }
 
-        function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); }
+        function saveData() { 
+            if(isUserLoggedIn) db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); 
+        }
         
-        db.ref('users/' + userId).on('value', snap => {
-            const v = snap.val(); if(v) {
-                balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0; tasksDone = v.tasksDone || 0; nextResetTime = v.nextResetTime || 0;
-                t1_done = v.t1_done || false; t2_done = v.t2_done || false; t3_done = v.t3_done || false;
-                
-                document.getElementById("coins").innerText = balance.toFixed(6);
-                document.getElementById("energy-count").innerText = energy;
-                document.getElementById("dia-count").innerText = diamonds;
-                document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
-                document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
-                
-                if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
-                if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
-                if(t3_done) { document.getElementById("t3-ui").style.display="none"; document.getElementById("t3-wait").style.display="block"; }
-            }
-        });
+        function initUserData() {
+            db.ref('users/' + userId).on('value', snap => {
+                const v = snap.val(); if(v) {
+                    balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0; tasksDone = v.tasksDone || 0; nextResetTime = v.nextResetTime || 0;
+                    t1_done = v.t1_done || false; t2_done = v.t2_done || false; t3_done = v.t3_done || false;
+                    
+                    document.getElementById("coins").innerText = balance.toFixed(6);
+                    document.getElementById("energy-count").innerText = energy;
+                    document.getElementById("dia-count").innerText = diamonds;
+                    document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
+                    document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
+                    
+                    if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
+                    if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
+                    if(t3_done) { document.getElementById("t3-ui").style.display="none"; document.getElementById("t3-wait").style.display="block"; }
+                }
+            });
+        }
 
         function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert("Copied!")); }
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
@@ -274,5 +342,5 @@
         draw();
     </script>
 </body>
-            </html>
-        
+    </html>
+                
