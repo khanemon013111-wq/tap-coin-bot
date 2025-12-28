@@ -3,30 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Dadu Special</title>
+    <title>Fishing Pro - Original Edition</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
-        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #001e30; z-index: 30000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .auth-box { background: rgba(0, 30, 50, 0.98); padding: 30px; border-radius: 25px; border: 2px solid #00f2ff; width: 85%; max-width: 320px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.3); }
-        .auth-input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; font-size: 16px; text-align: center; }
-        #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
-        .stat-box { background: rgba(0, 30, 50, 0.9); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
-        #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        #lock-info-text { font-size: 18px; font-weight: bold; color: #ffd700; margin-bottom: 25px; line-height: 1.5; }
-        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); max-height: 70vh; overflow-y: auto; }
-        .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
-        .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
-        .btn-gray { background: #444 !important; color: #888 !important; cursor: not-allowed !important; filter: grayscale(1); }
-        .task-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(0,242,255,0.1); }
-        input, select { width: 95%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; }
-        #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #00f2ff; cursor: pointer; flex: 1; }
-        .nav-text { font-size: 10px; font-weight: bold; margin-top: 4px; }
+        body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white; }
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #003a5d 0%, #001e30 100%); z-index: 30000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .auth-box { background: rgba(0, 30, 50, 0.95); padding: 30px; border-radius: 25px; border: 2px solid #00f2ff; width: 85%; max-width: 320px; box-shadow: 0 0 40px rgba(0, 242, 255, 0.4); }
+        .auth-input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; font-size: 16px; text-align: center; outline: none; }
+        #top-ui { position: absolute; top: 15px; width: 100%; display: flex; justify-content: center; gap: 10px; z-index: 100; pointer-events: none; }
+        .stat-box { background: rgba(0, 30, 50, 0.85); padding: 6px 14px; border-radius: 20px; border: 1.5px solid rgba(0, 242, 255, 0.5); font-weight: 800; font-size: 12px; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        #lock-info-text { font-size: 20px; font-weight: bold; color: #ffd700; margin-bottom: 25px; }
+        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: #001e30; padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 88%; max-width: 340px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        .close-btn { position: absolute; top: 12px; right: 15px; background: #ff4757; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+        .btn-action { background: linear-gradient(180deg, #00f2ff, #0072ff); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-gray { background: #555 !important; color: #aaa !important; cursor: not-allowed !important; transform: none !important; box-shadow: none !important; pointer-events: none; }
+        .task-card { background: rgba(255,255,255,0.07); padding: 12px; border-radius: 18px; margin-bottom: 15px; border: 1px solid rgba(0,242,255,0.15); }
+        #nav-bar { position: absolute; bottom: 0; width: 100%; height: 75px; background: #000d16; border-top: 2px solid #00f2ff; display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #00f2ff; cursor: pointer; opacity: 0.8; transition: 0.3s; }
+        .nav-item:active { transform: scale(0.9); opacity: 1; }
+        .nav-text { font-size: 11px; font-weight: bold; margin-top: 5px; }
         canvas { display: block; }
     </style>
 </head>
@@ -34,18 +34,17 @@
 
     <div id="auth-screen">
         <div class="auth-box">
-            <h2 style="color:#00f2ff; margin:0;">FISHING PRO</h2>
-            <p style="font-size:12px; color:#aaa; margin:10px 0 20px;">আপনার নম্বর ও পাসওয়ার্ড দিন দাদু</p>
-            <input type="number" id="reg-phone" class="auth-input" placeholder="মোবাইল নম্বর">
-            <input type="password" id="reg-pass" class="auth-input" placeholder="৬ সংখ্যার পাসওয়ার্ড" maxlength="6">
-            <button class="btn-action" onclick="processLogin()">প্রবেশ করুন</button>
-            <p id="auth-error" style="color:#ff4757; font-size:11px; margin-top:10px;"></p>
+            <h1 style="color:#00f2ff; margin:0; font-size: 28px;">FISHING PRO</h1>
+            <p style="font-size:13px; color:#00d2ff; margin:10px 0 20px;">Premium Fishing Experience</p>
+            <input type="number" id="reg-phone" class="auth-input" placeholder="Phone Number">
+            <input type="password" id="reg-pass" class="auth-input" placeholder="6-Digit Password" maxlength="6">
+            <button class="btn-action" onclick="processLogin()">START GAME</button>
         </div>
     </div>
 
     <div id="force-lock">
-        <div id="lock-info-text">অ্যাডটি ২০ সেকেন্ড দেখুন...</div>
-        <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RE-OPEN AD</button>
+        <div id="lock-info-text">VERIFYING AD STATUS...</div>
+        <button class="btn-action" style="width:240px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RE-OPEN AD</button>
     </div>
 
     <div id="top-ui">
@@ -56,59 +55,60 @@
 
     <div id="tasks-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#00f2ff;">🚀 EARN TASKS</h3>
+        <h3 style="color:#00f2ff; margin-bottom:20px;">EXCLUSIVE TASKS</h3>
         <div class="task-card">
-            <p style="font-size:12px; margin:0;">Join Telegram ($0.20)</p>
-            <button id="btn-t1" class="btn-action" onclick="doLinkTask('t1', 'https://t.me/FishingProCommunity')">JOIN CHANNEL</button>
+            <p style="font-size:12px; margin:0 0 8px;">Join Telegram Community</p>
+            <button id="btn-t1" class="btn-action" onclick="doLinkTask('t1', 'https://t.me/FishingProCommunity')">JOIN CHANNEL ($0.20)</button>
         </div>
         <div class="task-card">
-            <p style="font-size:12px; margin:0;">Subscribe YouTube ($0.20)</p>
-            <button id="btn-t2" class="btn-action" onclick="doLinkTask('t2', 'https://www.youtube.com/@FishProZoneYT')">SUBSCRIBE NOW</button>
+            <p style="font-size:12px; margin:0 0 8px;">Subscribe Official YouTube</p>
+            <button id="btn-t2" class="btn-action" onclick="doLinkTask('t2', 'https://www.youtube.com/@FishProZoneYT')">SUBSCRIBE NOW ($0.20)</button>
         </div>
         <div class="task-card">
-            <p style="font-size:12px; margin:0;">Watch Video ($0.05)</p>
+            <p style="font-size:12px; margin:0 0 8px;">Secret Video Task</p>
             <div id="t3-ui">
                 <button class="btn-action" style="background:#ff4757;" onclick="window.open('https://youtu.be/3vRDSaiZv_s', '_blank')">WATCH VIDEO</button>
-                <input type="text" id="v-code-input" placeholder="Code (22330)" style="margin-top:10px;">
+                <input type="text" id="v-code-input" placeholder="Enter Code" style="width:90%; padding:10px; margin-top:10px; border-radius:10px; border:1px solid #00f2ff; background:#001525; color:white;">
                 <button class="btn-action" onclick="verifyVideoCode()">SUBMIT CODE</button>
             </div>
-            <p id="t3-wait" style="display:none; color:#ffd700;">⏳ কাজ শেষ!</p>
+            <p id="t3-done-msg" style="display:none; color:#00f2ff; font-weight:bold;">COMPLETED ✅</p>
         </div>
     </div>
 
     <div id="energy-modal" class="modal">
-        <h3 style="color:#ffd700;">⚡ এনার্জি শেষ!</h3>
-        <button class="btn-action" onclick="startAd('energy')">📺 WATCH AD (15 ENERGY)</button>
+        <h3 style="color:#ffd700;">LOW ENERGY</h3>
+        <p>Watch a short video to refill 15 Energy</p>
+        <button class="btn-action" onclick="startAd('energy')">📺 WATCH AD</button>
     </div>
 
     <div id="diamond-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#ff00e6;">💎 DIAMOND TASK</h3>
-        <p style="font-size:11px; color:#aaa;">৩টি ভিডিও = ৩০ ডায়মন্ড</p>
+        <h3 style="color:#ff00e6;">DIAMOND FARM</h3>
+        <p style="font-size:12px; color:#aaa;">Complete 3 Ads to get 30 Diamonds</p>
         <button id="dia-ad-btn" class="btn-action" onclick="startAd('dia')">📺 WATCH AD (<span id="task-count">3</span>/3)</button>
-        
-        <div id="cooldown-area" style="display:none; margin-top:15px; border: 1px solid rgba(0,242,255,0.3); padding: 10px; border-radius: 15px;">
-            <p style="color:#aaa; font-size:11px; margin:0;">অপেক্ষা করুন:</p>
-            <p id="cooldown-timer" style="color:#00f2ff; font-size:22px; font-weight:bold; margin:5px 0;">05:00</p>
+        <div id="cooldown-area" style="display:none; margin-top:15px; border: 1px solid #00f2ff; padding: 10px; border-radius: 15px;">
+            <p style="color:#aaa; font-size:11px;">Next attempt in:</p>
+            <p id="cooldown-timer" style="color:#00f2ff; font-size:24px; font-weight:bold;">05:00</p>
         </div>
     </div>
 
     <div id="refer-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#ffd700;">👥 REFERRAL</h3>
-        <div id="refer-link-box" style="font-size:10px; padding:10px; border:1px dashed #00f2ff; color:#00f2ff; word-break:break-all;">Loading...</div>
-        <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
+        <h3 style="color:#ffd700;">INVITE FRIENDS</h3>
+        <p style="font-size:11px; color:#aaa; margin-bottom:15px;">Earn commissions from every friend join</p>
+        <div id="refer-link-box" style="font-size:11px; padding:12px; border:1px dashed #00f2ff; color:#00f2ff; background:rgba(0,0,0,0.3); border-radius:10px; word-break:break-all;">Loading...</div>
+        <button class="btn-action" onclick="copyReferLink()">COPY REFERRAL LINK</button>
     </div>
 
     <div id="withdraw-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
-        <h3 style="color:#27ae60;">💸 WITHDRAW</h3>
-        <input type="number" id="binance-uid" placeholder="Binance UID">
-        <select id="withdraw-amount">
-            <option value="5000">5.00 USD (5k Diamonds)</option>
-            <option value="10000">10.00 USD (10k Diamonds)</option>
+        <h3 style="color:#27ae60;">WALLET WITHDRAW</h3>
+        <input type="number" id="binance-uid" placeholder="Binance UID" class="auth-input">
+        <select id="withdraw-amount" style="width:100%; padding:14px; border-radius:12px; background:#001525; color:white; border:1px solid #00f2ff; margin-bottom:15px;">
+            <option value="5000">5.00 USD (5,000 Diamonds)</option>
+            <option value="10000">10.00 USD (10,000 Diamonds)</option>
         </select>
-        <button class="btn-action" style="background: #27ae60;" onclick="submitWithdraw()">SUBMIT REQUEST</button>
+        <button class="btn-action" style="background: #27ae60;" onclick="submitWithdraw()">CONFIRM WITHDRAW</button>
     </div>
 
     <div id="nav-bar">
@@ -123,7 +123,7 @@
     <script>
         const ADSTERRA_SMARTLINK = "https://www.effectivegatecpm.com/rarb5qds06?key=79349eb6a9357e2e416a3ef19425a5c1";
         const tg = window.Telegram.WebApp;
-        const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
+        const userId = tg.initDataUnsafe?.user?.id.toString() || "player_one";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuWhesvHRa2lkq-G-PRWBQ8S5RP",
@@ -139,11 +139,10 @@
         let adStartTime = 0, timerActive = false, rewardType = "", isUserLoggedIn = false;
         let fishes = [];
 
-        // লগইন ফাংশন
         function processLogin() {
             const phone = document.getElementById('reg-phone').value;
             const pass = document.getElementById('reg-pass').value;
-            if(phone.length < 10 || pass.length < 4) return alert("সঠিক তথ্য দিন!");
+            if(phone.length < 8) return alert("Invalid Phone Number");
             db.ref('users/' + userId + '/security').once('value').then(snap => {
                 if(snap.val()) startTheGame();
                 else db.ref('users/' + userId + '/security').set({ phone, password: pass }).then(() => startTheGame());
@@ -171,26 +170,38 @@
                     balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0;
                     tasksDone = v.tasksDone || 0; nextResetTime = v.nextResetTime || 0;
                     t1_done = v.t1_done || false; t2_done = v.t2_done || false; t3_done = v.t3_done || false;
+                    
                     document.getElementById("coins").innerText = balance.toFixed(6);
                     document.getElementById("energy-count").innerText = energy;
                     document.getElementById("dia-count").innerText = diamonds;
                     document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
                     document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
-                    
-                    // ডায়মন্ড বাটন ধূসর লজিক আপডেট
+
+                    // Auto Gray-out Task Buttons
+                    if(t1_done) lockBtn("btn-t1");
+                    if(t2_done) lockBtn("btn-t2");
+                    if(t3_done) { 
+                        document.getElementById("t3-ui").style.display = "none"; 
+                        document.getElementById("t3-done-msg").style.display = "block";
+                    }
+
                     const diaBtn = document.getElementById("dia-ad-btn");
                     if (tasksDone >= 3 || (nextResetTime > 0 && nextResetTime > Date.now())) {
                         diaBtn.classList.add("btn-gray");
-                        diaBtn.disabled = true;
                     } else {
                         diaBtn.classList.remove("btn-gray");
-                        diaBtn.disabled = false;
                     }
                 }
             });
         }
 
-        // অ্যাড এবং টাইমার লজিক
+        function lockBtn(id) {
+            const el = document.getElementById(id);
+            el.classList.add("btn-gray");
+            el.innerText = "COMPLETED";
+            el.onclick = null;
+        }
+
         function startAd(type) {
             if (type === 'dia' && (tasksDone >= 3 || nextResetTime > Date.now())) return;
             rewardType = type; adStartTime = Date.now(); timerActive = true;
@@ -201,8 +212,6 @@
 
         setInterval(() => {
             if (!isUserLoggedIn) return;
-
-            // ডায়মন্ড টাইমার
             if (nextResetTime > 0) {
                 let diff = Math.floor((nextResetTime - Date.now()) / 1000);
                 if (diff <= 0) { 
@@ -214,8 +223,6 @@
                     document.getElementById("cooldown-area").style.display = "block";
                 }
             }
-
-            // ২০ সেকেন্ড ওয়েট
             if (timerActive) {
                 let elapsed = (Date.now() - adStartTime) / 1000;
                 if (elapsed >= 20.5) { 
@@ -230,74 +237,59 @@
             }
         }, 500);
 
-        // --- রিয়েলিস্টিক বঁড়শি এবং গেম ইঞ্জিন ---
+        // Graphics Engine
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         let hook = { x: canvas.width/2, y: 80, state: 'idle' };
 
-        function drawRealisticHook(ctx, x, y) {
+        function drawHook(ctx, x, y) {
             ctx.save();
-            ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1;
             ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(x, y); ctx.stroke();
-            ctx.strokeStyle = "#bdc3c7";
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(x, y + 10, 8, 0, Math.PI, false);
-            ctx.stroke();
-            ctx.fillStyle = "#bdc3c7";
-            ctx.beginPath();
-            ctx.moveTo(x - 8, y + 10);
-            ctx.lineTo(x - 12, y + 5);
-            ctx.lineTo(x - 6, y + 8);
-            ctx.fill();
+            ctx.strokeStyle = "#ecf0f1"; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(x, y + 10, 8, 0, Math.PI, false); ctx.stroke();
             ctx.restore();
         }
 
-        function drawRealisticFish(ctx, f) {
+        function drawFish(ctx, f) {
             ctx.save(); ctx.translate(f.x, f.y); if (f.dir === -1) ctx.scale(-1, 1);
-            let g = ctx.createRadialGradient(0, 0, 5, 0, 0, 25); g.addColorStop(0, f.color); g.addColorStop(1, "rgba(0,0,0,0.5)");
-            ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(0, 0, 22, 12, 0, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.moveTo(-18, 0); ctx.lineTo(-32, -12); ctx.lineTo(-32, 12); ctx.closePath(); ctx.fill();
-            ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(12, -4, 4, 0, 7); ctx.fill();
-            ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(13, -4, 2, 0, 7); ctx.fill();
+            ctx.fillStyle = f.color;
+            ctx.beginPath(); ctx.ellipse(0, 0, 20, 10, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(-15, 0); ctx.lineTo(-28, -10); ctx.lineTo(-28, 10); ctx.closePath(); ctx.fill();
+            ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(10, -3, 3, 0, 7); ctx.fill();
             ctx.restore();
         }
 
         function createFish() {
-            return { x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-350), speed: 0.8+Math.random()*0.8, dir: Math.random()>0.5?1:-1, color: `hsl(${Math.random()*360}, 80%, 50%)`, caught: false };
+            return { x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-400), speed: 1+Math.random(), dir: Math.random()>0.5?1:-1, color: `hsl(${Math.random()*360}, 70%, 50%)`, caught: false };
         }
-        for(let i=0; i<12; i++) fishes.push(createFish());
+        for(let i=0; i<10; i++) fishes.push(createFish());
 
         function draw() {
             if(!isUserLoggedIn) { requestAnimationFrame(draw); return; }
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            let b = ctx.createLinearGradient(0,0,0,canvas.height); b.addColorStop(0,"#00a8e8"); b.addColorStop(1,"#001e30");
-            ctx.fillStyle = b; ctx.fillRect(0,0,canvas.width, canvas.height);
+            let grad = ctx.createLinearGradient(0,0,0,canvas.height);
+            grad.addColorStop(0, "#005c97"); grad.addColorStop(1, "#001e30");
+            ctx.fillStyle = grad; ctx.fillRect(0,0,canvas.width, canvas.height);
 
-            if(hook.state === 'dropping') { hook.y += 10; if(hook.y > canvas.height-120) hook.state = 'retracting'; }
-            else if(hook.state === 'retracting') { hook.y -= 10; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
+            if(hook.state === 'dropping') { hook.y += 12; if(hook.y > canvas.height-120) hook.state = 'retracting'; }
+            else if(hook.state === 'retracting') { hook.y -= 12; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
 
-            drawRealisticHook(ctx, hook.x, hook.y);
-
+            drawHook(ctx, hook.x, hook.y);
             fishes.forEach(f => {
-                if(f.caught) { f.x = hook.x; f.y = hook.y + 20; }
-                else { f.x += f.speed * f.dir; if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; }
-                drawRealisticFish(ctx, f);
+                if(f.caught) { f.x = hook.x; f.y = hook.y + 15; }
+                else { f.x += f.speed * f.dir; if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 25) f.caught = true; }
+                drawFish(ctx, f);
             });
-            requestAnimationFrame(drawAnimationFrame);
+            requestAnimationFrame(draw);
         }
-        // fix for requestAnimationFrame recursion
-        function drawAnimationFrame() { draw(); }
 
         function checkCatch() {
-            let caughtList = fishes.filter(f => f.caught);
-            if(caughtList.length > 0) {
-                // ব্যালেন্স রেট আগের মতো ০.০০০০০৫ এ সেট করা হয়েছে
-                balance += caughtList.length * 0.000005;
+            let caught = fishes.filter(f => f.caught);
+            if(caught.length > 0) {
+                balance += caught.length * 0.000005;
                 fishes = fishes.filter(f => !f.caught);
-                while(fishes.length < 12) fishes.push(createFish());
+                while(fishes.length < 10) fishes.push(createFish());
                 saveData();
             }
         }
@@ -313,28 +305,29 @@
             setTimeout(() => {
                 if(type === 't1' && !t1_done) { balance += 0.20; t1_done = true; }
                 if(type === 't2' && !t2_done) { balance += 0.20; t2_done = true; }
-                saveData(); alert("টাস্ক বোনাস যোগ হয়েছে!");
+                saveData();
             }, 5000);
         }
 
         function verifyVideoCode() {
-            if(document.getElementById("v-code-input").value === "22330") { balance += 0.05; t3_done = true; saveData(); alert("Success!"); }
-            else alert("ভুল কোড!");
-        }
-
-        function submitWithdraw() {
-            const u = document.getElementById('binance-uid').value;
-            const diaAmount = parseInt(document.getElementById('withdraw-amount').value);
-            const dollarAmount = diaAmount / 1000;
-            if(!u || diamonds < diaAmount || balance < dollarAmount) return alert("ব্যালেন্স কম!");
-            db.ref('Withdraw_Requests').push({ userId, binanceUID: u, diamondAmount: diaAmount, status: "Pending", timestamp: Date.now() });
-            diamonds -= diaAmount; balance -= dollarAmount;
-            saveData(); closeAll(); alert("আবেদন জমা হয়েছে!");
+            if(document.getElementById("v-code-input").value === "22330") { 
+                balance += 0.05; t3_done = true; saveData(); 
+                alert("Task Verified!"); 
+            } else alert("Wrong Code!");
         }
 
         function copyReferLink() {
             const link = document.getElementById("refer-link-box").innerText;
-            navigator.clipboard.writeText(link).then(() => alert("Refer Link Copied!"));
+            navigator.clipboard.writeText(link).then(() => alert("Referral Link Copied!"));
+        }
+
+        function submitWithdraw() {
+            const u = document.getElementById('binance-uid').value;
+            const dia = parseInt(document.getElementById('withdraw-amount').value);
+            if(!u || diamonds < dia) return alert("Low Balance or ID missing!");
+            db.ref('Withdraw_Requests').push({ userId, binanceUID: u, diamondAmount: dia, status: "Pending", timestamp: Date.now() });
+            diamonds -= dia; balance -= (dia/1000);
+            saveData(); closeAll(); alert("Request Sent!");
         }
 
         function saveData() { if(isUserLoggedIn) db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); }
@@ -343,5 +336,5 @@
         draw();
     </script>
 </body>
-    </html>
-            
+                </html>
+    
