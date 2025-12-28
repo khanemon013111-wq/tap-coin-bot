@@ -84,9 +84,12 @@
     <div id="diamond-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#ff00e6;">💎 DIAMOND TASK</h3>
+        <p style="font-size:12px; color:#aaa;">৩টি ভিডিও = ৩০ ডায়মন্ড</p>
         <button id="dia-ad-btn" class="btn-action" onclick="startAd('dia')">📺 WATCH AD (<span id="task-count">3</span>/3)</button>
-        <div id="cooldown-area" style="display:none; margin-top:15px;">
-            <p id="cooldown-timer" style="color:#00f2ff; font-size:22px; font-weight:bold;">05:00</p>
+        
+        <div id="cooldown-area" style="display:none; margin-top:15px; border: 1px solid rgba(0,242,255,0.3); padding: 10px; border-radius: 15px;">
+            <p style="color:#aaa; font-size:11px; margin:0;">পরবর্তী টাস্কের জন্য অপেক্ষা:</p>
+            <p id="cooldown-timer" style="color:#00f2ff; font-size:22px; font-weight:bold; margin:5px 0;">05:00</p>
         </div>
     </div>
 
@@ -136,17 +139,11 @@
         let adStartTime = 0, timerActive = false, rewardType = "", isUserLoggedIn = false;
         let fishes = [];
 
-        // --- লগইন এবং সিকিউরিটি ---
         function processLogin() {
             const phone = document.getElementById('reg-phone').value;
             const pass = document.getElementById('reg-pass').value;
             const errorText = document.getElementById('auth-error');
-
-            if(phone.length < 10 || pass.length < 4) {
-                errorText.innerText = "দাদু, সঠিক নম্বর ও পাসওয়ার্ড দিন!";
-                return;
-            }
-
+            if(phone.length < 10 || pass.length < 4) { errorText.innerText = "দাদু, সঠিক নম্বর ও পাসওয়ার্ড দিন!"; return; }
             db.ref('users/' + userId + '/security').once('value').then(snap => {
                 const data = snap.val();
                 if(data) {
@@ -155,7 +152,7 @@
                 } else {
                     db.ref('users/' + userId + '/security').set({ phone, password: pass }).then(() => startTheGame());
                 }
-            }).catch(e => { errorText.innerText = "ডাটাবেস কানেকশন এরর!"; });
+            });
         }
 
         function startTheGame() {
@@ -190,9 +187,11 @@
             });
         }
 
-        // --- অ্যাড এবং রিওয়ার্ড ---
         function startAd(type) {
-            if (type === 'dia' && tasksDone >= 3) return;
+            if (type === 'dia' && tasksDone >= 3) {
+                alert("৫ মিনিট অপেক্ষা করুন দাদু!");
+                return;
+            }
             rewardType = type; adStartTime = Date.now(); timerActive = true;
             window.open(ADSTERRA_SMARTLINK, '_blank');
             closeAll();
@@ -201,28 +200,38 @@
 
         setInterval(() => {
             if (!isUserLoggedIn) return;
+
+            // ডায়মন্ড কুলডাউন টাইমার চেক
             if (nextResetTime > 0) {
                 let diff = Math.floor((nextResetTime - Date.now()) / 1000);
-                if (diff <= 0) { tasksDone = 0; nextResetTime = 0; saveData(); document.getElementById("cooldown-area").style.display = "none"; }
-                else {
+                if (diff <= 0) { 
+                    tasksDone = 0; nextResetTime = 0; saveData(); 
+                    document.getElementById("cooldown-area").style.display = "none";
+                    document.getElementById("dia-ad-btn").classList.remove("btn-gray");
+                } else {
                     let m = Math.floor(diff/60); let s = diff%60;
                     document.getElementById("cooldown-timer").innerText = `${m}:${s.toString().padStart(2,'0')}`;
                     document.getElementById("cooldown-area").style.display = "block";
+                    document.getElementById("dia-ad-btn").classList.add("btn-gray");
                 }
             }
+
+            // ২০ সেকেন্ড অ্যাড লক
             if (timerActive) {
                 let elapsed = (Date.now() - adStartTime) / 1000;
                 if (elapsed >= 20.5) { 
                     timerActive = false;
                     document.getElementById("force-lock").style.display = "none";
-                    if(rewardType === 'dia') { diamonds += 10; tasksDone++; if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); }
+                    if(rewardType === 'dia') { 
+                        diamonds += 10; tasksDone++; 
+                        if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); 
+                    }
                     else if(rewardType === 'energy') { energy = 15; }
                     saveData();
                 }
             }
         }, 500);
 
-        // --- গেম গ্রাফিক্স ---
         function drawRealisticFish(ctx, f) {
             ctx.save(); ctx.translate(f.x, f.y); if (f.dir === -1) ctx.scale(-1, 1);
             let g = ctx.createRadialGradient(0, 0, 5, 0, 0, 25); g.addColorStop(0, f.color); g.addColorStop(1, "rgba(0,0,0,0.5)");
@@ -250,7 +259,6 @@
             if(hook.state === 'dropping') { hook.y += 10; if(hook.y > canvas.height-120) hook.state = 'retracting'; }
             else if(hook.state === 'retracting') { hook.y -= 10; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
             ctx.strokeStyle = "white"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
-            ctx.beginPath(); ctx.arc(hook.x, hook.y+5, 10, 0, Math.PI); ctx.stroke();
             fishes.forEach(f => {
                 if(f.caught) { f.x = hook.x; f.y = hook.y + 15; }
                 else { f.x += f.speed * f.dir; if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; }
@@ -270,7 +278,6 @@
             hook.state = 'dropping'; energy--; saveData();
         };
 
-        // --- টাস্ক এবং উইথড্র (ফিক্সড) ---
         function doLinkTask(type, link) {
             window.open(link, '_blank');
             setTimeout(() => {
@@ -288,15 +295,10 @@
         function submitWithdraw() {
             const u = document.getElementById('binance-uid').value;
             const diaAmount = parseInt(document.getElementById('withdraw-amount').value);
-            const dollarAmount = diaAmount / 1000; // ৫০০০ এ ৫ ডলার
-
-            if(!u || diamonds < diaAmount) return alert("ডায়মন্ড কম আছে দাদু!");
-            if(balance < dollarAmount) return alert("পর্যাপ্ত ডলার (Balance) নেই!");
-
+            const dollarAmount = diaAmount / 1000;
+            if(!u || diamonds < diaAmount || balance < dollarAmount) return alert("পর্যাপ্ত ব্যালেন্স নেই দাদু!");
             db.ref('Withdraw_Requests').push({ userId, binanceUID: u, diamondAmount: diaAmount, dollarAmount: dollarAmount, status: "Pending", timestamp: Date.now() });
-            
-            diamonds -= diaAmount;
-            balance -= dollarAmount;
+            diamonds -= diaAmount; balance -= dollarAmount;
             saveData(); closeAll(); alert("আবেদন জমা হয়েছে দাদু!");
         }
 
