@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Security Updated</title>
+    <title>Fishing Pro - Dadu Special</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -11,27 +11,19 @@
 
     <style>
         body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
-        
-        /* দাদু, এটি নতুন লগইন স্ক্রিন */
         #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #001e30; z-index: 30000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         .auth-box { background: rgba(0, 30, 50, 0.98); padding: 30px; border-radius: 25px; border: 2px solid #00f2ff; width: 85%; max-width: 320px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.3); }
         .auth-input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; font-size: 16px; text-align: center; }
-
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
         .stat-box { background: rgba(0, 30, 50, 0.9); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
-        
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         #lock-info-text { font-size: 18px; font-weight: bold; color: #ffd700; margin-bottom: 25px; line-height: 1.5; }
-
         .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); max-height: 70vh; overflow-y: auto; }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
-
         .btn-gray { background: #444 !important; color: #888 !important; cursor: not-allowed; }
         .task-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(0,242,255,0.1); }
-
         input, select { width: 95%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; }
-        
         #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #00f2ff; cursor: pointer; flex: 1; }
         .nav-text { font-size: 10px; font-weight: bold; margin-top: 4px; }
@@ -43,7 +35,7 @@
     <div id="auth-screen">
         <div class="auth-box">
             <h2 style="color:#00f2ff; margin:0;">FISHING PRO</h2>
-            <p style="font-size:12px; color:#aaa; margin:10px 0 20px;">আপনার নম্বর ও পাসওয়ার্ড দিয়ে লগইন করুন</p>
+            <p style="font-size:12px; color:#aaa; margin:10px 0 20px;">আপনার নম্বর ও পাসওয়ার্ড দিন দাদু</p>
             <input type="number" id="reg-phone" class="auth-input" placeholder="মোবাইল নম্বর">
             <input type="password" id="reg-pass" class="auth-input" placeholder="৬ সংখ্যার পাসওয়ার্ড" maxlength="6">
             <button class="btn-action" onclick="processLogin()">প্রবেশ করুন</button>
@@ -52,8 +44,8 @@
     </div>
 
     <div id="force-lock">
-        <div id="lock-info-text">Please watch the ad for 10 seconds</div>
-        <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RE-OPEN AD PAGE</button>
+        <div id="lock-info-text">অ্যাডটি ২০ সেকেন্ড দেখুন...</div>
+        <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RE-OPEN AD</button>
     </div>
 
     <div id="top-ui">
@@ -66,34 +58,32 @@
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#00f2ff;">🚀 EARN TASKS</h3>
         <div class="task-card">
-            <p style="font-size:12px; margin:0;">Task 1: Join Telegram ($0.20)</p>
+            <p style="font-size:12px; margin:0;">Join Telegram ($0.20)</p>
             <button id="btn-t1" class="btn-action" onclick="doLinkTask('t1', 'https://t.me/FishingProCommunity')">JOIN CHANNEL</button>
         </div>
         <div class="task-card">
-            <p style="font-size:12px; margin:0;">Task 2: Subscribe YouTube ($0.20)</p>
+            <p style="font-size:12px; margin:0;">Subscribe YouTube ($0.20)</p>
             <button id="btn-t2" class="btn-action" onclick="doLinkTask('t2', 'https://www.youtube.com/@FishProZoneYT')">SUBSCRIBE NOW</button>
         </div>
         <div class="task-card">
-            <p style="font-size:12px; margin:0;">Task 3: Watch Video ($0.05)</p>
+            <p style="font-size:12px; margin:0;">Watch Video ($0.05)</p>
             <div id="t3-ui">
                 <button class="btn-action" style="background:#ff4757;" onclick="window.open('https://youtu.be/3vRDSaiZv_s', '_blank')">WATCH VIDEO</button>
-                <input type="text" id="v-code-input" placeholder="Enter 5 Digit Code" style="margin-top:10px;">
+                <input type="text" id="v-code-input" placeholder="Code (22330)" style="margin-top:10px;">
                 <button class="btn-action" onclick="verifyVideoCode()">SUBMIT CODE</button>
             </div>
-            <p id="t3-wait" style="display:none; color:#ffd700; font-size:11px;">⏳ নতুন ভিডিওর জন্য অপেক্ষা করুন...</p>
+            <p id="t3-wait" style="display:none; color:#ffd700;">⏳ কাজ শেষ!</p>
         </div>
     </div>
 
     <div id="energy-modal" class="modal">
         <h3 style="color:#ffd700;">⚡ এনার্জি শেষ!</h3>
-        <p style="font-size:12px; color:#aaa;">অ্যাড দেখে ১৫ এনার্জি রিফিল করুন।</p>
-        <button class="btn-action" onclick="startAd('energy')">📺 WATCH AD TO REFILL</button>
+        <button class="btn-action" onclick="startAd('energy')">📺 WATCH AD (15 ENERGY)</button>
     </div>
 
     <div id="diamond-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#ff00e6;">💎 DIAMOND TASK</h3>
-        <p style="font-size:12px; color:#aaa;">1 Ad = 10 Diamonds (Max 3 turns)</p>
         <button id="dia-ad-btn" class="btn-action" onclick="startAd('dia')">📺 WATCH AD (<span id="task-count">3</span>/3)</button>
         <div id="cooldown-area" style="display:none; margin-top:15px;">
             <p id="cooldown-timer" style="color:#00f2ff; font-size:22px; font-weight:bold;">05:00</p>
@@ -103,7 +93,7 @@
     <div id="refer-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#ffd700;">👥 REFERRAL</h3>
-        <div id="refer-link-box" style="font-size:11px; padding:15px; border:1px dashed #00f2ff; color:#00f2ff; word-break:break-all; border-radius:10px;">Loading...</div>
+        <div id="refer-link-box" style="font-size:10px; padding:10px; border:1px dashed #00f2ff; color:#00f2ff; word-break:break-all;">Loading...</div>
         <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
     </div>
 
@@ -143,11 +133,10 @@
 
         let balance = 0, energy = 15, diamonds = 0, tasksDone = 0, nextResetTime = 0;
         let t1_done = false, t2_done = false, t3_done = false;
-        let adStartTime = 0, timerActive = false, rewardType = "";
+        let adStartTime = 0, timerActive = false, rewardType = "", isUserLoggedIn = false;
         let fishes = [];
-        let isUserLoggedIn = false; // লগইন ট্র্যাক করবে
 
-        // --- লগইন হ্যান্ডলিং ---
+        // --- লগইন এবং সিকিউরিটি ---
         function processLogin() {
             const phone = document.getElementById('reg-phone').value;
             const pass = document.getElementById('reg-pass').value;
@@ -158,19 +147,15 @@
                 return;
             }
 
-            db.ref('users/' + userId + '/security').once('value', snap => {
+            db.ref('users/' + userId + '/security').once('value').then(snap => {
                 const data = snap.val();
                 if(data) {
-                    if(data.password === pass) {
-                        startTheGame();
-                    } else {
-                        errorText.innerText = "ভুল পাসওয়ার্ড দাদু!";
-                    }
+                    if(data.password === pass) startTheGame();
+                    else errorText.innerText = "ভুল পাসওয়ার্ড দাদু!";
                 } else {
-                    db.ref('users/' + userId + '/security').set({ phone, password: pass })
-                    .then(() => startTheGame());
+                    db.ref('users/' + userId + '/security').set({ phone, password: pass }).then(() => startTheGame());
                 }
-            });
+            }).catch(e => { errorText.innerText = "ডাটাবেস কানেকশন এরর!"; });
         }
 
         function startTheGame() {
@@ -188,6 +173,24 @@
             }
         };
 
+        function initUserData() {
+            db.ref('users/' + userId).on('value', snap => {
+                const v = snap.val(); if(v) {
+                    balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0; tasksDone = v.tasksDone || 0;
+                    nextResetTime = v.nextResetTime || 0; t1_done = v.t1_done || false; t2_done = v.t2_done || false; t3_done = v.t3_done || false;
+                    document.getElementById("coins").innerText = balance.toFixed(6);
+                    document.getElementById("energy-count").innerText = energy;
+                    document.getElementById("dia-count").innerText = diamonds;
+                    document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
+                    document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
+                    if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
+                    if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
+                    if(t3_done) { document.getElementById("t3-ui").style.display="none"; document.getElementById("t3-wait").style.display="block"; }
+                }
+            });
+        }
+
+        // --- অ্যাড এবং রিওয়ার্ড ---
         function startAd(type) {
             if (type === 'dia' && tasksDone >= 3) return;
             rewardType = type; adStartTime = Date.now(); timerActive = true;
@@ -219,25 +222,14 @@
             }
         }, 500);
 
+        // --- গেম গ্রাফিক্স ---
         function drawRealisticFish(ctx, f) {
-            ctx.save();
-            ctx.translate(f.x, f.y);
-            if (f.dir === -1) ctx.scale(-1, 1);
-            let g = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
-            g.addColorStop(0, f.color); g.addColorStop(1, "rgba(0,0,0,0.5)");
-            ctx.fillStyle = g;
-            ctx.beginPath();
-            ctx.moveTo(25, 0); ctx.quadraticCurveTo(10, -18, -15, -8); 
-            ctx.lineTo(-20, -12); ctx.lineTo(-15, -5); 
-            ctx.quadraticCurveTo(-25, 0, -15, 5); 
-            ctx.lineTo(-20, 12); ctx.lineTo(-15, 8); 
-            ctx.quadraticCurveTo(10, 18, 25, 0);
-            ctx.fill();
-            let w = Math.sin(Date.now() * 0.01 + f.x) * 6;
-            ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(-35, -15+w); ctx.lineTo(-30, 0); ctx.lineTo(-35, 15-w); ctx.fill();
+            ctx.save(); ctx.translate(f.x, f.y); if (f.dir === -1) ctx.scale(-1, 1);
+            let g = ctx.createRadialGradient(0, 0, 5, 0, 0, 25); g.addColorStop(0, f.color); g.addColorStop(1, "rgba(0,0,0,0.5)");
+            ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(25, 0); ctx.quadraticCurveTo(10, -18, -15, -8); ctx.lineTo(-20, -12); ctx.lineTo(-15, -5); ctx.quadraticCurveTo(-25, 0, -15, 5); ctx.lineTo(-20, 12); ctx.lineTo(-15, 8); ctx.quadraticCurveTo(10, 18, 25, 0); ctx.fill();
+            let w = Math.sin(Date.now() * 0.01 + f.x) * 6; ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(-35, -15+w); ctx.lineTo(-30, 0); ctx.lineTo(-35, 15-w); ctx.fill();
             ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(16, -4, 4, 0, 7); ctx.fill();
-            ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(18, -4, 2, 0, 7); ctx.fill();
-            ctx.restore();
+            ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(18, -4, 2, 0, 7); ctx.fill(); ctx.restore();
         }
 
         const canvas = document.getElementById("gameCanvas");
@@ -255,20 +247,13 @@
             ctx.clearRect(0,0,canvas.width, canvas.height);
             let b = ctx.createLinearGradient(0,0,0,canvas.height); b.addColorStop(0,"#00a8e8"); b.addColorStop(1,"#001e30");
             ctx.fillStyle = b; ctx.fillRect(0,0,canvas.width, canvas.height);
-
             if(hook.state === 'dropping') { hook.y += 10; if(hook.y > canvas.height-120) hook.state = 'retracting'; }
             else if(hook.state === 'retracting') { hook.y -= 10; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
-
             ctx.strokeStyle = "white"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
             ctx.beginPath(); ctx.arc(hook.x, hook.y+5, 10, 0, Math.PI); ctx.stroke();
-
             fishes.forEach(f => {
                 if(f.caught) { f.x = hook.x; f.y = hook.y + 15; }
-                else {
-                    f.x += f.speed * f.dir;
-                    if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1;
-                    if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true;
-                }
+                else { f.x += f.speed * f.dir; if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; }
                 drawRealisticFish(ctx, f);
             });
             requestAnimationFrame(draw);
@@ -285,71 +270,42 @@
             hook.state = 'dropping'; energy--; saveData();
         };
 
+        // --- টাস্ক এবং উইথড্র (ফিক্সড) ---
         function doLinkTask(type, link) {
             window.open(link, '_blank');
             setTimeout(() => {
                 if(type === 't1' && !t1_done) { balance += 0.20; t1_done = true; }
                 if(type === 't2' && !t2_done) { balance += 0.20; t2_done = true; }
-                saveData();
-                alert("Success! $0.20 added.");
+                saveData(); alert("Success! $0.20 added.");
             }, 3000);
         }
 
         function verifyVideoCode() {
-            let input = document.getElementById("v-code-input").value;
-            if(input === "22330") { 
-                balance += 0.05; t3_done = true; saveData(); alert("Correct! $0.05 added.");
-            } else { alert("Wrong Code দাদু!"); }
+            if(document.getElementById("v-code-input").value === "22330") { balance += 0.05; t3_done = true; saveData(); alert("Success!"); }
+            else alert("ভুল কোড দাদু!");
         }
 
-        function saveData() { 
-            if(isUserLoggedIn) db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); 
-        }
-        
-        function initUserData() {
-            db.ref('users/' + userId).on('value', snap => {
-                const v = snap.val(); if(v) {
-                    balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0; tasksDone = v.tasksDone || 0; nextResetTime = v.nextResetTime || 0;
-                    t1_done = v.t1_done || false; t2_done = v.t2_done || false; t3_done = v.t3_done || false;
-                    
-                    document.getElementById("coins").innerText = balance.toFixed(6);
-                    document.getElementById("energy-count").innerText = energy;
-                    document.getElementById("dia-count").innerText = diamonds;
-                    document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
-                    document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
-                    
-                    if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
-                    if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
-                    if(t3_done) { document.getElementById("t3-ui").style.display="none"; document.getElementById("t3-wait").style.display="block"; }
-                }
-            });
-        }
-
-        function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert("Copied!")); }
-        function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
-        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
-        
-        // দাদু, এখানে আমি ডলার কাটার ফাংশনটা নিখুঁত করে দিয়েছি
         function submitWithdraw() {
             const u = document.getElementById('binance-uid').value;
             const diaAmount = parseInt(document.getElementById('withdraw-amount').value);
+            const dollarAmount = diaAmount / 1000; // ৫০০০ এ ৫ ডলার
+
+            if(!u || diamonds < diaAmount) return alert("ডায়মন্ড কম আছে দাদু!");
+            if(balance < dollarAmount) return alert("পর্যাপ্ত ডলার (Balance) নেই!");
+
+            db.ref('Withdraw_Requests').push({ userId, binanceUID: u, diamondAmount: diaAmount, dollarAmount: dollarAmount, status: "Pending", timestamp: Date.now() });
             
-            // ডায়মন্ড অনুযায়ী ডলারের হিসাব (৫০০০ ডায়মন্ডে ৫ ডলার, ১০০০ এ ১ ডলার)
-            const dollarToCut = diaAmount / 1000; 
+            diamonds -= diaAmount;
+            balance -= dollarAmount;
+            saveData(); closeAll(); alert("আবেদন জমা হয়েছে দাদু!");
+        }
 
-            if(!u) return alert("Binance UID দিন দাদু!");
-            if(diamonds < diaAmount) return alert("পর্যাপ্ত ডায়মন্ড নেই দাদু!");
-            if(balance < dollarToCut) return alert("পর্যাপ্ত ব্যালেন্স নেই দাদু!");
+        function saveData() { if(isUserLoggedIn) db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); }
+        function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert("Copied!")); }
+        function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
+        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
+        draw();
+    </script>
+</body>
+</html>
 
-            // ফায়ারবেসে রিকোয়েস্ট পাঠানো
-            db.ref('Withdraw_Requests').push({
-                userId, 
-                binanceUID: u, 
-                diamondAmount: diaAmount, 
-                dollarAmount: dollarToCut, 
-                status: "Pending", 
-                timestamp: Date.now()
-            });
-
-            // দাদু, এখন ডায়মন্ড এবং ডলার দুইটাই কেটে নিবে
-       
