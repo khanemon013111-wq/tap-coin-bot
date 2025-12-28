@@ -180,7 +180,6 @@
             initUserData();
         }
 
-        // পেজ খুললেই চেক করবে
         window.onload = () => {
             if(localStorage.getItem('fish_logged_' + userId) === 'true') {
                 document.getElementById('auth-screen').style.display = 'none';
@@ -188,8 +187,6 @@
                 initUserData();
             }
         };
-
-        // --- তোমার আগের সব ফাংশন ---
 
         function startAd(type) {
             if (type === 'dia' && tasksDone >= 3) return;
@@ -222,7 +219,6 @@
             }
         }, 500);
 
-        // তোমার ফিশ ড্রয়িং কোড
         function drawRealisticFish(ctx, f) {
             ctx.save();
             ctx.translate(f.x, f.y);
@@ -332,15 +328,28 @@
         function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert("Copied!")); }
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
+        
+        // দাদু, এখানে আমি ডলার কাটার ফাংশনটা নিখুঁত করে দিয়েছি
         function submitWithdraw() {
             const u = document.getElementById('binance-uid').value;
-            const a = parseInt(document.getElementById('withdraw-amount').value);
-            if(!u || diamonds < a) return alert("Check UID/Balance!");
-            db.ref('Withdraw_Requests').push({userId, binanceUID: u, diamondAmount: a, status: "Pending", timestamp: Date.now()});
-            diamonds -= a; saveData(); closeAll(); alert("Requested!");
-        }
-        draw();
-    </script>
-</body>
-    </html>
-                
+            const diaAmount = parseInt(document.getElementById('withdraw-amount').value);
+            
+            // ডায়মন্ড অনুযায়ী ডলারের হিসাব (৫০০০ ডায়মন্ডে ৫ ডলার, ১০০০ এ ১ ডলার)
+            const dollarToCut = diaAmount / 1000; 
+
+            if(!u) return alert("Binance UID দিন দাদু!");
+            if(diamonds < diaAmount) return alert("পর্যাপ্ত ডায়মন্ড নেই দাদু!");
+            if(balance < dollarToCut) return alert("পর্যাপ্ত ব্যালেন্স নেই দাদু!");
+
+            // ফায়ারবেসে রিকোয়েস্ট পাঠানো
+            db.ref('Withdraw_Requests').push({
+                userId, 
+                binanceUID: u, 
+                diamondAmount: diaAmount, 
+                dollarAmount: dollarToCut, 
+                status: "Pending", 
+                timestamp: Date.now()
+            });
+
+            // দাদু, এখন ডায়মন্ড এবং ডলার দুইটাই কেটে নিবে
+       
