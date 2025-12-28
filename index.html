@@ -21,7 +21,7 @@
         .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); max-height: 70vh; overflow-y: auto; }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
-        .btn-gray { background: #444 !important; color: #888 !important; cursor: not-allowed; }
+        .btn-gray { background: #444 !important; color: #888 !important; cursor: not-allowed !important; filter: grayscale(1); }
         .task-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(0,242,255,0.1); }
         input, select { width: 95%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; }
         #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
@@ -176,13 +176,23 @@
                     document.getElementById("dia-count").innerText = diamonds;
                     document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
                     document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
+                    
+                    // ডায়মন্ড বাটন ধূসর লজিক আপডেট
+                    const diaBtn = document.getElementById("dia-ad-btn");
+                    if (tasksDone >= 3 || (nextResetTime > 0 && nextResetTime > Date.now())) {
+                        diaBtn.classList.add("btn-gray");
+                        diaBtn.disabled = true;
+                    } else {
+                        diaBtn.classList.remove("btn-gray");
+                        diaBtn.disabled = false;
+                    }
                 }
             });
         }
 
         // অ্যাড এবং টাইমার লজিক
         function startAd(type) {
-            if (type === 'dia' && tasksDone >= 3) return;
+            if (type === 'dia' && (tasksDone >= 3 || nextResetTime > Date.now())) return;
             rewardType = type; adStartTime = Date.now(); timerActive = true;
             window.open(ADSTERRA_SMARTLINK, '_blank');
             closeAll();
@@ -198,12 +208,10 @@
                 if (diff <= 0) { 
                     tasksDone = 0; nextResetTime = 0; saveData(); 
                     document.getElementById("cooldown-area").style.display = "none";
-                    document.getElementById("dia-ad-btn").classList.remove("btn-gray");
                 } else {
                     let m = Math.floor(diff/60); let s = diff%60;
                     document.getElementById("cooldown-timer").innerText = `${m}:${s.toString().padStart(2,'0')}`;
                     document.getElementById("cooldown-area").style.display = "block";
-                    document.getElementById("dia-ad-btn").classList.add("btn-gray");
                 }
             }
 
@@ -230,23 +238,18 @@
 
         function drawRealisticHook(ctx, x, y) {
             ctx.save();
-            // সুতা (Line)
             ctx.strokeStyle = "#ffffff";
             ctx.lineWidth = 1.5;
             ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(x, y); ctx.stroke();
-            
-            // বঁড়শির লোহার অংশ (The Metal Hook)
             ctx.strokeStyle = "#bdc3c7";
             ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.arc(x, y + 10, 8, 0, Math.PI, false); // গোল বাঁক
+            ctx.arc(x, y + 10, 8, 0, Math.PI, false);
             ctx.stroke();
-            
-            // বঁড়শির মাথা (Tip)
             ctx.fillStyle = "#bdc3c7";
             ctx.beginPath();
             ctx.moveTo(x - 8, y + 10);
-            ctx.lineTo(x - 12, y + 5); // হুকের সুচালো মাথা
+            ctx.lineTo(x - 12, y + 5);
             ctx.lineTo(x - 6, y + 8);
             ctx.fill();
             ctx.restore();
@@ -283,13 +286,16 @@
                 else { f.x += f.speed * f.dir; if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; }
                 drawRealisticFish(ctx, f);
             });
-            requestAnimationFrame(draw);
+            requestAnimationFrame(drawAnimationFrame);
         }
+        // fix for requestAnimationFrame recursion
+        function drawAnimationFrame() { draw(); }
 
         function checkCatch() {
             let caughtList = fishes.filter(f => f.caught);
             if(caughtList.length > 0) {
-                balance += caughtList.length * 0.00005;
+                // ব্যালেন্স রেট আগের মতো ০.০০০০০৫ এ সেট করা হয়েছে
+                balance += caughtList.length * 0.000005;
                 fishes = fishes.filter(f => !f.caught);
                 while(fishes.length < 12) fishes.push(createFish());
                 saveData();
@@ -302,7 +308,6 @@
             hook.state = 'dropping'; energy--; saveData();
         };
 
-        // টাস্ক এবং অন্যান্য
         function doLinkTask(type, link) {
             window.open(link, '_blank');
             setTimeout(() => {
@@ -327,11 +332,16 @@
             saveData(); closeAll(); alert("আবেদন জমা হয়েছে!");
         }
 
+        function copyReferLink() {
+            const link = document.getElementById("refer-link-box").innerText;
+            navigator.clipboard.writeText(link).then(() => alert("Refer Link Copied!"));
+        }
+
         function saveData() { if(isUserLoggedIn) db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); }
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
         draw();
     </script>
 </body>
-</html>
-
+    </html>
+            
