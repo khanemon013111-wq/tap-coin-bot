@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - 10 Diamonds per Ad</title>
+    <title>Fishing Pro - Realistic Update</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -12,7 +12,6 @@
     <style>
         body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
         
-        /* দাদু আপনার ব্যানার অ্যাডের স্টাইল */
         #banner-ad-box {
             position: fixed;
             bottom: 65px; 
@@ -25,22 +24,20 @@
             background: rgba(0,0,0,0.2);
         }
 
-        #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
+        #top-ui { position: fixed; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
         .stat-box { background: rgba(0, 30, 50, 0.9); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
         
         #force-lock { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        #lock-info-text { font-size: 18px; font-weight: bold; color: #ffd700; margin-bottom: 25px; line-height: 1.5; }
+        #lock-info-text { font-size: 20px; font-weight: bold; color: #ff4757; margin-bottom: 20px; }
 
-        .modal { display: none; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); max-height: 70vh; overflow-y: auto; }
+        .modal { display: none; position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 20, 35, 0.98); padding: 25px; border-radius: 25px; border: 2px solid #00f2ff; z-index: 3000; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); max-height: 70vh; overflow-y: auto; }
         .close-btn { position: absolute; top: 10px; right: 15px; background: #ff4757; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
         .btn-action { background: linear-gradient(135deg, #00d2ff, #0072ff); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
 
         .btn-gray { background: #444 !important; color: #888 !important; cursor: not-allowed; }
         .task-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; margin-bottom: 12px; border: 1px solid rgba(0,242,255,0.1); }
-
-        input, select { width: 95%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #00f2ff; background: #001525; color: white; box-sizing: border-box; }
         
-        #nav-bar { position: absolute; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        #nav-bar { position: fixed; bottom: 0; width: 100%; height: 65px; background: rgba(0, 15, 25, 0.98); border-top: 1.5px solid rgba(0, 242, 255, 0.3); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #00f2ff; cursor: pointer; flex: 1; }
         .nav-text { font-size: 10px; font-weight: bold; margin-top: 4px; }
         canvas { display: block; }
@@ -51,8 +48,9 @@
     <script src="https://pl28355732.effectivegatecpm.com/a8/fe/bd/a8febd56aaf107a403bd203fa2d55338.js"></script>
 
     <div id="force-lock">
-        <div id="lock-info-text">Please watch the ad for 20 seconds</div>
-        <button id="lock-timer-btn" class="btn-action" style="width:220px; background:#ffd700; color:#000; cursor:not-allowed;">WAITING (20s)</button>
+        <div id="lock-info-text">⏳ PROCESSING AD...</div>
+        <p style="color: #aaa; font-size: 14px; margin-bottom: 25px;">Please wait for 15 seconds. Don't close the ad.</p>
+        <button id="re-open-btn" class="btn-action" style="width:240px; background:#ffd700; color:#000;" onclick="reOpenAd()">🚀 RE-OPEN AD PAGE</button>
     </div>
 
     <div id="top-ui">
@@ -63,13 +61,7 @@
 
     <div id="banner-ad-box">
         <script type="text/javascript">
-            atOptions = {
-                'key' : '31538927255dfc639a3be82f8f45a1de',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-            };
+            atOptions = { 'key' : '31538927255dfc639a3be82f8f45a1de', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
         </script>
         <script type="text/javascript" src="//www.highperformanceformat.com/31538927255dfc639a3be82f8f45a1de/invoke.js"></script>
     </div>
@@ -89,16 +81,16 @@
             <p style="font-size:12px; margin:0;">Task 3: Watch Video ($0.05)</p>
             <div id="t3-ui">
                 <button class="btn-action" style="background:#ff4757;" onclick="window.open('https://youtu.be/3vRDSaiZv_s', '_blank')">WATCH VIDEO</button>
-                <input type="text" id="v-code-input" placeholder="Enter 5 Digit Code" style="margin-top:10px;">
+                <input type="text" id="v-code-input" placeholder="Enter Code" style="margin-top:10px; width: 90%; background: #000; color: #fff; border: 1px solid #00f2ff; padding: 10px;">
                 <button class="btn-action" onclick="verifyVideoCode()">SUBMIT CODE</button>
             </div>
-            <p id="t3-wait" style="display:none; color:#ffd700; font-size:11px;">⏳ নতুন ভিডিওর জন্য অপেক্ষা করুন...</p>
+            <p id="t3-wait" style="display:none; color:#ffd700; font-size:11px;">⏳ New video coming soon...</p>
         </div>
     </div>
 
     <div id="energy-modal" class="modal">
-        <h3 style="color:#ffd700;">⚡ এনার্জি শেষ!</h3>
-        <p style="font-size:12px; color:#aaa;">অ্যাড দেখে ১৫ এনার্জি রিফিল করুন।</p>
+        <h3 style="color:#ffd700;">⚡ NO ENERGY!</h3>
+        <p style="font-size:12px; color:#aaa;">Watch ad to refill 15 energy.</p>
         <button class="btn-action" onclick="startAd('energy')">📺 WATCH AD TO REFILL</button>
     </div>
 
@@ -122,8 +114,8 @@
     <div id="withdraw-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#27ae60;">💸 WITHDRAW</h3>
-        <input type="number" id="binance-uid" placeholder="Binance UID">
-        <select id="withdraw-amount">
+        <input type="number" id="binance-uid" placeholder="Binance UID" style="width: 90%; background: #000; color: #fff; border: 1px solid #27ae60; padding: 10px; margin-bottom: 10px;">
+        <select id="withdraw-amount" style="width: 90%; background: #000; color: #fff; border: 1px solid #27ae60; padding: 10px;">
             <option value="5000">5.00 USD (5k Diamonds)</option>
             <option value="10000">10.00 USD (10k Diamonds)</option>
         </select>
@@ -156,30 +148,24 @@
         let balance = 0, energy = 15, diamonds = 0, tasksDone = 0, nextResetTime = 0;
         let t1_done = false, t2_done = false, t3_done = false;
         let adStartTime = 0, timerActive = false, rewardType = "";
+        let hookThrowCount = 0;
         let fishes = [];
-        let hookThrowCount = 0; // দাদু ১০০ বার গনার জন্য এই ভেরিয়েবল
+
+        // Camera Logic
+        const WATER_DEPTH = 2500;
+        let cameraY = 0;
 
         function startAd(type) {
             if (type === 'dia' && tasksDone >= 3) return;
-            rewardType = type; adStartTime = Date.now(); timerActive = true;
+            rewardType = type; 
+            adStartTime = Date.now(); 
+            timerActive = true;
             window.open(ADSTERRA_SMARTLINK, '_blank');
             closeAll();
             document.getElementById("force-lock").style.display = "flex";
-            updateLockTimer(20);
         }
 
-        // দাদু ১০০ বার পূর্ণ হলে এই ফাংশনটি অটো অ্যাড ওপেন করবে
-        function triggerAutoAd() {
-            rewardType = "auto"; adStartTime = Date.now(); timerActive = true;
-            window.open(ADSTERRA_SMARTLINK, '_blank');
-            document.getElementById("force-lock").style.display = "flex";
-            updateLockTimer(20);
-        }
-
-        function updateLockTimer(seconds) {
-            let btn = document.getElementById("lock-timer-btn");
-            btn.innerText = `WAITING (${seconds}s)`;
-        }
+        function reOpenAd() { window.open(ADSTERRA_SMARTLINK, '_blank'); }
 
         setInterval(() => {
             if (nextResetTime > 0) {
@@ -192,34 +178,29 @@
                 }
             }
             if (timerActive) {
-                let elapsed = Math.floor((Date.now() - adStartTime) / 1000);
-                let remaining = 20 - elapsed;
-                if (remaining > 0) {
-                    updateLockTimer(remaining);
-                } else { 
+                let elapsed = (Date.now() - adStartTime) / 1000;
+                if (elapsed >= 15.2) { 
                     timerActive = false;
                     document.getElementById("force-lock").style.display = "none";
                     if(rewardType === 'dia') { diamonds += 10; tasksDone++; if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); }
                     else if(rewardType === 'energy') { energy = 15; }
                     saveData();
+                    alert("Reward Successful!");
                 }
             }
-        }, 500);
+        }, 1000);
 
-        function drawRealisticFish(ctx, f) {
-            ctx.save();
-            ctx.translate(f.x, f.y);
+        function drawRealisticFish(ctx, f, camY) {
+            ctx.save(); ctx.translate(f.x, f.y - camY);
             if (f.dir === -1) ctx.scale(-1, 1);
             let g = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
             g.addColorStop(0, f.color); g.addColorStop(1, "rgba(0,0,0,0.5)");
-            ctx.fillStyle = g;
-            ctx.beginPath();
+            ctx.fillStyle = g; ctx.beginPath();
             ctx.moveTo(25, 0); ctx.quadraticCurveTo(10, -18, -15, -8); 
             ctx.lineTo(-20, -12); ctx.lineTo(-15, -5); 
             ctx.quadraticCurveTo(-25, 0, -15, 5); 
             ctx.lineTo(-20, 12); ctx.lineTo(-15, 8); 
-            ctx.quadraticCurveTo(10, 18, 25, 0);
-            ctx.fill();
+            ctx.quadraticCurveTo(10, 18, 25, 0); ctx.fill();
             let w = Math.sin(Date.now() * 0.01 + f.x) * 6;
             ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(-35, -15+w); ctx.lineTo(-30, 0); ctx.lineTo(-35, 15-w); ctx.fill();
             ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(16, -4, 4, 0, 7); ctx.fill();
@@ -233,20 +214,37 @@
         let hook = { x: canvas.width/2, y: 80, state: 'idle' };
 
         function createFish() {
-            return { x: Math.random()*canvas.width, y: 250+Math.random()*(canvas.height-350), speed: 0.7+Math.random()*0.8, dir: Math.random()>0.5?1:-1, color: `hsl(${Math.random()*360}, 80%, 50%)`, caught: false };
+            return { 
+                x: Math.random()*canvas.width, 
+                y: 350 + Math.random()*(WATER_DEPTH - 500), 
+                speed: 0.7+Math.random()*0.8, 
+                dir: Math.random()>0.5?1:-1, 
+                color: `hsl(${Math.random()*360}, 80%, 50%)`, 
+                caught: false 
+            };
         }
-        for(let i=0; i<12; i++) fishes.push(createFish());
+        for(let i=0; i<25; i++) fishes.push(createFish());
 
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            let b = ctx.createLinearGradient(0,0,0,canvas.height); b.addColorStop(0,"#00a8e8"); b.addColorStop(1,"#001e30");
+            
+            if (hook.y > canvas.height / 2) {
+                cameraY = hook.y - canvas.height / 2;
+            } else {
+                cameraY = 0;
+            }
+            if (cameraY > WATER_DEPTH - canvas.height) cameraY = WATER_DEPTH - canvas.height;
+
+            let b = ctx.createLinearGradient(0, -cameraY, 0, WATER_DEPTH - cameraY);
+            b.addColorStop(0,"#00a8e8"); b.addColorStop(0.5,"#001e30"); b.addColorStop(1,"#00050a");
             ctx.fillStyle = b; ctx.fillRect(0,0,canvas.width, canvas.height);
 
-            if(hook.state === 'dropping') { hook.y += 10; if(hook.y > canvas.height-120) hook.state = 'retracting'; }
-            else if(hook.state === 'retracting') { hook.y -= 10; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
+            if(hook.state === 'dropping') { hook.y += 10; if(hook.y > WATER_DEPTH - 120) hook.state = 'retracting'; }
+            else if(hook.state === 'retracting') { hook.y -= 12; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
 
-            ctx.strokeStyle = "white"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(hook.x, hook.y); ctx.stroke();
-            ctx.beginPath(); ctx.arc(hook.x, hook.y+5, 10, 0, Math.PI); ctx.stroke();
+            ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 2; ctx.beginPath(); 
+            ctx.moveTo(canvas.width/2, -cameraY); ctx.lineTo(hook.x, hook.y - cameraY); ctx.stroke();
+            ctx.beginPath(); ctx.arc(hook.x, hook.y - cameraY + 5, 10, 0, Math.PI); ctx.stroke();
 
             fishes.forEach(f => {
                 if(f.caught) { f.x = hook.x; f.y = hook.y + 15; }
@@ -255,30 +253,21 @@
                     if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1;
                     if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true;
                 }
-                drawRealisticFish(ctx, f);
+                drawRealisticFish(ctx, f, cameraY);
             });
             requestAnimationFrame(draw);
         }
 
         function checkCatch() {
             let c = fishes.filter(f => f.caught).length;
-            if(c > 0) { balance += c * 0.00005; fishes = fishes.filter(f => !f.caught); while(fishes.length < 12) fishes.push(createFish()); saveData(); }
+            if(c > 0) { balance += c * 0.0001; fishes = fishes.filter(f => !f.caught); while(fishes.length < 25) fishes.push(createFish()); saveData(); }
         }
 
         window.onclick = (e) => {
             if(e.target.tagName !== 'CANVAS' || hook.state !== 'idle' || timerActive) return;
             if(energy <= 0) { openShop('energy-modal'); return; }
-            
-            hook.state = 'dropping'; 
-            energy--; 
-            
-            // দাদু বঁড়শি ফেলার সংখ্যা গননা করা হচ্ছে
-            hookThrowCount++;
-            if(hookThrowCount >= 100) {
-                hookThrowCount = 0;
-                triggerAutoAd();
-            }
-            
+            hook.state = 'dropping'; energy--; hookThrowCount++;
+            if(hookThrowCount >= 100) { hookThrowCount = 0; startAd('auto'); }
             saveData();
         };
 
@@ -287,16 +276,14 @@
             setTimeout(() => {
                 if(type === 't1' && !t1_done) { balance += 0.20; t1_done = true; }
                 if(type === 't2' && !t2_done) { balance += 0.20; t2_done = true; }
-                saveData();
-                alert("Success! $0.20 added.");
-            }, 3000);
+                saveData(); alert("Task Done!");
+            }, 3500);
         }
 
         function verifyVideoCode() {
             let input = document.getElementById("v-code-input").value;
-            if(input === "22330") { 
-                balance += 0.05; t3_done = true; saveData(); alert("Correct! $0.05 added.");
-            } else { alert("Wrong Code দাদু!"); }
+            if(input === "22330") { balance += 0.05; t3_done = true; saveData(); alert("Success!"); } 
+            else { alert("Wrong Code!"); }
         }
 
         function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); }
@@ -305,15 +292,13 @@
             const v = snap.val(); if(v) {
                 balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0; tasksDone = v.tasksDone || 0; nextResetTime = v.nextResetTime || 0;
                 t1_done = v.t1_done || false; t2_done = v.t2_done || false; t3_done = v.t3_done || false;
-                
                 document.getElementById("coins").innerText = balance.toFixed(6);
                 document.getElementById("energy-count").innerText = energy;
                 document.getElementById("dia-count").innerText = diamonds;
                 document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
                 document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
-                
-                if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
-                if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE ✅"; b.classList.add("btn-gray"); b.disabled=true; }
+                if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE"; b.classList.add("btn-gray"); b.disabled=true; }
+                if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE"; b.classList.add("btn-gray"); b.disabled=true; }
                 if(t3_done) { document.getElementById("t3-ui").style.display="none"; document.getElementById("t3-wait").style.display="block"; }
             }
         });
@@ -324,12 +309,12 @@
         function submitWithdraw() {
             const u = document.getElementById('binance-uid').value;
             const a = parseInt(document.getElementById('withdraw-amount').value);
-            if(!u || diamonds < a) return alert("Check UID/Balance!");
+            if(!u || diamonds < a) return alert("Check Balance!");
             db.ref('Withdraw_Requests').push({userId, binanceUID: u, diamondAmount: a, status: "Pending", timestamp: Date.now()});
             diamonds -= a; saveData(); closeAll(); alert("Requested!");
         }
         draw();
     </script>
 </body>
-    </html>
-    
+            </html>
+                                                                                            
