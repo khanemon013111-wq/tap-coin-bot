@@ -11,6 +11,20 @@
 
     <style>
         body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
+        
+        /* দাদু আপনার ব্যানার অ্যাডের স্টাইল */
+        #banner-ad-box {
+            position: fixed;
+            bottom: 65px; 
+            width: 100%;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1500;
+            background: rgba(0,0,0,0.2);
+        }
+
         #top-ui { position: absolute; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
         .stat-box { background: rgba(0, 30, 50, 0.9); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(0, 242, 255, 0.3); font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 4px; }
         
@@ -34,15 +48,30 @@
 </head>
 <body>
 
+    <script src="https://pl28355732.effectivegatecpm.com/a8/fe/bd/a8febd56aaf107a403bd203fa2d55338.js"></script>
+
     <div id="force-lock">
-        <div id="lock-info-text">Please watch the ad for 10 seconds</div>
-        <button class="btn-action" style="width:220px; background:#ffd700; color:#000;" onclick="window.open(ADSTERRA_SMARTLINK, '_blank')">🚀 RE-OPEN AD PAGE</button>
+        <div id="lock-info-text">Please watch the ad for 20 seconds</div>
+        <button id="lock-timer-btn" class="btn-action" style="width:220px; background:#ffd700; color:#000; cursor:not-allowed;">WAITING (20s)</button>
     </div>
 
     <div id="top-ui">
         <div class="stat-box">💰 $<span id="coins">0.000000</span></div>
         <div class="stat-box">⚡ <span id="energy-count">15</span>/15</div>
         <div class="stat-box">💎 <span id="dia-count">0</span></div>
+    </div>
+
+    <div id="banner-ad-box">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '31538927255dfc639a3be82f8f45a1de',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/31538927255dfc639a3be82f8f45a1de/invoke.js"></script>
     </div>
 
     <div id="tasks-modal" class="modal">
@@ -128,6 +157,7 @@
         let t1_done = false, t2_done = false, t3_done = false;
         let adStartTime = 0, timerActive = false, rewardType = "";
         let fishes = [];
+        let hookThrowCount = 0; // দাদু ১০০ বার গনার জন্য এই ভেরিয়েবল
 
         function startAd(type) {
             if (type === 'dia' && tasksDone >= 3) return;
@@ -135,6 +165,20 @@
             window.open(ADSTERRA_SMARTLINK, '_blank');
             closeAll();
             document.getElementById("force-lock").style.display = "flex";
+            updateLockTimer(20);
+        }
+
+        // দাদু ১০০ বার পূর্ণ হলে এই ফাংশনটি অটো অ্যাড ওপেন করবে
+        function triggerAutoAd() {
+            rewardType = "auto"; adStartTime = Date.now(); timerActive = true;
+            window.open(ADSTERRA_SMARTLINK, '_blank');
+            document.getElementById("force-lock").style.display = "flex";
+            updateLockTimer(20);
+        }
+
+        function updateLockTimer(seconds) {
+            let btn = document.getElementById("lock-timer-btn");
+            btn.innerText = `WAITING (${seconds}s)`;
         }
 
         setInterval(() => {
@@ -148,8 +192,11 @@
                 }
             }
             if (timerActive) {
-                let elapsed = (Date.now() - adStartTime) / 1000;
-                if (elapsed >= 20.5) { 
+                let elapsed = Math.floor((Date.now() - adStartTime) / 1000);
+                let remaining = 20 - elapsed;
+                if (remaining > 0) {
+                    updateLockTimer(remaining);
+                } else { 
                     timerActive = false;
                     document.getElementById("force-lock").style.display = "none";
                     if(rewardType === 'dia') { diamonds += 10; tasksDone++; if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); }
@@ -221,7 +268,18 @@
         window.onclick = (e) => {
             if(e.target.tagName !== 'CANVAS' || hook.state !== 'idle' || timerActive) return;
             if(energy <= 0) { openShop('energy-modal'); return; }
-            hook.state = 'dropping'; energy--; saveData();
+            
+            hook.state = 'dropping'; 
+            energy--; 
+            
+            // দাদু বঁড়শি ফেলার সংখ্যা গননা করা হচ্ছে
+            hookThrowCount++;
+            if(hookThrowCount >= 100) {
+                hookThrowCount = 0;
+                triggerAutoAd();
+            }
+            
+            saveData();
         };
 
         function doLinkTask(type, link) {
@@ -236,7 +294,6 @@
 
         function verifyVideoCode() {
             let input = document.getElementById("v-code-input").value;
-            // দাদু এখানে আপনার কোডটা বসিয়ে দিয়েছি
             if(input === "22330") { 
                 balance += 0.05; t3_done = true; saveData(); alert("Correct! $0.05 added.");
             } else { alert("Wrong Code দাদু!"); }
@@ -275,3 +332,4 @@
     </script>
 </body>
     </html>
+    
