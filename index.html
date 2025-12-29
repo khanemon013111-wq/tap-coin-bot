@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fishing Pro - Realistic Update</title>
+    <title>Fishing Pro - Realistic Hook Update</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -151,7 +151,6 @@
         let hookThrowCount = 0;
         let fishes = [];
 
-        // Camera Logic
         const WATER_DEPTH = 2500;
         let cameraY = 0;
 
@@ -185,10 +184,32 @@
                     if(rewardType === 'dia') { diamonds += 10; tasksDone++; if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); }
                     else if(rewardType === 'energy') { energy = 15; }
                     saveData();
-                    alert("Reward Successful!");
+                    alert("Reward Added!");
                 }
             }
         }, 1000);
+
+        function drawOriginalHook(ctx, x, y) {
+            ctx.save();
+            ctx.strokeStyle = "#silver";
+            ctx.lineWidth = 3;
+            ctx.lineCap = "round";
+            // Main Shaft
+            ctx.beginPath();
+            ctx.moveTo(x, y - 20);
+            ctx.lineTo(x, y + 5);
+            // Hook Curve
+            ctx.arc(x - 6, y + 5, 6, 0, Math.PI, false);
+            // Sharp Point
+            ctx.lineTo(x - 12, y - 2);
+            ctx.stroke();
+            // Eyelet
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(x, y - 22, 3, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
 
         function drawRealisticFish(ctx, f, camY) {
             ctx.save(); ctx.translate(f.x, f.y - camY);
@@ -216,7 +237,7 @@
         function createFish() {
             return { 
                 x: Math.random()*canvas.width, 
-                y: 350 + Math.random()*(WATER_DEPTH - 500), 
+                y: 400 + Math.random()*(WATER_DEPTH - 600), 
                 speed: 0.7+Math.random()*0.8, 
                 dir: Math.random()>0.5?1:-1, 
                 color: `hsl(${Math.random()*360}, 80%, 50%)`, 
@@ -229,7 +250,7 @@
             ctx.clearRect(0,0,canvas.width, canvas.height);
             
             if (hook.y > canvas.height / 2) {
-                cameraY = hook.y - canvas.height / 2;
+                cameraY = (hook.y - canvas.height / 2);
             } else {
                 cameraY = 0;
             }
@@ -239,12 +260,22 @@
             b.addColorStop(0,"#00a8e8"); b.addColorStop(0.5,"#001e30"); b.addColorStop(1,"#00050a");
             ctx.fillStyle = b; ctx.fillRect(0,0,canvas.width, canvas.height);
 
-            if(hook.state === 'dropping') { hook.y += 10; if(hook.y > WATER_DEPTH - 120) hook.state = 'retracting'; }
-            else if(hook.state === 'retracting') { hook.y -= 12; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
+            // Hook Movement Speed (Slowed Down)
+            if(hook.state === 'dropping') { 
+                hook.y += 6; // Reduced speed
+                if(hook.y > WATER_DEPTH - 150) hook.state = 'retracting'; 
+            }
+            else if(hook.state === 'retracting') { 
+                hook.y -= 7; // Reduced speed
+                if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } 
+            }
 
-            ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 2; ctx.beginPath(); 
-            ctx.moveTo(canvas.width/2, -cameraY); ctx.lineTo(hook.x, hook.y - cameraY); ctx.stroke();
-            ctx.beginPath(); ctx.arc(hook.x, hook.y - cameraY + 5, 10, 0, Math.PI); ctx.stroke();
+            // Fishing Line
+            ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 1; ctx.beginPath(); 
+            ctx.moveTo(canvas.width/2, -cameraY); ctx.lineTo(hook.x, hook.y - cameraY - 20); ctx.stroke();
+            
+            // Draw Real Hook
+            drawOriginalHook(ctx, hook.x, hook.y - cameraY);
 
             fishes.forEach(f => {
                 if(f.caught) { f.x = hook.x; f.y = hook.y + 15; }
@@ -276,7 +307,7 @@
             setTimeout(() => {
                 if(type === 't1' && !t1_done) { balance += 0.20; t1_done = true; }
                 if(type === 't2' && !t2_done) { balance += 0.20; t2_done = true; }
-                saveData(); alert("Task Done!");
+                saveData(); alert("Success!");
             }, 3500);
         }
 
@@ -316,5 +347,5 @@
         draw();
     </script>
 </body>
-            </html>
-                                                                                            
+</html>
+
