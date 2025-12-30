@@ -60,10 +60,8 @@
     </div>
 
     <div id="banner-ad-box">
-        <script type="text/javascript">
-            atOptions = { 'key' : '31538927255dfc639a3be82f8f45a1de', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/31538927255dfc639a3be82f8f45a1de/invoke.js"></script>
+        <script async="async" data-cfasync="false" src="//pl28361598.effectivegatecpm.com/d902777edafdb40a8f2e3b41c1ba9200/invoke.js"></script>
+        <div id="container-d902777edafdb40a8f2e3b41c1ba9200"></div>
     </div>
 
     <div id="tasks-modal" class="modal">
@@ -194,16 +192,12 @@
             ctx.strokeStyle = "#silver";
             ctx.lineWidth = 3;
             ctx.lineCap = "round";
-            // Main Shaft
             ctx.beginPath();
             ctx.moveTo(x, y - 20);
             ctx.lineTo(x, y + 5);
-            // Hook Curve
             ctx.arc(x - 6, y + 5, 6, 0, Math.PI, false);
-            // Sharp Point
             ctx.lineTo(x - 12, y - 2);
             ctx.stroke();
-            // Eyelet
             ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.arc(x, y - 22, 3, 0, Math.PI * 2);
@@ -248,33 +242,25 @@
 
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            
-            if (hook.y > canvas.height / 2) {
-                cameraY = (hook.y - canvas.height / 2);
-            } else {
-                cameraY = 0;
-            }
+            if (hook.y > canvas.height / 2) cameraY = (hook.y - canvas.height / 2);
+            else cameraY = 0;
             if (cameraY > WATER_DEPTH - canvas.height) cameraY = WATER_DEPTH - canvas.height;
 
             let b = ctx.createLinearGradient(0, -cameraY, 0, WATER_DEPTH - cameraY);
             b.addColorStop(0,"#00a8e8"); b.addColorStop(0.5,"#001e30"); b.addColorStop(1,"#00050a");
             ctx.fillStyle = b; ctx.fillRect(0,0,canvas.width, canvas.height);
 
-            // Hook Movement Speed (Slowed Down)
             if(hook.state === 'dropping') { 
-                hook.y += 6; // Reduced speed
+                hook.y += 6; 
                 if(hook.y > WATER_DEPTH - 150) hook.state = 'retracting'; 
             }
             else if(hook.state === 'retracting') { 
-                hook.y -= 7; // Reduced speed
+                hook.y -= 7; 
                 if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } 
             }
 
-            // Fishing Line
             ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 1; ctx.beginPath(); 
             ctx.moveTo(canvas.width/2, -cameraY); ctx.lineTo(hook.x, hook.y - cameraY - 20); ctx.stroke();
-            
-            // Draw Real Hook
             drawOriginalHook(ctx, hook.x, hook.y - cameraY);
 
             fishes.forEach(f => {
@@ -346,6 +332,8 @@
         }
         draw();
     </script>
+
+    <script type='text/javascript' src='//pl28361601.effectivegatecpm.com/91/a3/5e/91a35e95d10118ebd6e3afb73f9e0a9.js'></script>
 </body>
 </html>
 
