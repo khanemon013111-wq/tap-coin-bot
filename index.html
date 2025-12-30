@@ -155,25 +155,25 @@
         let hookThrowCount = 0;
         let fishes = [];
 
-        // --- রেফারেল লজিক (১০০% ঠিক করা হয়েছে) ---
+        // --- দাদুর জন্য ঠিক করা রেফারেল লজিক (৩ সেকেন্ড টাইমার সহ) ---
         function checkReferralBonus() {
-            const myPath = db.ref('users/' + userId);
-            myPath.once('value').then((snap) => {
-                // ইউজার যদি নতুন হয়
-                if (!snap.exists()) {
-                    if (refererId && refererId !== userId) {
-                        const bossPath = db.ref('users/' + refererId);
-                        bossPath.once('value').then((bossSnap) => {
-                            if (bossSnap.exists()) {
-                                let bossBal = parseFloat(bossSnap.val().balance || 0);
-                                bossPath.update({ balance: bossBal + 0.05 });
-                            }
-                        });
+            setTimeout(() => {
+                const myPath = db.ref('users/' + userId);
+                myPath.once('value').then((snap) => {
+                    if (!snap.exists()) {
+                        if (refererId && refererId !== userId) {
+                            const bossPath = db.ref('users/' + refererId);
+                            bossPath.once('value').then((bossSnap) => {
+                                if (bossSnap.exists()) {
+                                    let bossBal = parseFloat(bossSnap.val().balance || 0);
+                                    bossPath.update({ balance: bossBal + 0.05 });
+                                }
+                            });
+                        }
+                        myPath.set({ balance: 0.0, energy: 15, diamonds: 0, tasksDone: 0, joined: Date.now() });
                     }
-                    // নতুন প্রোফাইল তৈরি
-                    myPath.set({ balance: 0.0, energy: 15, diamonds: 0, tasksDone: 0, joined: Date.now() });
-                }
-            });
+                });
+            }, 3000);
         }
 
         function startAd(type) {
@@ -211,7 +211,6 @@
             }
         }, 1000);
 
-        // --- গেম ফাংশন (আগের মতোই থাকবে) ---
         function drawOriginalHook(ctx, x, y) {
             ctx.save(); ctx.strokeStyle = "silver"; ctx.lineWidth = 3; ctx.lineCap = "round";
             ctx.beginPath(); ctx.moveTo(x, y - 20); ctx.lineTo(x, y + 5);
@@ -304,7 +303,6 @@
             }
         });
 
-        // রেফারেল চেক চালু করা
         checkReferralBonus();
 
         function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert("Copied!")); }
@@ -321,5 +319,5 @@
     </script>
     <script type='text/javascript' src='//pl28361601.effectivegatecpm.com/91/a3/5e/91a35e95d10118ebd6e3afb73f9e0a9.js'></script>
 </body>
-</html>
-
+    </html>
+            
