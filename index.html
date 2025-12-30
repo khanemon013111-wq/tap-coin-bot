@@ -22,7 +22,7 @@
             align-items: center;
             z-index: 1500;
             background: rgba(0,0,0,0.2);
-            pointer-events: auto; /* অ্যাড ক্লিকেবল রাখার জন্য */
+            pointer-events: auto; 
         }
 
         #top-ui { position: fixed; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
@@ -108,6 +108,7 @@
     <div id="refer-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#ffd700;">👥 REFERRAL</h3>
+        <p style="font-size: 11px; color: #aaa;">Refer a friend and get $0.05 bonus!</p>
         <div id="refer-link-box" style="font-size:11px; padding:15px; border:1px dashed #00f2ff; color:#00f2ff; word-break:break-all; border-radius:10px;">Loading...</div>
         <button class="btn-action" onclick="copyReferLink()">COPY LINK</button>
     </div>
@@ -136,6 +137,7 @@
         const ADSTERRA_SMARTLINK = "https://www.effectivegatecpm.com/rarb5qds06?key=79349eb6a9357e2e416a3ef19425a5c1";
         const tg = window.Telegram.WebApp;
         const userId = tg.initDataUnsafe?.user?.id.toString() || "test_user";
+        const refererId = tg.initDataUnsafe?.start_param || null; // রেফারার আইডি ধরা হচ্ছে
 
         const firebaseConfig = {
             apiKey: "AIzaSyA-2VRyhIktuWhesvHRa2lkq-G-PRWBQ8S5RP",
@@ -147,13 +149,27 @@
         const db = firebase.database();
 
         let balance = 0, energy = 15, diamonds = 0, tasksDone = 0, nextResetTime = 0;
-        let t1_done = false, t2_done = false, t3_done = false;
+        let t1_done = false, t2_done = false, t3_done = false, isNewUser = false;
         let adStartTime = 0, timerActive = false, rewardType = "";
         let hookThrowCount = 0;
         let fishes = [];
 
         const WATER_DEPTH = 2500;
         let cameraY = 0;
+
+        // রেফারেল লজিক ফাংশন
+        function handleReferral() {
+            if (refererId && refererId !== userId && isNewUser) {
+                const refRef = db.ref('users/' + refererId);
+                refRef.once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        let currentBalance = snapshot.val().balance || 0;
+                        refRef.update({ balance: currentBalance + 0.05 });
+                        console.log("Referral bonus given to: " + refererId);
+                    }
+                });
+            }
+        }
 
         function startAd(type) {
             if (type === 'dia' && tasksDone >= 3) return;
@@ -190,40 +206,23 @@
             }
         }, 1000);
 
+        // --- Game Drawing Functions (একই রাখা হয়েছে) ---
         function drawOriginalHook(ctx, x, y) {
-            ctx.save();
-            ctx.strokeStyle = "silver";
-            ctx.lineWidth = 3;
-            ctx.lineCap = "round";
-            ctx.beginPath();
-            ctx.moveTo(x, y - 20);
-            ctx.lineTo(x, y + 5);
-            ctx.arc(x - 6, y + 5, 6, 0, Math.PI, false);
-            ctx.lineTo(x - 12, y - 2);
-            ctx.stroke();
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.arc(x, y - 22, 3, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.restore();
+            ctx.save(); ctx.strokeStyle = "silver"; ctx.lineWidth = 3; ctx.lineCap = "round";
+            ctx.beginPath(); ctx.moveTo(x, y - 20); ctx.lineTo(x, y + 5);
+            ctx.arc(x - 6, y + 5, 6, 0, Math.PI, false); ctx.lineTo(x - 12, y - 2); ctx.stroke();
+            ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y - 22, 3, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
         }
 
         function drawRealisticFish(ctx, f, camY) {
-            ctx.save(); ctx.translate(f.x, f.y - camY);
-            if (f.dir === -1) ctx.scale(-1, 1);
-            let g = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
-            g.addColorStop(0, f.color); g.addColorStop(1, "rgba(0,0,0,0.5)");
-            ctx.fillStyle = g; ctx.beginPath();
-            ctx.moveTo(25, 0); ctx.quadraticCurveTo(10, -18, -15, -8); 
-            ctx.lineTo(-20, -12); ctx.lineTo(-15, -5); 
-            ctx.quadraticCurveTo(-25, 0, -15, 5); 
-            ctx.lineTo(-20, 12); ctx.lineTo(-15, 8); 
-            ctx.quadraticCurveTo(10, 18, 25, 0); ctx.fill();
-            let w = Math.sin(Date.now() * 0.01 + f.x) * 6;
-            ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(-35, -15+w); ctx.lineTo(-30, 0); ctx.lineTo(-35, 15-w); ctx.fill();
+            ctx.save(); ctx.translate(f.x, f.y - camY); if (f.dir === -1) ctx.scale(-1, 1);
+            let g = ctx.createRadialGradient(0, 0, 5, 0, 0, 25); g.addColorStop(0, f.color); g.addColorStop(1, "rgba(0,0,0,0.5)");
+            ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(25, 0); ctx.quadraticCurveTo(10, -18, -15, -8); 
+            ctx.lineTo(-20, -12); ctx.lineTo(-15, -5); ctx.quadraticCurveTo(-25, 0, -15, 5); 
+            ctx.lineTo(-20, 12); ctx.lineTo(-15, 8); ctx.quadraticCurveTo(10, 18, 25, 0); ctx.fill();
+            let w = Math.sin(Date.now() * 0.01 + f.x) * 6; ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(-35, -15+w); ctx.lineTo(-30, 0); ctx.lineTo(-35, 15-w); ctx.fill();
             ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(16, -4, 4, 0, 7); ctx.fill();
-            ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(18, -4, 2, 0, 7); ctx.fill();
-            ctx.restore();
+            ctx.fillStyle = "black"; ctx.beginPath(); ctx.arc(18, -4, 2, 0, 7); ctx.fill(); ctx.restore();
         }
 
         const canvas = document.getElementById("gameCanvas");
@@ -232,47 +231,27 @@
         let hook = { x: canvas.width/2, y: 80, state: 'idle' };
 
         function createFish() {
-            return { 
-                x: Math.random()*canvas.width, 
-                y: 400 + Math.random()*(WATER_DEPTH - 600), 
-                speed: 0.7+Math.random()*0.8, 
-                dir: Math.random()>0.5?1:-1, 
-                color: `hsl(${Math.random()*360}, 80%, 50%)`, 
-                caught: false 
-            };
+            return { x: Math.random()*canvas.width, y: 400 + Math.random()*(WATER_DEPTH - 600), speed: 0.7+Math.random()*0.8, dir: Math.random()>0.5?1:-1, color: `hsl(${Math.random()*360}, 80%, 50%)`, caught: false };
         }
         for(let i=0; i<25; i++) fishes.push(createFish());
 
         function draw() {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            if (hook.y > canvas.height / 2) cameraY = (hook.y - canvas.height / 2);
-            else cameraY = 0;
+            if (hook.y > canvas.height / 2) cameraY = (hook.y - canvas.height / 2); else cameraY = 0;
             if (cameraY > WATER_DEPTH - canvas.height) cameraY = WATER_DEPTH - canvas.height;
-
             let b = ctx.createLinearGradient(0, -cameraY, 0, WATER_DEPTH - cameraY);
             b.addColorStop(0,"#00a8e8"); b.addColorStop(0.5,"#001e30"); b.addColorStop(1,"#00050a");
             ctx.fillStyle = b; ctx.fillRect(0,0,canvas.width, canvas.height);
 
-            if(hook.state === 'dropping') { 
-                hook.y += 6; 
-                if(hook.y > WATER_DEPTH - 150) hook.state = 'retracting'; 
-            }
-            else if(hook.state === 'retracting') { 
-                hook.y -= 7; 
-                if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } 
-            }
+            if(hook.state === 'dropping') { hook.y += 6; if(hook.y > WATER_DEPTH - 150) hook.state = 'retracting'; }
+            else if(hook.state === 'retracting') { hook.y -= 7; if(hook.y <= 80) { hook.state = 'idle'; checkCatch(); } }
 
-            ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 1; ctx.beginPath(); 
-            ctx.moveTo(canvas.width/2, -cameraY); ctx.lineTo(hook.x, hook.y - cameraY - 20); ctx.stroke();
+            ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(canvas.width/2, -cameraY); ctx.lineTo(hook.x, hook.y - cameraY - 20); ctx.stroke();
             drawOriginalHook(ctx, hook.x, hook.y - cameraY);
 
             fishes.forEach(f => {
                 if(f.caught) { f.x = hook.x; f.y = hook.y + 15; }
-                else {
-                    f.x += f.speed * f.dir;
-                    if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1;
-                    if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true;
-                }
+                else { f.x += f.speed * f.dir; if(f.x > canvas.width+50) f.dir = -1; if(f.x < -50) f.dir = 1; if(hook.state === 'retracting' && Math.hypot(hook.x-f.x, hook.y-f.y) < 30) f.caught = true; }
                 drawRealisticFish(ctx, f, cameraY);
             });
             requestAnimationFrame(draw);
@@ -308,6 +287,15 @@
 
         function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); }
         
+        // --- Firebase Data loading & Referral Logic ---
+        db.ref('users/' + userId).once('value', snapshot => {
+            if (!snapshot.exists()) {
+                isNewUser = true;
+                saveData(); // নতুন ইউজার তৈরি
+                handleReferral(); // রেফার বোনাস চেক
+            }
+        });
+
         db.ref('users/' + userId).on('value', snap => {
             const v = snap.val(); if(v) {
                 balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0; tasksDone = v.tasksDone || 0; nextResetTime = v.nextResetTime || 0;
@@ -316,6 +304,7 @@
                 document.getElementById("energy-count").innerText = energy;
                 document.getElementById("dia-count").innerText = diamonds;
                 document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
+                // বট লিংকে অটোমেটিক আইডি যোগ হবে
                 document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
                 if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE"; b.classList.add("btn-gray"); b.disabled=true; }
                 if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE"; b.classList.add("btn-gray"); b.disabled=true; }
@@ -335,9 +324,6 @@
         }
         draw();
     </script>
-
-    <script type='text/javascript' src='//pl28361601.effectivegatecpm.com/91/a3/5e/91a35e95d10118ebd6e3afb73f9e0a9.js'></script>
-
 </body>
-</html>
-
+            </html>
+            
