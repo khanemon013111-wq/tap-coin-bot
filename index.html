@@ -12,17 +12,17 @@
     <style>
         body { margin: 0; padding: 0; background: #001e30; overflow: hidden; touch-action: none; font-family: 'Segoe UI', sans-serif; color: white; }
         
-        /* [AD BOX] - Native Banner container */
         #banner-ad-box {
             position: fixed;
             bottom: 65px; 
             width: 100%;
+            height: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1500;
             background: rgba(0,0,0,0.2);
-            pointer-events: auto;
+            pointer-events: auto; /* অ্যাড ক্লিকেবল রাখার জন্য */
         }
 
         #top-ui { position: fixed; top: 10px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 100; pointer-events: none; }
@@ -61,8 +61,10 @@
     </div>
 
     <div id="banner-ad-box">
-        <script async="async" data-cfasync="false" src="//pl28361598.effectivegatecpm.com/d902777edafdb40a8f2e3b41c1ba9200/invoke.js"></script>
-        <div id="container-d902777edafdb40a8f2e3b41c1ba9200"></div>
+        <script type="text/javascript">
+            atOptions = { 'key' : '31538927255dfc639a3be82f8f45a1de', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/31538927255dfc639a3be82f8f45a1de/invoke.js"></script>
     </div>
 
     <div id="tasks-modal" class="modal">
@@ -335,6 +337,7 @@
     </script>
 
     <script type='text/javascript' src='//pl28361601.effectivegatecpm.com/91/a3/5e/91a35e95d10118ebd6e3afb73f9e0a9.js'></script>
+
 </body>
-     </html>
-         
+</html>
+
