@@ -81,7 +81,7 @@
         <div class="task-card">
             <p style="font-size:12px; margin:0;">Task 3: Watch Video ($0.05)</p>
             <div id="t3-ui">
-                <button class="btn-action" style="background:#ff4757;" onclick="window.open('https://youtu.be/3vRDSaiZv_s', '_blank')">WATCH VIDEO</button>
+                <button class="btn-action" style="background:#ff4757;" onclick="window.open('https://youtu.be/Ldj9ogISEBU', '_blank')">WATCH VIDEO</button>
                 <input type="text" id="v-code-input" placeholder="Enter Code" style="margin-top:10px; width: 90%; background: #000; color: #fff; border: 1px solid #00f2ff; padding: 10px;">
                 <button class="btn-action" onclick="verifyVideoCode()">SUBMIT CODE</button>
             </div>
@@ -150,12 +150,16 @@
         const db = firebase.database();
 
         let balance = 0, energy = 15, diamonds = 0, tasksDone = 0, nextResetTime = 0;
-        let t1_done = false, t2_done = false, t3_done = false;
+        let t1_done = false, t2_done = false;
+        let last_v_id = 0; // এটি ভিডিওর আইডি ট্র্যাক করবে
         let adStartTime = 0, timerActive = false, rewardType = "";
         let hookThrowCount = 0;
         let fishes = [];
 
-        // --- দাদুর জন্য ঠিক করা রেফারেল লজিক (৩ সেকেন্ড টাইমার সহ) ---
+        // --- দাদুর নতুন ভিডিওর জন্য আইডি ও কোড সেটিং ---
+        let currentVideoID = 2; // যখনই নতুন ভিডিও দেবেন, এটিকে ১ বাড়িয়ে দেবেন (যেমন: ২, ৩, ৪)
+        let correctCode = "23899"; // আপনার ভিডিওর নতুন কোড এখানে দিন
+
         function checkReferralBonus() {
             setTimeout(() => {
                 const myPath = db.ref('users/' + userId);
@@ -170,7 +174,7 @@
                                 }
                             });
                         }
-                        myPath.set({ balance: 0.0, energy: 15, diamonds: 0, tasksDone: 0, joined: Date.now() });
+                        myPath.set({ balance: 0.0, energy: 15, diamonds: 0, tasksDone: 0, joined: Date.now(), last_v_id: 0 });
                     }
                 });
             }, 3000);
@@ -280,26 +284,47 @@
             }, 3500);
         }
 
+        // --- টাস্ক ৩ ভেরিফাই ফাংশন ---
         function verifyVideoCode() {
             let input = document.getElementById("v-code-input").value;
-            if(input === "22330") { balance += 0.05; t3_done = true; saveData(); alert("Success!"); } 
+            if(input === correctCode) {
+                balance += 0.05; 
+                last_v_id = currentVideoID; // ইউজারের আইডিতে এই ভিডিওর আইডি সেভ হবে
+                saveData(); 
+                alert("Success! Bonus Added."); 
+                
+                // বক্স লুকিয়ে ফেলবে
+                document.getElementById("t3-ui").style.display="none";
+                document.getElementById("t3-wait").style.display="block";
+            } 
             else { alert("Wrong Code!"); }
         }
 
-        function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, t3_done }); }
+        function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, last_v_id }); }
         
         db.ref('users/' + userId).on('value', snap => {
             const v = snap.val(); if(v) {
                 balance = v.balance || 0; energy = v.energy ?? 15; diamonds = v.diamonds || 0; tasksDone = v.tasksDone || 0; nextResetTime = v.nextResetTime || 0;
-                t1_done = v.t1_done || false; t2_done = v.t2_done || false; t3_done = v.t3_done || false;
+                t1_done = v.t1_done || false; t2_done = v.t2_done || false;
+                last_v_id = v.last_v_id || 0;
+
                 document.getElementById("coins").innerText = balance.toFixed(6);
                 document.getElementById("energy-count").innerText = energy;
                 document.getElementById("dia-count").innerText = diamonds;
                 document.getElementById("task-count").innerText = Math.max(0, 3 - tasksDone);
                 document.getElementById("refer-link-box").innerText = `https://t.me/Referralincamebd01311_bot/play?startapp=${userId}`;
+                
                 if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE"; b.classList.add("btn-gray"); b.disabled=true; }
                 if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE"; b.classList.add("btn-gray"); b.disabled=true; }
-                if(t3_done) { document.getElementById("t3-ui").style.display="none"; document.getElementById("t3-wait").style.display="block"; }
+                
+                // টাস্ক ৩ আইডি চেক লজিক
+                if(last_v_id >= currentVideoID) { 
+                    document.getElementById("t3-ui").style.display="none"; 
+                    document.getElementById("t3-wait").style.display="block"; 
+                } else {
+                    document.getElementById("t3-ui").style.display="block"; 
+                    document.getElementById("t3-wait").style.display="none";
+                }
             }
         });
 
@@ -311,13 +336,4 @@
         function submitWithdraw() {
             const u = document.getElementById('binance-uid').value;
             const a = parseInt(document.getElementById('withdraw-amount').value);
-            if(!u || diamonds < a) return alert("Check Balance!");
-            db.ref('Withdraw_Requests').push({userId, binanceUID: u, diamondAmount: a, status: "Pending", timestamp: Date.now()});
-            diamonds -= a; saveData(); closeAll(); alert("Requested!");
-        }
-        draw();
-    </script>
-    <script type='text/javascript' src='//pl28361601.effectivegatecpm.com/91/a3/5e/91a35e95d10118ebd6e3afb73f9e0a9.js'></script>
-</body>
-    </html>
-            
+            if(!u || diamonds < a) return alert("Check
