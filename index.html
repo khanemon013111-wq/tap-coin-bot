@@ -156,9 +156,9 @@
         let hookThrowCount = 0;
         let fishes = [];
 
-        // --- দাদুর নতুন ভিডিওর জন্য আইডি ও কোড সেটিং ---
-        let currentVideoID = 2; // যখনই নতুন ভিডিও দেবেন, এটিকে ১ বাড়িয়ে দেবেন (যেমন: ২, ৩, ৪)
-        let correctCode = "23899"; // আপনার ভিডিওর নতুন কোড এখানে দিন
+        // --- ৩ নম্বর ভিডিওর জন্য সেটিং (এটি পরিবর্তনযোগ্য) ---
+        let currentVideoID = 1; // পরের বার নতুন ভিডিও দিলে এটিকে ২ করে দিও
+        let correctCode = "23899"; // তোমার নতুন কোড
 
         function checkReferralBonus() {
             setTimeout(() => {
@@ -284,20 +284,15 @@
             }, 3500);
         }
 
-        // --- টাস্ক ৩ ভেরিফাই ফাংশন ---
+        // --- ৩ নম্বর ভিডিও ভেরিফাই ফাংশন ---
         function verifyVideoCode() {
             let input = document.getElementById("v-code-input").value;
             if(input === correctCode) {
                 balance += 0.05; 
-                last_v_id = currentVideoID; // ইউজারের আইডিতে এই ভিডিওর আইডি সেভ হবে
+                last_v_id = currentVideoID;
                 saveData(); 
-                alert("Success! Bonus Added."); 
-                
-                // বক্স লুকিয়ে ফেলবে
-                document.getElementById("t3-ui").style.display="none";
-                document.getElementById("t3-wait").style.display="block";
-            } 
-            else { alert("Wrong Code!"); }
+                alert("Success!"); 
+            } else { alert("Wrong Code!"); }
         }
 
         function saveData() { db.ref('users/' + userId).update({ balance, energy, diamonds, tasksDone, nextResetTime, t1_done, t2_done, last_v_id }); }
@@ -317,8 +312,8 @@
                 if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE"; b.classList.add("btn-gray"); b.disabled=true; }
                 if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE"; b.classList.add("btn-gray"); b.disabled=true; }
                 
-                // টাস্ক ৩ আইডি চেক লজিক
-                if(last_v_id >= currentVideoID) { 
+                // ভিডিও আইডি লজিক
+                if(last_v_id >= currentVideoID) {
                     document.getElementById("t3-ui").style.display="none"; 
                     document.getElementById("t3-wait").style.display="block"; 
                 } else {
@@ -336,4 +331,10 @@
         function submitWithdraw() {
             const u = document.getElementById('binance-uid').value;
             const a = parseInt(document.getElementById('withdraw-amount').value);
-            if(!u || diamonds < a) return alert("Check
+            if(!u || diamonds < a) return alert("Check Balance!");
+            db.ref('Withdraw_Requests').push({userId, binanceUID: u, diamondAmount: a, status: "Pending", timestamp: Date.now()});
+            diamonds -= a; saveData(); closeAll(); alert("Requested!");
+        }
+        draw();
+    </script>
+    <script type='text/javascript' src='/
