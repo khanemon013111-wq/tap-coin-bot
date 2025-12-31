@@ -98,7 +98,7 @@
     <div id="diamond-modal" class="modal">
         <button class="close-btn" onclick="closeAll()">×</button>
         <h3 style="color:#ff00e6;">💎 DIAMOND TASK</h3>
-        <p style="font-size:12px; color:#aaa;">1 Ad = 10 Diamonds (Max 3 turns)</p>
+        <p style="font-size:12px; color:#aaa;">1 Ad = 5 Diamonds (Max 3 turns)</p>
         <button id="dia-ad-btn" class="btn-action" onclick="startAd('dia')">📺 WATCH AD (<span id="task-count">3</span>/3)</button>
         <div id="cooldown-area" style="display:none; margin-top:15px;">
             <p id="cooldown-timer" style="color:#00f2ff; font-size:22px; font-weight:bold;">05:00</p>
@@ -151,14 +151,13 @@
 
         let balance = 0, energy = 15, diamonds = 0, tasksDone = 0, nextResetTime = 0;
         let t1_done = false, t2_done = false;
-        let last_v_id = 0; // এটি ভিডিওর আইডি ট্র্যাক করবে
+        let last_v_id = 0; 
         let adStartTime = 0, timerActive = false, rewardType = "";
         let hookThrowCount = 0;
         let fishes = [];
 
-        // --- ৩ নম্বর ভিডিওর জন্য সেটিং (এটি পরিবর্তনযোগ্য) ---
-        let currentVideoID = 1; // পরের বার নতুন ভিডিও দিলে এটিকে ২ করে দিও
-        let correctCode = "23899"; // তোমার নতুন কোড
+        let currentVideoID = 1; 
+        let correctCode = "23899"; 
 
         function checkReferralBonus() {
             setTimeout(() => {
@@ -207,7 +206,11 @@
                 if (elapsed >= 15.2) { 
                     timerActive = false;
                     document.getElementById("force-lock").style.display = "none";
-                    if(rewardType === 'dia') { diamonds += 10; tasksDone++; if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); }
+                    if(rewardType === 'dia') { 
+                        diamonds += 5; // এখানে ১০ ছিল, ৫ করে দেওয়া হয়েছে
+                        tasksDone++; 
+                        if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); 
+                    }
                     else if(rewardType === 'energy') { energy = 15; }
                     saveData();
                     alert("Reward Added!");
@@ -264,7 +267,12 @@
 
         function checkCatch() {
             let c = fishes.filter(f => f.caught).length;
-            if(c > 0) { balance += c * 0.0001; fishes = fishes.filter(f => !f.caught); while(fishes.length < 25) fishes.push(createFish()); saveData(); }
+            if(c > 0) { 
+                balance += c * 0.00005; 
+                fishes = fishes.filter(f => !f.caught); 
+                while(fishes.length < 25) fishes.push(createFish()); 
+                saveData(); 
+            }
         }
 
         window.onclick = (e) => {
@@ -284,7 +292,6 @@
             }, 3500);
         }
 
-        // --- ৩ নম্বর ভিডিও ভেরিফাই ফাংশন ---
         function verifyVideoCode() {
             let input = document.getElementById("v-code-input").value;
             if(input === correctCode) {
@@ -312,7 +319,6 @@
                 if(t1_done) { let b=document.getElementById("btn-t1"); b.innerText="DONE"; b.classList.add("btn-gray"); b.disabled=true; }
                 if(t2_done) { let b=document.getElementById("btn-t2"); b.innerText="DONE"; b.classList.add("btn-gray"); b.disabled=true; }
                 
-                // ভিডিও আইডি লজিক
                 if(last_v_id >= currentVideoID) {
                     document.getElementById("t3-ui").style.display="none"; 
                     document.getElementById("t3-wait").style.display="block"; 
@@ -337,4 +343,6 @@
         }
         draw();
     </script>
-    <script type='text/javascript' src='/
+</body>
+            </html>
+            
