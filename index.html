@@ -334,19 +334,16 @@
         function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert("Copied!")); }
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
-
+        
+        // --- উইথড্র ফাংশন আপডেট করা হয়েছে যাতে ডলারও কাটে ---
         function submitWithdraw() {
             const u = document.getElementById('binance-uid').value;
             const a = parseInt(document.getElementById('withdraw-amount').value);
             
-            // ডলার কাটবে ৫ বা ১০ (ডায়মন্ডের পরিমাণ অনুযায়ী)
-            let dollarCut = (a === 5000) ? 5 : 10;
+            // ডলার কাটবে কত সেটা ঠিক করা (৫০০০ ডায়মন্ডে ৫ ডলার, ১০০০ ডায়মন্ডে ১০ ডলার)
+            let dollarToDeduct = (a === 5000) ? 5.0 : 10.0;
 
-            if(!u) return alert("Enter Binance UID!");
-            if(diamonds < a) return alert("Check Diamonds!");
+            if(!u) return alert("Please enter Binance UID!");
             
-            // ডাটাবেসে রিকোয়েস্ট পাঠানো
-            db.ref('Withdraw_Requests').push({
-                userId, 
-                binanceUID: u, 
-           
+            // চেক করা হচ্ছে ডায়মন্ড এবং ডলারের ব্যালেন্স পর্যাপ্ত কি না
+            if(diamonds < a
