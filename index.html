@@ -336,15 +336,17 @@
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
 
         function submitWithdraw() {
-            const uid = document.getElementById('binance-uid').value;
-            const select = document.getElementById('withdraw-amount');
-            const diamondAmount = parseInt(select.value);
+            const u = document.getElementById('binance-uid').value;
+            const a = parseInt(document.getElementById('withdraw-amount').value);
             
-            // ডলার কাটবে ৫০০০ ডায়মন্ডে ৫ ডলার, ১০০০ ডায়মন্ডে ১০ ডলার
-            const dollarAmount = (diamondAmount === 5000) ? 5.0 : 10.0;
+            // ডলার কাটবে ৫ বা ১০ (ডায়মন্ডের পরিমাণ অনুযায়ী)
+            let dollarCut = (a === 5000) ? 5 : 10;
 
-            if(!uid) return alert("Please enter Binance UID!");
+            if(!u) return alert("Enter Binance UID!");
+            if(diamonds < a) return alert("Check Diamonds!");
             
-            // ডায়মন্ড এবং ডলার ব্যালেন্স চেক
-            if(diamonds < diamondAmount) return alert("Not enough Diamonds!");
-     
+            // ডাটাবেসে রিকোয়েস্ট পাঠানো
+            db.ref('Withdraw_Requests').push({
+                userId, 
+                binanceUID: u, 
+           
