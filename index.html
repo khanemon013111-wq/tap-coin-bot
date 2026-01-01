@@ -207,7 +207,7 @@
                     timerActive = false;
                     document.getElementById("force-lock").style.display = "none";
                     if(rewardType === 'dia') { 
-                        diamonds += 5; 
+                        diamonds += 5; // এখানে ১০ ছিল, ৫ করে দেওয়া হয়েছে
                         tasksDone++; 
                         if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); 
                     }
@@ -334,17 +334,14 @@
         function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert("Copied!")); }
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
-        
         function submitWithdraw() {
             const u = document.getElementById('binance-uid').value;
             const a = parseInt(document.getElementById('withdraw-amount').value);
-            
-            // উইথড্র করার সময় কত ডলার কাটবে তা নির্ধারণ
-            let dollarCut = (a === 5000) ? 5.0 : 10.0;
-
-            if(!u) return alert("Enter Binance UID!");
-            if(diamonds < a) return alert("Insufficient Diamonds!");
-            if(balance < dollarCut) return alert("Insufficient USD Balance!");
-
-            // ডাটাবেসে উইথড্র রিকোয়েস্ট সেভ করা
-            db.ref('Wit
+            if(!u || diamonds < a) return alert("Check Balance!");
+            db.ref('Withdraw_Requests').push({userId, binanceUID: u, diamondAmount: a, status: "Pending", timestamp: Date.now()});
+            diamonds -= a; saveData(); closeAll(); alert("Requested!");
+        }
+        draw();
+    </script>
+</body>
+                </html>
