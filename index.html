@@ -207,7 +207,7 @@
                     timerActive = false;
                     document.getElementById("force-lock").style.display = "none";
                     if(rewardType === 'dia') { 
-                        diamonds += 5; 
+                        diamonds += 5; // এখানে ১০ ছিল, ৫ করে দেওয়া হয়েছে
                         tasksDone++; 
                         if(tasksDone >= 3) nextResetTime = Date.now() + (5 * 60 * 1000); 
                     }
@@ -334,16 +334,15 @@
         function copyReferLink() { navigator.clipboard.writeText(document.getElementById("refer-link-box").innerText).then(() => alert("Copied!")); }
         function openShop(id) { closeAll(); document.getElementById(id).style.display = "block"; }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = "none"); }
-        
-        // --- উইথড্র ফাংশন আপডেট করা হয়েছে যাতে ডলারও কাটে ---
         function submitWithdraw() {
             const u = document.getElementById('binance-uid').value;
             const a = parseInt(document.getElementById('withdraw-amount').value);
+            if(!u || diamonds < a) return alert("Check Balance!");
+            db.ref('Withdraw_Requests').push({userId, binanceUID: u, diamondAmount: a, status: "Pending", timestamp: Date.now()});
+            diamonds -= a; saveData(); closeAll(); alert("Requested!");
+        }
+        draw();
+    </script>
+</body>
+            </html>
             
-            // ডলার কাটবে কত সেটা ঠিক করা (৫০০০ ডায়মন্ডে ৫ ডলার, ১০০০ ডায়মন্ডে ১০ ডলার)
-            let dollarToDeduct = (a === 5000) ? 5.0 : 10.0;
-
-            if(!u) return alert("Please enter Binance UID!");
-            
-            // চেক করা হচ্ছে ডায়মন্ড এবং ডলারের ব্যালেন্স পর্যাপ্ত কি না
-            if(diamonds < a
